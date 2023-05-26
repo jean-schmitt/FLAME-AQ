@@ -1,0 +1,193 @@
+State,Operator,City,Mmgal/year,Mb/d
+New York,Western New York Energy Llc             ,Medina,62,4
+North Carolina,Tyton NC Biofuels Llc                   ,Raeford,57,4
+Pennsylvania,Pennsylvania Grain Prcsg Llc            ,Clearfield,128,8
+Illinois,Adkins Energy Llc                       ,Lena,60,4
+Illinois,ADM,Decatur,375,24
+Illinois,Alto ICP LLC,Pekin,82,5
+Illinois,Alto Pekin LLC Wet Mill,Pekin,100,7
+Illinois,Alto Pekin LLC Dry Mill,Pekin,53,3
+Illinois,Big River Resources Galva Llc           ,Galva,100,7
+Illinois,Biourja Renewables LLC,Peoria,61,4
+Illinois,Green Plains Madison Llc                ,Madison,88,6
+Illinois,Illinois River Energy Llc               ,Rochelle,138,9
+Illinois,Lincolnland Agri-Energy Llc             ,Palestine,66,4
+Illinois,Marquis Energy Llc                      ,Hennepin,340,22
+Illinois,One Earth Energy Llc                    ,Gibson City,150,10
+Illinois,Patriot Renewable Fuels Llc             ,Annawan,130,8
+Indiana,Cardinal Ethanol Llc                    ,Union City,133,9
+Indiana,Central Indiana Ethanol Llc             ,Marion,50,3
+Indiana,Grain Processing Corp                   ,Washington,37,2
+Indiana,Green Plains Mount Vernon Llc           ,Mount Vernon,88,6
+Indiana,Iroquois Bio-Energy Co Llc              ,Rensselaer,60,4
+Indiana,Poet Biorefining - Alexandria Llc       ,Alexandria,90,6
+Indiana,Poet Biorefining - North Manchester Llc ,North Manchester,90,6
+Indiana,Poet Biorefining - Portland Llc         ,Portland,90,6
+Indiana,Poet Biorefining - Shelbyville Llc,Shelbyville,94,6
+Indiana,South Bend Ethanol Llc                  ,South Bend,100,7
+Indiana,The Andersons Marathon Holdings Llc     ,Logansport,130,8
+Indiana,Valero Renewable Fuels Llc              ,Bluffton,118,8
+Indiana,Valero Renewable Fuels Llc              ,Linden,135,9
+Indiana,Valero Renewable Fuels Llc              ,Mount Vernon,100,7
+Iowa,Absolute Energy Llc                     ,St. Ansgar,125,8
+Iowa,ADM Dry Mill,Cedar Rapids,300,20
+Iowa,ADM Wet Mill,Cedar Rapids,240,16
+Iowa,ADM,Clinton,237,15
+Iowa,Big River Resources Llc                 ,West Burlington,92,6
+Iowa,Big River United Energy Llc             ,Dyersville,100,7
+Iowa,Cargill Inc                             ,Eddyville,71,5
+Iowa,Cargill Inc                             ,Fort Dodge,130,8
+Iowa,Corn Lp                                 ,Goldfield,75,5
+Iowa,Elite Octane Llc                        ,Atlantic,150,10
+Iowa,Golden Grain Energy Llc                 ,Mason City,120,8
+Iowa,Grain Processing Corp                   ,Muscatine,83,5
+Iowa,Green Plains Inc                        ,Shenandoah,80,5
+Iowa,Green Plains Superior Llc               ,Superior,50,3
+Iowa,Homeland Energy Solutions Llc           ,Lawler,196,13
+Iowa,Lincolnway Energy Llc                   ,Nevada,90,6
+Iowa,Little Sioux Corn Processors Lllp       ,Marcus,165,11
+Iowa,Louis Dreyfus Co                        ,Grand Junction,122,8
+Iowa,Pine Lake Corn Processors               ,Steamboat Rock,73,5
+Iowa,Plymouth Energy Llc                     ,Merrill,55,4
+Iowa,Poet Biorefining - Arthur Llc,Arthur,132,9
+Iowa,Poet Biorefining - Ashton LLC,Ashton,68,4
+Iowa,Poet Biorefining - Coon Rapids Llc,Coon Rapids,65,4
+Iowa,Poet Biorefining - Corning Llc            ,Corning,90,6
+Iowa,Poet Biorefining - Emmetsburg Llc         ,Emmetsburg,68,4
+Iowa,Poet Biorefining - Fairbank Llc,Fairbank,132,9
+Iowa,Poet Biorefining - Gowrie Llc             ,Gowrie,90,6
+Iowa,Poet Biorefining - Hanlontown Llc         ,Hanlontown,80,5
+Iowa,Poet Biorefining - Iowa Falls Llc,Iowa Falls,112,7
+Iowa,Poet Biorefining - Jewell Llc             ,Jewell,90,6
+Iowa,Poet Biorefining - Menlo Llc,Menlo,132,9
+Iowa,Poet Biorefining - Shell Rock Llc,Shell Rock,128,8
+Iowa,Quad Cnty Corn Processors Coop          ,Galva,38,2
+Iowa,Siouxland Energy & Livestock Co-Op      ,Sioux Center,65,4
+Iowa,Southwest Iowa Renewable                ,Council Bluffs,130,8
+Iowa,The Andersons Marathon Holdings Llc     ,Denison,55,4
+Iowa,Valero Renewable Fuels Llc              ,Albert City,135,9
+Iowa,Valero Renewable Fuels Llc              ,Charles City,140,9
+Iowa,Valero Renewable Fuels Llc              ,Fort Dodge,140,9
+Iowa,Valero Renewable Fuels Llc              ,Hartley,140,9
+Iowa,Valero Renewables Fuels Llc             ,Lakota,110,7
+Kansas,Arkalon Ethanol Llc                     ,Liberal,110,7
+Kansas,Bonanza Bioenergy Llc                   ,Garden City,55,4
+Kansas,East Kansas Agri-Energy Llc             ,Garnett,48,3
+Kansas,Element Llc                             ,Colwich,70,5
+Kansas,Kansas Ethanol Llc                      ,Lyons,80,5
+Kansas,Mgp Ingredients Inc                     ,Atchison,6, (s) 
+Kansas,Nesika Energy Llc                       ,Scandia,10,1
+Kansas,Prairie Horizon Agri Enrgy Llc          ,Phillipsburg,40,3
+Kansas,Pratt Energy Llc                        ,Pratt,55,4
+Kansas,Purefield Ingredients Llc               ,Russell,55,4
+Kansas,Reeve Agri Energy Inc                   ,Garden City,20,1
+Kansas,Western Plains Energy Llc               ,Oakley,52,3
+Kentucky,Commonwealth Agri-Energy Llc            ,Hopkinsville,48,3
+Kentucky,Parallel Products Inc                   ,Louisville,5, (s) 
+Michigan,Carbon Green Bioenergy Llc              ,Lake Odessa,57,4
+Michigan,Marysville Ethanol Llc                  ,Marysville,60,4
+Michigan,Poet Biorefining - Caro Llc               ,Caro,80,5
+Michigan,The Andersons Marathon Holdings Llc     ,Albion,135,9
+Michigan,Valero Renewable Fuels Llc              ,Riga,55,4
+Minnesota,ADM,Marshall,48,3
+Minnesota,Agri-Energy Llc                         ,Luverne,24,2
+Minnesota,Al-Corn Clean Fuel                      ,Claremont,130,8
+Minnesota,Bushmills Ethanol Inc                   ,Atwater,90,6
+Minnesota,Chippewa Valley Ethanol Co Llp         ,Benson,50,3
+Minnesota,Denco II Llc                            ,Morris,30,2
+Minnesota,Granite Falls Energy Llc                ,Granite Falls,63,4
+Minnesota,Greenfield Global Corn Plus LLC                           ,Winnebago,43,3
+Minnesota,Green Plains Fairmont Llc               ,Fairmont,110,7
+Minnesota,Green Plains Otter Tail Llc             ,Fergus Falls,60,4
+Minnesota,Guardian Energy Llc                     ,Janesville,150,10
+Minnesota,Heartland Corn Products                 ,Winthrop,140,9
+Minnesota,Heron Lake Bioenergy Llc                ,Heron Lake,68,4
+Minnesota,Highwater Ethanol Llc                   ,Lamberton,72,5
+Minnesota,Poet Biorefining - Bingham Lake Llc     ,Bingham Lake,35,2
+Minnesota,Poet Biorefining - Glenville Llc               ,Glenville,48,3
+Minnesota,Poet Biorefining - Lake Crystal Llc       ,Lake Crystal,68,4
+Minnesota,Poet Biorefining - Preston Llc       ,Preston,55,4
+Minnesota,Valero Renewable Fuels Llc              ,Welcome,140,9
+Missouri,Golden Triangle Energy Llc              ,Craig,21,1
+Missouri,Icm Biofuels Llc                        ,St. Joseph,50,3
+Missouri,Mid-Missouri Energy Llc                 ,Malta Bend,60,4
+Missouri,Poet Biorefining - Laddonia Llc           ,Laddonia,80,5
+Missouri,Poet Biorefining - Macon Llc           ,Macon,55,4
+Missouri,Show Me Ethanol                         ,Carrollton,65,4
+Nebraska,ADM Dry Mill,Columbus,313,20
+Nebraska,ADM Wet Mill,Columbus,100,7
+Nebraska,Alten Llc                               ,Mead,25,2
+Nebraska,Aurora West Llc         ,Aurora,110,7
+Nebraska,Bridgeport Ethanol Llc                  ,Bridgeport,54,4
+Nebraska,Cargill Inc                             ,Blair,210,14
+Nebraska,Chief Ethanol Fuels Inc                 ,Hastings,70,5
+Nebraska,Chief Ethanol Fuels Inc                 ,Lexington,52,3
+Nebraska,E Energy Adams Llc                      ,Adams,101,7
+Nebraska,Elkhorn Valley Ethanol                  ,Norfolk,52,3
+Nebraska,Green Plains Atkinson                   ,Atkinson,47,3
+Nebraska,Green Plains Central City Llc           ,Central City,100,7
+Nebraska,GreenAmerica Biofuels Ord LLC,Ord,57,4
+Nebraska,Green Plains Wood River Llc             ,Wood River,110,7
+Nebraska,Husker Ag Llc                           ,Plainview,90,6
+Nebraska,Kaapa Ethanol Llc                       ,Minden,87,6
+Nebraska,Kaapa Ethanol Ravenna Llc               ,Ravenna,125,8
+Nebraska,Mid America Agri Products Llc           ,Madrid,50,3
+Nebraska,Midwest Renewable Energy Llc            ,Sutherland,28,2
+Nebraska,Nebraska Corn Processing Llc            ,Cambridge,50,3
+Nebraska,Poet Biorefining - Fairmont LLC,Fairmont,128,8
+Nebraska,Siouxland Ethanol Llc                   ,Jackson,95,6
+Nebraska,Trenton Agri Products Llc               ,Trenton,55,4
+Nebraska,Valero Renewable Fuels                  ,Albion,135,9
+North Dakota,Blue Flint Ethanol Llc                  ,Underwood,73,5
+North Dakota,Dakota Spirit Agenergy                  ,Spiritwood,77,5
+North Dakota,Hankinson Renewable Energy Llc          ,Hankinson,150,10
+North Dakota,Red River Biorefinery LLC,Grand Forks,17,1
+North Dakota,Red Trail Energy Llc                    ,Richardton,65,4
+North Dakota,Tharaldson Ethanol                      ,Casselton,165,11
+Ohio,CE Acquisitions Co Llc                  ,Coshocton,50,3
+Ohio,Guardian Lima Llc                       ,Lima,73,5
+Ohio,Poet Biorefining - Fostoria Llc           ,Fostoria,90,6
+Ohio,Poet Biorefining - Leipsic Llc          ,Leipsic,90,6
+Ohio,Poet Biorefining - Marion Llc             ,Marion,154,10
+Ohio,The Andersons Marathon Holdings Llc     ,Greenville,130,8
+Ohio,Valero Renewable Fuels Llc              ,Bloomingburg,135,9
+South Dakota,Dakota Ethanol Llc                      ,Wentworth,92,6
+South Dakota,Glacial Lakes Energy Llc                ,Watertown,148,10
+South Dakota,Glacial Lakes Energy Llc                ,Mina,162,11
+South Dakota,Hub City Energy Llc                     ,Aberdeen,61,4
+South Dakota,Huron Energy Llc                        ,Huron,38,2
+South Dakota,Nugen Energy Llc                        ,Marion,150,10
+South Dakota,Poet Biorefining - Big Stone Llc         ,Big Stone City,105,7
+South Dakota,Poet Biorefining - Chancellor Llc         ,Chancellor,125,8
+South Dakota,Poet Biorefining - Groton Llc         ,Groton,68,4
+South Dakota,Poet Biorefining - Hudson Llc         ,Hudson,80,5
+South Dakota,Poet Biorefining - Mitchell Llc         ,Mitchell,86,6
+South Dakota,Poet Research Center                    ,Scotland,12,1
+South Dakota,Red River Energy Llc                    ,Rosholt,32,2
+South Dakota,Redfield Energy Llc                     ,Redfield,65,4
+South Dakota,Ringneck Energy & Feed Llc              ,Onida,80,5
+South Dakota,Valero Renewable Fuels                  ,Aurora,140,9
+Tennessee,Dynamic Recycling Llc                   ,Bristol,1, (s) 
+Tennessee,Green Plains Obion Llc                  ,Obion,125,8
+Tennessee,Tate & Lyle                             ,Loudon,110,7
+Wisconsin,Ace Ethanol Llc                         ,Stanley,52,3
+Wisconsin,Badger State Ethanol Llc                ,Monroe,85,6
+Wisconsin,Big River Resources Boyceville Llc      ,Boyceville,55,4
+Wisconsin,Didion Ethanol Llc                      ,Johnson Creek,50,3
+Wisconsin,Fox River Valley Ethanol Llc            ,Oshkosh,64,4
+Wisconsin,Marquis Energy-Wisconsin Llc            ,Necedah,50,3
+Wisconsin,United Ethanol Llc                      ,Milton,61,4
+Wisconsin,United Wisconsin Grain Producers Llc    ,Friesland,60,4
+Wisconsin,Valero Renewable Fuels Llc              ,Jefferson,110,7
+Texas,Hereford Ethanol Partners LP,Hereford,120,8
+Texas,Plainview Bioenergy Llc                 ,Plainview,130,8
+Texas,White Energy Hereford Llc               ,Hereford,130,8
+Colorado,Front Range Energy Llc                  ,Windsor,40,3
+Colorado,Sterling Ethanol Llc                    ,Sterling,50,3
+Colorado,Yuma Ethanol Llc                        ,Yuma,50,3
+Idaho,Alto Magic Valley LLC,Burley,60,4
+California,Aemetis Advanced Fuels Keyes Inc        ,Keyes,70,5
+California,Calgren Renewable Fuels Llc             ,Pixley,55,4
+California,Parallel Products                       ,Rancho Cucamonga,3, (s) 
+California,Pelican Renewables LLC,Stockton,60,4
+Oregon,Alto Columbia LLC,Boardman,40,3

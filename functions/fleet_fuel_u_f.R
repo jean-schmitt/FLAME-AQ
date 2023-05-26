@@ -1,0 +1,225 @@
+#' fleet_fuel_u_f
+#' Function: Calculates on-road fuel use by LDVs
+#' @export
+fleet_fuel_u_f<-function (first_yr = NA,last_yr = NA, fc_deg=NA, fc_deg_mdl = NA, vkt_turnover_adj_mdl = NA, survival_rate_adj_age = NA, scenario_id = NA, fleet_id = NA){
+  attribute_f("fleet_fuel_u_f")
+  results_path <- paste0(getwd(), "/outputs/air_quality/", Sys.Date(), "_", scenario_id, "_results")
+  #Inputs files
+  vh_techno <- get_input_f(input_name = "model_matching_technology")
+  fc_degradation <- get_input_f(input_name = "fuel_consumption_degradation")
+  #Functions' Outputs
+  vehicle_module_f_res <- do.call(fun_res_f,list(fun_name="vehicle_module_f"))
+  fleet_fc_dt <- vehicle_module_f_res[["fleet_fc_dt"]]
+  fleet_uf_dt <- vehicle_module_f_res[["fleet_uf_dt"]]
+  #fleet_vkt
+  fleet_vkt_f_res <- do.call(fun_res_f,list(fun_name="fleet_vkt_f"))
+  fleet_vint_vkt <- fleet_vkt_f_res[["fleet_vint_vkt"]]
+  if (vkt_turnover_adj_mdl=="y" & survival_rate_adj_age!=0){
+    #Get total fleet VKT from current simulations
+    tot_vkt <- aggregate(formula = Value~Year,data = fleet_vint_vkt,FUN=sum)
+    #Simulate fleet with no turnover
+    #Update attribute value with no turnover adjustments
+    update_attribute_values(list(survival_rate_adj_age=0))
+    new_fleet_vkt_f_res <- do.call(fleet_vkt_f,list(use_res_env="n"))
+    new_fleet_vint_vkt <- new_fleet_vkt_f_res[["fleet_vint_vkt"]]
+    new_tot_vkt <- aggregate(formula = Value~Year,data = new_fleet_vint_vkt,FUN=sum)
+    #Calculate adjustment ratio 
+    tot_vkt_adj_ratio <- tot_vkt
+    tot_vkt_adj_ratio$Value <- sapply(1:nrow(tot_vkt_adj_ratio),function(x)subset(new_tot_vkt,Year==tot_vkt_adj_ratio[x,"Year"])$Value/subset(tot_vkt,Year==tot_vkt_adj_ratio[x,"Year"])$Value)
+    matrix_vkt_adj_ratio <- acast(data=tot_vkt_adj_ratio, Year ~ Year , value.var='Value',fun.aggregate=sum, margins=FALSE)
+    #Update attribute value with no turnover adjustments
+    update_attribute_values(list(survival_rate_adj_age=survival_rate_adj_age))
+  } else {
+    matrix_vkt_adj_ratio <- diag(1,ncol = length(unique(fleet_vint_vkt$Year)),nrow = length(unique(fleet_vint_vkt$Year)))
+
+  }
+  #Creation output files
+  #fuel_use is the data.frame with the fuel use per year, scenario and fuel
+  dt_col <- c("Year","Age","Size","Technology","Fuel","Unit","Value")
+  fleet_vint_fuel_use <- setNames(data.frame(matrix(0,ncol = length(dt_col), nrow = 0),stringsAsFactors = FALSE,check.names = FALSE),dt_col)
+  #Loop for size
+  for (size in c("Car", "Light truck")) {
+    #Loop for technology
+    for (techno in unique(vh_techno$Own)) {
+      #Loop for fuel_type
+      #model_year_list is the list of Model Years we should consider in the matrices
+      model_year_list <- unique(subset(fleet_fc_dt, Size==size & Technology==techno)$Model_year)[order(unique(subset(fleet_fc_dt, Size==size & Technology==techno)$Model_year))]
+      #Create matrix of vintaged vkt. Rows: Year. Cols: Model year. Unit: km. If model year is older than the minimum model year data, assume it is the oldest
+      stock_vkt <- subset(fleet_vint_vkt,Size==size & Technology == techno & Year%in%c(first_yr:last_yr))
+      stock_vkt[,"Model_year"] <- sapply(stock_vkt[,"Year"] - stock_vkt[,"Age"],function(x) ifelse(x < min(model_year_list),min(model_year_list),x))
+      #tmp_mat_vkt is a temporary matrix. Dimensions may not correspond to final format
+      tmp_mat_vkt <- acast(stock_vkt, Year ~ Model_year , value.var='Value',fun.aggregate=sum, margins=FALSE)
+      #matrix_vkt contains the vkt by year and model year in final format
+      matrix_vkt <- matrix(0,ncol = length(model_year_list),nrow = length(first_yr:last_yr),dimnames = list(first_yr:last_yr,model_year_list))
+      matrix_vkt[rownames(tmp_mat_vkt),colnames(tmp_mat_vkt)] <- matrix_vkt_adj_ratio %*% tmp_mat_vkt
+      #Fuel types per technology
+      fuel_l <- unlist(strsplit(vh_techno$`Fuel type`[which(vh_techno$Own == techno)][1], ";"))
+      for (fuel_type in fuel_l) {
+        fuel_unit <- subset(vh_techno,`Fuel type`==fuel_type)[1,'Fuel unit']
+        #Create matrix of fuel Consumption. Rows = Year. Columns = Model year. Unit: fuel unit / 100 km
+        fc_dt <- subset(fleet_fc_dt, Size==size & Technology==techno & Fuel==fuel_type)
+        #matrix_fc is the matrix of fuel consumption ratins
+        matrix_fc <- matrix(fc_dt$Value[order(fc_dt$Model_year)],ncol = length(model_year_list),nrow = length(first_yr:last_yr),byrow = TRUE,dimnames = list(first_yr:last_yr,model_year_list))
+        #mat_deg is the matrix of fuel consumption degradation for all years and model years. Assumed to be 1 (no degradation)
+        mat_deg <- matrix(1,ncol = length(model_year_list),nrow = length(first_yr:last_yr),dimnames = list(first_yr:last_yr,model_year_list))
+        #If degradation to be included
+        if (fc_deg!="n" & nrow(subset(fc_degradation,techno%in%unlist(strsplit(Technology,";")) & Fuel==fuel_type))>0){
+          #Only consider the degradation specific to the technology
+          tmp_fc_degradation <- subset(fc_degradation,techno%in%unlist(strsplit(Technology,";")) & Fuel==fuel_type)
+          #max_age is the maximum age available in the data
+          max_age <- max(tmp_fc_degradation$Age)
+          #tmp_mat_fc_deg is a temporary matrix of degradation factors by age (up to max_age)
+          tmp_mat_fc_deg <- acast(tmp_fc_degradation,Age ~ Technology,value.var = fc_deg)
+          #mat_age_deg is the matrix of degradation factors by age (up to 30)
+          mat_age_deg <- matrix(1,nrow=31,ncol=1,dimnames = list(0:30,"Degradation"))
+          mat_age_deg[rownames(tmp_mat_fc_deg),1] <- tmp_mat_fc_deg[,1]
+          #Create rate for prospective values (after max_age)
+          if (fc_deg_mdl=="constant"){
+            fc_deg_rate <- 0
+          } else if (fc_deg_mdl=="linear"){
+            fc_deg_rate <- (mat_age_deg[as.character(max_age),1]-mat_age_deg[as.character(0),1])/max_age
+          }
+          #Project the values
+          mat_age_deg[as.character((max_age+1):30),1] <- mat_age_deg[as.character(max_age),1]+(1:(30-max_age))*fc_deg_rate
+          #Update mat_deg
+          mat_deg[,] <- as.matrix(sapply(colnames(mat_deg),function(x)sapply(rownames(mat_deg),function(y)ifelse(as.numeric(y)-as.numeric(x)>0,ifelse(as.numeric(y)-as.numeric(x)<31,mat_age_deg[as.character(as.numeric(y)-as.numeric(x)),1],mat_age_deg["30",1]),1))))
+        }
+        matrix_fc_deg <- matrix_fc * mat_deg
+        #Create matrix of VKT share. Diagonal matrix with the share of vkt on fuel_type by model year
+        vkt_share <- subset(fleet_uf_dt,Size==size & Technology==techno & Fuel==fuel_type & Model_year%in%model_year_list)
+        matrix_vkt_share <- diag(x=vkt_share$Value[order(vkt_share$Model_year)],nrow=length(vkt_share$Model_year),ncol=length(vkt_share$Model_year))
+        dimnames(matrix_vkt_share) <- list(vkt_share$Model_year,vkt_share$Model_year)
+        #Calculate the fuel use by technology
+        matrix_fuel_use <- (matrix_vkt %*% matrix_vkt_share) * matrix_fc_deg/100
+        #Convert matrix into long table
+        tmp_fuel_use_dt <- as.data.frame(matrix_fuel_use) %>% 
+          cbind(Year=as.numeric(rownames(matrix_fuel_use)),stringsAsFactors = FALSE) %>% 
+          gather("Model_year","Value",-Year,convert=TRUE) %>% 
+          cbind(Technology=techno,Size=size,Fuel=fuel_type,Unit=fuel_unit,stringsAsFactors = FALSE)
+        tmp_fuel_use_dt[,"Age"] <- tmp_fuel_use_dt[,"Year"] - tmp_fuel_use_dt[,"Model_year"]
+        #Combine
+        fleet_vint_fuel_use <- rbind(fleet_vint_fuel_use,subset(tmp_fuel_use_dt,Age %in% c(0:30),-Model_year))
+      }
+    }
+  }
+  if (fleet_id == "2020_fleet") {
+    years <- 2020:max(fleet_vint_fuel_use$Year)
+    fleet_vint_fuel_use <- filter(fleet_vint_fuel_use, fleet_vint_fuel_use$Year <= 2020)
+    temp <- filter(fleet_vint_fuel_use, fleet_vint_fuel_use$Year == 2020)
+    for (i in years) {
+      temp$Year <- i
+      fleet_vint_fuel_use <- rbind(fleet_vint_fuel_use, temp)
+    }
+  }
+  fleet_fuel_use_tot <- aggregate(data = fleet_vint_fuel_use,Value ~ Fuel + Year + Unit,FUN=sum)
+  # This portion of the code has been added to the original function to calculate the electricity use by state
+  fleet_vint_elec_use <- filter(fleet_vint_fuel_use, fleet_vint_fuel_use$Fuel == "Electricity")
+  fleet_vint_elec_use <- filter(fleet_vint_elec_use, fleet_vint_elec_use$Value != 0)
+  fleet_norm_elec_use <- fleet_vint_elec_use
+  fleet_norm_elec_use$Value <- 0
+  fleet_total <- fleet_vkt_f_res[["fleet_composition"]][["fleet_vint_stock"]]
+  fleet_state <- fleet_vkt_f_res[["fleet_composition"]][["fleet_vint_stock_scenario_state_breakdown"]] %>%
+    add_column("Fuel" = NA) %>%
+    add_column("Unit" = NA) %>%
+    relocate(Age, .after = Unit) %>%
+    relocate(Size, .before = Fuel) %>%
+    relocate(Technology, .before = Size) %>%
+    relocate(Value, .before = Technology) %>%
+    relocate(Year, .before = Value) %>%
+    filter(Technology %in% unique(fleet_vint_elec_use$Technology)) %>%
+    filter(Year >= first_yr) %>%
+    filter(Value != 0)
+  fleet_elec_use_state <- fleet_state
+  fleet_elec_use_state$Fuel <- "Electricity"
+  fleet_elec_use_state$Unit <- "kWh"
+  fleet_elec_use_state$Value <- 0
+  for (i in 1:dim(fleet_vint_elec_use)[1]) {
+    temp <- which(fleet_total$Age == fleet_vint_elec_use$Age[i] & 
+                  fleet_total$Year == fleet_vint_elec_use$Year[i] & 
+                  fleet_total$Size == fleet_vint_elec_use$Size[i] & 
+                  fleet_total$Technology == fleet_vint_elec_use$Technology[i])
+    number_vehicles <- fleet_total$Value[temp]
+    temp_state <- which(fleet_state$Age == fleet_vint_elec_use$Age[i] & 
+                          fleet_state$Year == fleet_vint_elec_use$Year[i] & 
+                          fleet_state$Size == fleet_vint_elec_use$Size[i] & 
+                          fleet_state$Technology == fleet_vint_elec_use$Technology[i])
+    fleet_elec_use_state$Value[temp_state] <- fleet_state$Value[temp_state]*fleet_vint_elec_use$Value[i]/number_vehicles
+  }
+  fleet_elec_use_tot_state <- aggregate(data = fleet_elec_use_state,Value ~ State + Fuel + Year + Unit,FUN=sum)
+  fleet_fuel_use <- filter(fleet_vint_fuel_use, fleet_vint_fuel_use$Fuel != "Electricity")
+  fleet_fuel_use <- filter(fleet_fuel_use, fleet_fuel_use$Value != 0)
+  fleet_norm_fuel_use <- fleet_fuel_use
+  fleet_norm_fuel_use$Value <- 0
+  fleet_state <- fleet_vkt_f_res[["fleet_composition"]][["fleet_vint_stock_scenario_state_breakdown"]] %>%
+    add_column("Fuel" = NA) %>%
+    add_column("Unit" = NA) %>%
+    relocate(Age, .after = Unit) %>%
+    relocate(Size, .before = Fuel) %>%
+    relocate(Technology, .before = Size) %>%
+    relocate(Value, .before = Technology) %>%
+    relocate(Year, .before = Value) %>%
+    filter(Technology %in% unique(fleet_fuel_use$Technology)) %>%
+    filter(Year >= first_yr) %>%
+    filter(Value != 0)
+  fleet_fuel_use_state <- fleet_state
+  fleet_fuel_use_state$Value <- 0
+  for (i in 1:dim(fleet_fuel_use)[1]) {
+    temp <- which(fleet_total$Age == fleet_fuel_use$Age[i] & 
+                    fleet_total$Year == fleet_fuel_use$Year[i] & 
+                    fleet_total$Size == fleet_fuel_use$Size[i] & 
+                    fleet_total$Technology == fleet_fuel_use$Technology[i])
+    number_vehicles <- fleet_total$Value[temp]
+    temp_state <- which(fleet_state$Age == fleet_fuel_use$Age[i] & 
+                          fleet_state$Year == fleet_fuel_use$Year[i] & 
+                          fleet_state$Size == fleet_fuel_use$Size[i] & 
+                          fleet_state$Technology == fleet_fuel_use$Technology[i])
+    fleet_fuel_use_state$Value[temp_state] <- fleet_state$Value[temp_state]*fleet_fuel_use$Value[i]/number_vehicles
+    fleet_fuel_use_state$Fuel[temp_state] <- fleet_fuel_use$Fuel[i]
+    fleet_fuel_use_state$Unit[temp_state] <- fleet_fuel_use$Unit[i]
+  }
+  fleet_fuel_use_tot_state <- aggregate(data = fleet_fuel_use_state, Value ~ State + Fuel + Year + Unit, FUN = sum)
+  write.csv(fleet_elec_use_tot_state, paste0(results_path, "/fleet_elec_use_tot_state.csv"))
+  write.csv(fleet_fuel_use_tot, paste0(results_path, "/fleet_fuel_use_tot.csv"))
+  write.csv(fleet_fuel_use_tot_state, paste0(results_path, "/fleet_fuel_use_tot_state.csv"))
+  # Fleet electricity consumption by county
+  county_allocation_factors <- get_input_f(input_name = 'normalized_vehicles_distribution_by_county')
+  county_allocation_factors <- county_allocation_factors[,-1]
+  fleet_elec_use_tot_county_temp <- data.frame(county_allocation_factors$FIPS, county_allocation_factors$State_ID) %>%
+    add_column("Fuel" = "Electricity") %>%
+    add_column("Year" = 0) %>%
+    add_column("Unit" = "kWh") %>%
+    add_column("Value" = 0)
+  colnames(fleet_elec_use_tot_county_temp)[1:2] <- c("FIPS", "State")
+  fleet_elec_use_tot_county_temp <- arrange(fleet_elec_use_tot_county_temp, FIPS)
+  county_allocation_factors <- arrange(county_allocation_factors, FIPS)
+  years <- unique(fleet_elec_use_tot_state$Year)
+  states <- unique(fleet_elec_use_tot_state$State)
+  m <- 0
+  for (i in years) {
+    for (j in states) {
+      temp <- which(fleet_elec_use_tot_county_temp$State == j)
+      temp2 <- which(fleet_elec_use_tot_state$Year == i & fleet_elec_use_tot_state == j)
+      if (length(temp != 0)) {
+        fleet_elec_use_tot_county_temp$Year[temp] <- i
+        fleet_elec_use_tot_county_temp$Value[temp] <- fleet_elec_use_tot_state$Value[temp2]*county_allocation_factors$county_allocation_factor[which(county_allocation_factors$State_ID == j)]
+      } else {
+        fleet_elec_use_tot_county_temp$Year[temp] <- i
+        fleet_elec_use_tot_county_temp$Value[temp] <- 0
+      }
+    }
+    if (m == 0) {
+      fleet_elec_use_tot_county <- fleet_elec_use_tot_county_temp
+    } else {
+      fleet_elec_use_tot_county <- rbind(fleet_elec_use_tot_county, fleet_elec_use_tot_county_temp)
+    }
+    m <- m+1
+  }
+  # End of the additional code to calculate the electricity consumption by state
+  results<-list(fleet_fuel_use_tot=fleet_fuel_use_tot,
+                fleet_fuel_use_tot_state=fleet_fuel_use_tot_state,
+                fleet_vint_fuel_use=fleet_vint_fuel_use,
+                fleet_composition = fleet_vkt_f_res[["fleet_composition"]], 
+                fleet_elec_use_tot_state=fleet_elec_use_tot_state,
+                fleet_elec_use_tot_county = fleet_elec_use_tot_county)
+  return(results)
+}

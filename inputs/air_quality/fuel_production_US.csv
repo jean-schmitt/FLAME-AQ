@@ -1,0 +1,176 @@
+PADD,Fuel,Origin,Value,Unit
+1,Crude_oil,Production,22649,Thousand Barrels
+1,Crude_oil,Imports,217948,Thousand Barrels
+1,Crude_oil,Exports,18524,Thousand Barrels
+1,Gasoline,Production,1153044,Thousand Barrels
+1,Gasoline,Imports,27657,Thousand Barrels
+1,Gasoline,Exports,844,Thousand Barrels
+1,Diesel,Production,79260,Thousand Barrels
+1,Diesel,Imports,55188,Thousand Barrels
+1,Diesel,Exports,8068,Thousand Barrels
+1,CNG & LPG,Production,231111,Thousand Barrels
+1,CNG & LPG,Imports,11470,Thousand Barrels
+1,CNG & LPG,Exports,91282,Thousand Barrels
+1,Ethanol,Production,4174,Thousand Barrels
+1,Ethanol,Imports,444,Thousand Barrels
+1,Ethanol,Exports,1566,Thousand Barrels
+1,Crude_oil,2,15664,Thousand Barrels
+1,Gasoline,2,8186,Thousand Barrels
+1,Diesel,2,16500,Thousand Barrels
+1,CNG & LPG,2,90179,Thousand Barrels
+1,Ethanol,2,103649,Thousand Barrels
+1,Crude_oil,3,24281,Thousand Barrels
+1,Gasoline,3,20447,Thousand Barrels
+1,Diesel,3,308631,Thousand Barrels
+1,CNG & LPG,3,20191,Thousand Barrels
+1,Ethanol,3,684,Thousand Barrels
+1,Crude_oil,4,0,Thousand Barrels
+1,Gasoline,4,0,Thousand Barrels
+1,Diesel,4,0,Thousand Barrels
+1,CNG & LPG,4,0,Thousand Barrels
+1,Ethanol,4,0,Thousand Barrels
+1,Crude_oil,5,0,Thousand Barrels
+1,Gasoline,5,0,Thousand Barrels
+1,Diesel,5,0,Thousand Barrels
+1,CNG & LPG,5,0,Thousand Barrels
+1,Ethanol,5,0,Thousand Barrels
+2,Crude_oil,Production,606206,Thousand Barrels
+2,Crude_oil,Imports,1032707,Thousand Barrels
+2,Crude_oil,Exports,24794,Thousand Barrels
+2,Gasoline,Production,897120,Thousand Barrels
+2,Gasoline,Imports,0,Thousand Barrels
+2,Gasoline,Exports,4224,Thousand Barrels
+2,Diesel,Production,428574,Thousand Barrels
+2,Diesel,Imports,3534,Thousand Barrels
+2,Diesel,Exports,1771,Thousand Barrels
+2,CNG & LPG,Production,399568,Thousand Barrels
+2,CNG & LPG,Imports,24697,Thousand Barrels
+2,CNG & LPG,Exports,88000,Thousand Barrels
+2,Ethanol,Production,345467,Thousand Barrels
+2,Ethanol,Imports,0,Thousand Barrels
+2,Ethanol,Exports,9366,Thousand Barrels
+2,Crude_oil,1,4294,Thousand Barrels
+2,Gasoline,1,913,Thousand Barrels
+2,Diesel,1,31704,Thousand Barrels
+2,CNG & LPG,1,86628,Thousand Barrels
+2,Ethanol,1,0,Thousand Barrels
+2,Crude_oil,3,227415,Thousand Barrels
+2,Gasoline,3,13319,Thousand Barrels
+2,Diesel,3,26764,Thousand Barrels
+2,CNG & LPG,3,130281,Thousand Barrels
+2,Ethanol,3,0,Thousand Barrels
+2,Crude_oil,4,298278,Thousand Barrels
+2,Gasoline,4,4430,Thousand Barrels
+2,Diesel,4,4317,Thousand Barrels
+2,CNG & LPG,4,241607,Thousand Barrels
+2,Ethanol,4,0,Thousand Barrels
+2,Crude_oil,5,0,Thousand Barrels
+2,Gasoline,5,0,Thousand Barrels
+2,Diesel,5,0,Thousand Barrels
+2,CNG & LPG,5,0,Thousand Barrels
+2,Ethanol,5,0,Thousand Barrels
+3,Crude_oil,Production,3107925,Thousand Barrels
+3,Crude_oil,Imports,460405,Thousand Barrels
+3,Crude_oil,Exports,1269781,Thousand Barrels
+3,Gasoline,Production,793011,Thousand Barrels
+3,Gasoline,Imports,179,Thousand Barrels
+3,Gasoline,Exports,306778,Thousand Barrels
+3,Diesel,Production,1070517,Thousand Barrels
+3,Diesel,Imports,328,Thousand Barrels
+3,Diesel,Exports,425842,Thousand Barrels
+3,CNG & LPG,Production,1296889,Thousand Barrels
+3,CNG & LPG,Imports,48,Thousand Barrels
+3,CNG & LPG,Exports,674004,Thousand Barrels
+3,Ethanol,Production,8445,Thousand Barrels
+3,Ethanol,Imports,0,Thousand Barrels
+3,Ethanol,Exports,18589,Thousand Barrels
+3,Crude_oil,1,1760,Thousand Barrels
+3,Gasoline,1,0,Thousand Barrels
+3,Diesel,1,0,Thousand Barrels
+3,CNG & LPG,1,749,Thousand Barrels
+3,Ethanol,1,0,Thousand Barrels
+3,Crude_oil,2,613254,Thousand Barrels
+3,Gasoline,2,1226,Thousand Barrels
+3,Diesel,2,11828,Thousand Barrels
+3,CNG & LPG,2,408885,Thousand Barrels
+3,Ethanol,2,64379,Thousand Barrels
+3,Crude_oil,4,11993,Thousand Barrels
+3,Gasoline,4,0,Thousand Barrels
+3,Diesel,4,0,Thousand Barrels
+3,CNG & LPG,4,53222,Thousand Barrels
+3,Ethanol,4,0,Thousand Barrels
+3,Crude_oil,5,0,Thousand Barrels
+3,Gasoline,5,0,Thousand Barrels
+3,Diesel,5,0,Thousand Barrels
+3,CNG & LPG,5,0,Thousand Barrels
+3,Ethanol,5,0,Thousand Barrels
+4,Crude_oil,Production,315533,Thousand Barrels
+4,Crude_oil,Imports,142374,Thousand Barrels
+4,Crude_oil,Exports,0,Thousand Barrels
+4,Gasoline,Production,125551,Thousand Barrels
+4,Gasoline,Imports,20,Thousand Barrels
+4,Gasoline,Exports,9,Thousand Barrels
+4,Diesel,Production,71721,Thousand Barrels
+4,Diesel,Imports,1624,Thousand Barrels
+4,Diesel,Exports,1,Thousand Barrels
+4,CNG & LPG,Production,194145,Thousand Barrels
+4,CNG & LPG,Imports,4970,Thousand Barrels
+4,CNG & LPG,Exports,405,Thousand Barrels
+4,Ethanol,Production,5171,Thousand Barrels
+4,Ethanol,Imports,7,Thousand Barrels
+4,Ethanol,Exports,121,Thousand Barrels
+4,Crude_oil,1,0,Thousand Barrels
+4,Gasoline,1,0,Thousand Barrels
+4,Diesel,1,0,Thousand Barrels
+4,CNG & LPG,1,0,Thousand Barrels
+4,Ethanol,1,0,Thousand Barrels
+4,Crude_oil,2,74618,Thousand Barrels
+4,Gasoline,2,1284,Thousand Barrels
+4,Diesel,2,9447,Thousand Barrels
+4,CNG & LPG,2,118217,Thousand Barrels
+4,Ethanol,2,4932,Thousand Barrels
+4,Crude_oil,3,0,Thousand Barrels
+4,Gasoline,3,0,Thousand Barrels
+4,Diesel,3,0,Thousand Barrels
+4,CNG & LPG,3,0,Thousand Barrels
+4,Ethanol,3,0,Thousand Barrels
+4,Crude_oil,5,0,Thousand Barrels
+4,Gasoline,5,0,Thousand Barrels
+4,Diesel,5,0,Thousand Barrels
+4,CNG & LPG,5,0,Thousand Barrels
+4,Ethanol,5,0,Thousand Barrels
+5,Crude_oil,Production,284921,Thousand Barrels
+5,Crude_oil,Imports,437994,Thousand Barrels
+5,Crude_oil,Exports,2528,Thousand Barrels
+5,Gasoline,Production,985495,Thousand Barrels
+5,Gasoline,Imports,53719,Thousand Barrels
+5,Gasoline,Exports,91783,Thousand Barrels
+5,Diesel,Production,177111,Thousand Barrels
+5,Diesel,Imports,7943,Thousand Barrels
+5,Diesel,Exports,24992,Thousand Barrels
+5,CNG & LPG,Production,25526,Thousand Barrels
+5,CNG & LPG,Imports,16623,Thousand Barrels
+5,CNG & LPG,Exports,18752,Thousand Barrels
+5,Ethanol,Production,2572,Thousand Barrels
+5,Ethanol,Imports,1194,Thousand Barrels
+5,Ethanol,Exports,2641,Thousand Barrels
+5,Crude_oil,1,3,Thousand Barrels
+5,Gasoline,1,0,Thousand Barrels
+5,Diesel,1,0,Thousand Barrels
+5,CNG & LPG,1,0,Thousand Barrels
+5,Ethanol,1,0,Thousand Barrels
+5,Crude_oil,2,30045,Thousand Barrels
+5,Gasoline,2,0,Thousand Barrels
+5,Diesel,2,0,Thousand Barrels
+5,CNG & LPG,2,7746,Thousand Barrels
+5,Ethanol,2,44270,Thousand Barrels
+5,Crude_oil,3,188,Thousand Barrels
+5,Gasoline,3,0,Thousand Barrels
+5,Diesel,3,10792,Thousand Barrels
+5,CNG & LPG,3,1368,Thousand Barrels
+5,Ethanol,3,4612,Thousand Barrels
+5,Crude_oil,4,0,Thousand Barrels
+5,Gasoline,4,1071,Thousand Barrels
+5,Diesel,4,3751,Thousand Barrels
+5,CNG & LPG,4,3849,Thousand Barrels
+5,Ethanol,4,818,Thousand Barrels

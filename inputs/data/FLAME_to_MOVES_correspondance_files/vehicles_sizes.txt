@@ -1,0 +1,3 @@
+Sizes;ID
+Car;21
+Light truck;31

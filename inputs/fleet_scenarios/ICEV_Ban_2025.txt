@@ -1,0 +1,5 @@
+Year;Event;Size;Technology;Value; Interpolation_type
+2025;road_ban;Car;ICEV;NA;linear
+2025;road_ban;Light truck;ICEV;NA;linear
+2025;sales_ban;Car;ICEV;NA;linear
+2025;sales_ban;Light truck;ICEV;NA;linear

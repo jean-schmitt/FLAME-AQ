@@ -1,0 +1,7 @@
+Feedstock,Description,Parameter,Scenario,Technology,Value,Unit,Source
+H2,H2 feedstock per volume of efuel,fh2,def,AEL,0.363375,kg/L,Hombach et al. 2019
+CO2,CO2 feedstock per volume of efuel,fco2,def,RWGS,2.620125,kg/L,Hombach et al. 2019
+Syngas,Syngas feedstock per volume of efuel,fsyngas,def,Fischer-Tropsch,1.9125,kg/L,Hombach et al. 2019
+Electricity for H2,Electricity consumption in H2 production per volume of efuel,elech2,def,AEL,19.258875,kWh/L,Hombach et al. 2019
+Electricity for syngas,Electricity consumption in syngas production per volume of efuel,elecsyngas,def,RWGS,0.11475,kWh/L,Hombach et al. 2019
+Electricity for CO2,Electricity consumption in CO2 capture per volume of efuel,elecco2,def,DAC,0.989883225,kWh/L,Hombach et al. 2019

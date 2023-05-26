@@ -1,0 +1,9 @@
+Year;Event;Size;Technology;Value; Interpolation_type
+2026;sales_share;Car;Electric;0.35;linear
+2030;sales_share;Car;Electric;0.68;linear
+2035;sales_share;Car;Electric;1;linear
+2025;sales_share;Light truck;Electric;0.07;linear
+2030;sales_share;Light truck;Electric;0.3;linear
+2035;sales_share;Light truck;Electric;0.55;linear
+2045;sales_share;Light truck;Electric;1;linear
+2025;sales_share;Car;all;1;linear

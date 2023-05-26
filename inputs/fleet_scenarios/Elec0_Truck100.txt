@@ -1,0 +1,3 @@
+Year;Event;Size;Technology;Value;Interpolation_type;State
+2025;sales_share;all;electric;0;linear;all
+2025;sales_share;Light truck;all;1;linear;all
