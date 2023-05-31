@@ -8,7 +8,7 @@
 "bat_ms_scen","cha","constant","constant",NA,NA,NA
 "bat_resz_ratio","num","0.5","0.5","0;1","Battery resizing ratio","When weight changes occur, this ratio determines if the weight changes reduce the battery weight to get the same driving range (ratio of 1) or if the battery weight is unchanged to gain driving ranges (ratio of 0)."
 "BEV_bat_t","cha","Li_ion LMO","Li_ion LMO","Li_ion LMO;Ni_MH","Battery chemistry for BEV","Battery chemistry for BEV"
-"brake_tire_emissions_modification","cha","default","default","default;BTW_standard","Scenario modifying the brake and tire emissions","Scenario modifying the brake and tire emissions"
+"brake_tire_emissions_modification","cha","default","default","default;low_brake;high_brake","Scenario modifying the brake and tire emissions","Scenario modifying the brake and tire emissions"
 "calculation_mode","cha","default","default","default;aggregated;pollutants_breakdown;all","Defines in which form the final benefits are calculated: default calculates the benefits in each year; aggregated calculated only the difference between 2020 and 2050; pollutants_breakdown provides the single output for each sector and pollutant.",""
 "col",NA,NA,NA,NA,NA,NA
 "color_palette",NA,NA,NA,NA,NA,NA

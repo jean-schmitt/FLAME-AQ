@@ -1,0 +1,9 @@
+﻿Size,Fuel,Pollutant,Factor
+21,9,Brake_PM10,0.2
+31,9,Brake_PM10,0.2
+21,9,Brake_PM25,0.2
+31,9,Brake_PM25,0.2
+21,9,Tire_PM10,1.27
+31,9,Tire_PM10,1.27
+21,9,Tire_PM25,1.18
+31,9,Tire_PM25,1.18
