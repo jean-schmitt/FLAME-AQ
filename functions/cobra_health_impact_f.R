@@ -526,37 +526,38 @@ cobra_health_impact_f <- function(state_resolved_fleet_direct_emissions, fleet_e
       health_benefits_by_state$State[which(health_benefits_by_state$State == states_correspondence$COBRA_code[i])] <- states_correspondence$name_state[i]
     }
     # Add the discounted benefits
-    health_benefits <- add_column(health_benefits, "Discounted_benefits" = NA)
+    health_benefits <- add_column(health_benefits, "Cumulative_before_discount_benefits" = NA)
     health_benefits <- add_column(health_benefits, "Cumulative_benefits" = NA)
     health_benefits <- add_column(health_benefits, "Total_benefits" = NA)
-    health_benefits_by_state <- add_column(health_benefits_by_state, "Discounted_benefits" = NA)
+    health_benefits_by_state <- add_column(health_benefits_by_state, "Cumulative_before_discount_benefits" = NA)
     health_benefits_by_state <- add_column(health_benefits_by_state, "Cumulative_benefits" = NA)
     health_benefits_by_state <- add_column(health_benefits_by_state, "Total_benefits" = NA)
-    health_benefits_by_county <- add_column(health_benefits_by_county, "Discounted_benefits" = NA)
+    health_benefits_by_county <- add_column(health_benefits_by_county, "Cumulative_before_discount_benefits" = NA)
     health_benefits_by_county <- add_column(health_benefits_by_county, "Cumulative_benefits" = NA)
     health_benefits_by_county <- add_column(health_benefits_by_county, "Total_benefits" = NA)
     years <- unique(health_benefits$Year)
     states <- unique(health_benefits_by_state$State)
     counties <- unique(health_benefits_by_county$FIPS)
     for (i in 1:length(years)) {
-      health_benefits$Discounted_benefits[i] <- health_benefits$Total_health_benefits[i]*1/((1+discount_rate/100)^(i-1))
       if (i > 1) {
-        health_benefits$Cumulative_benefits[i] <- health_benefits$Cumulative_benefits[i-1]+health_benefits$Discounted_benefits[i]
+        health_benefits$Cumulative_before_discount_benefits[i] <- health_benefits$Cumulative_before_discount_benefits[i-1]+health_benefits$Total_health_benefits[i]
+        health_benefits$Cumulative_benefits[i] <- health_benefits$Cumulative_before_discount_benefits[i]*1/((1+discount_rate/100)^(i))
         health_benefits$Total_benefits[i] <- health_benefits$Total_benefits[i-1]+health_benefits$Cumulative_benefits[i]
       } else {
-        health_benefits$Cumulative_benefits[i] <- health_benefits$Discounted_benefits[i]
+        health_benefits$Cumulative_before_discount_benefits[i] <- health_benefits$Total_health_benefits[i]
+        health_benefits$Cumulative_benefits[i] <- health_benefits$Cumulative_before_discount_benefits[i]*1/((1+discount_rate/100)^(i))
         health_benefits$Total_benefits[i] <- health_benefits$Cumulative_benefits[i]
       }
-      health_benefits_by_state$Discounted_benefits[which(health_benefits_by_state$Year == years[i])] <- health_benefits_by_state$Total_health_benefits[which(health_benefits_by_state$Year == years[i])]*1/((1+discount_rate/100)^(i-1))
-      health_benefits_by_county$Discounted_benefits[which(health_benefits_by_county$Year == years[i])] <- health_benefits_by_county$Total_health_benefits[which(health_benefits_by_county$Year == years[i])]*1/((1+discount_rate/100)^(i-1))
       for (j in 1:length(states)) {
         index_state <- which(health_benefits_by_state$State == states[j] & health_benefits_by_state$Year == years[i])
         index_state_previous <- which(health_benefits_by_state$State == states[j] & health_benefits_by_state$Year == years[i-1])
         if (i > 1) {
-          health_benefits_by_state$Cumulative_benefits[index_state] <- health_benefits_by_state$Cumulative_benefits[index_state_previous]+health_benefits_by_state$Discounted_benefits[index_state]
+          health_benefits_by_state$Cumulative_before_discount_benefits[index_state] <- health_benefits_by_state$Cumulative_before_discount_benefits[index_state_previous]+health_benefits_by_state$Total_health_benefits[index_state]
+          health_benefits_by_state$Cumulative_benefits[index_state] <- health_benefits_by_state$Cumulative_before_discount_benefits[index_state]*1/((1+discount_rate/100)^(i))
           health_benefits_by_state$Total_benefits[index_state] <- health_benefits_by_state$Total_benefits[index_state_previous] + health_benefits_by_state$Cumulative_benefits[index_state]
         } else {
-          health_benefits_by_state$Cumulative_benefits[index_state] <- health_benefits_by_state$Discounted_benefits[index_state]
+          health_benefits_by_state$Cumulative_before_discount_benefits[index_state] <- health_benefits_by_state$Total_health_benefits[index_state]
+          health_benefits_by_state$Cumulative_benefits[index_state] <- health_benefits_by_state$Cumulative_before_discount_benefits[index_state]*1/((1+discount_rate/100)^(i))
           health_benefits_by_state$Total_benefits[index_state] <- health_benefits_by_state$Cumulative_benefits[index_state]
         }
       }
@@ -564,15 +565,17 @@ cobra_health_impact_f <- function(state_resolved_fleet_direct_emissions, fleet_e
         index_county <- which(health_benefits_by_county$FIPS == counties[j] & health_benefits_by_county$Year == years[i])
         index_county_previous <- which(health_benefits_by_county$FIPS == counties[j] & health_benefits_by_county$Year == years[i-1])
         if (i > 1) {
-          health_benefits_by_county$Cumulative_benefits[index_county] <- health_benefits_by_county$Cumulative_benefits[index_county_previous]+health_benefits_by_county$Discounted_benefits[index_county]
+          health_benefits_by_county$Cumulative_before_discount_benefits[index_county] <- health_benefits_by_county$Cumulative_before_discount_benefits[index_county_previous]+health_benefits_by_county$Total_health_benefits[index_county]
+          health_benefits_by_county$Cumulative_benefits[index_county] <- health_benefits_by_county$Cumulative_before_discount_benefits[index_county]*1/((1+discount_rate/100)^(i))
           health_benefits_by_county$Total_benefits[index_county] <- health_benefits_by_county$Total_benefits[index_county_previous] + health_benefits_by_county$Cumulative_benefits[index_county]
         } else {
-          health_benefits_by_county$Cumulative_benefits[index_county] <- health_benefits_by_county$Discounted_benefits[index_county]
+          health_benefits_by_county$Cumulative_before_discount_benefits[index_county] <- health_benefits_by_county$Total_health_benefits[index_county]
+          health_benefits_by_county$Cumulative_benefits[index_county] <- health_benefits_by_county$Cumulative_before_discount_benefits[index_county]*1/((1+discount_rate/100)^(i))
           health_benefits_by_county$Total_benefits[index_county] <- health_benefits_by_county$Cumulative_benefits[index_county]
         }
       }
     }
-    health_benefits <- add_row(health_benefits, Year = 0, Total_health_benefits = sum(health_benefits$Total_health_benefits), Discounted_benefits = sum(health_benefits$Discounted_benefits), Cumulative_benefits = sum(health_benefits$Cumulative_benefits), Total_benefits = sum(health_benefits$Total_benefits))
+    health_benefits <- add_row(health_benefits, Year = 0, Total_health_benefits = sum(health_benefits$Total_health_benefits), Cumulative_before_discount_benefits = sum(health_benefits$Cumulative_before_discount_benefits), Cumulative_benefits = sum(health_benefits$Cumulative_benefits), Total_benefits = sum(health_benefits$Total_benefits))
     # Export the health benefits files
     print("Exporting the health benefits files")
     write.csv(health_benefits, paste0(results_path, "/health_benefits.csv"))
