@@ -1,7 +1,13 @@
-fleet_composition_scenario_f <- function(fleet, fleet_initial_year = NA, fleet_final_year = NA, first_proj_yr = NA) {
+fleet_composition_scenario_f <- function(fleet, fleet_initial_year = NA, fleet_final_year = NA, first_proj_yr = NA, fleet_id = NA) {
   attribute_f("fleet_composition_scenario_f")
   fleet_vint_stock <- fleet$get_list_dataframe()[["fleet_vint_stock"]]
   fleet_vint_scrap <- fleet$get_list_dataframe()[["fleet_vint_scrap"]]
+  if (fleet_id == "no_EVs") {
+    fleet_vint_stock$Technology[which(fleet_vint_stock$Year >= 2021 & grepl("BEV", fleet_vint_stock$Technology))] <- "ICEV-G"
+    fleet_vint_stock <- aggregate(Value ~ Age+Year+Size+Technology, fleet_vint_stock, FUN = sum)
+    fleet_vint_scrap$Technology[which(fleet_vint_scrap$Year >= 2021 & grepl("BEV", fleet_vint_scrap$Technology))] <- "ICEV-G"
+    fleet_vint_scrap <- aggregate(Value ~ Age+Year+Size+Technology, fleet_vint_scrap, FUN = sum)
+  }
   vehicles_sizes <- unique(fleet_vint_stock$Size)
   scenario_entire_us <- fleet_read_scenario_f(fleet_id = NA)
   scenario_entire_us <- arrange(scenario_entire_us, scenario_entire_us$Year)
