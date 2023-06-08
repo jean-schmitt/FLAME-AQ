@@ -13,7 +13,7 @@ cambium_el_grid_scenario_f <- function(output, elec_mix_mdl=NA, first_yr=NA, las
     add_column("Generation" = data$generation)
   colnames(grid_mix_data)[1] <- "Region"
   grid_mix_data <- cbind(grid_mix_data, data[,grep("MWh", colnames(data))])
-  emission_sources <- c("Coal", "Natural Gas", "Nuclear", "Other", "Renewable")
+  emission_sources <- c("Coal", "Natural Gas", "Nuclear", "Other", "Renewable", "Biomass")
   years <- first_yr:max(grid_mix_data$Years)
   regions <- unique(grid_mix_data$Region)
   m <- 0
@@ -67,7 +67,7 @@ cambium_el_grid_scenario_f <- function(output, elec_mix_mdl=NA, first_yr=NA, las
           total_nuclear <- sum(grid_mix_data[temp_us, grep("nuclear", colnames(grid_mix_data))])
           total_renewables <- sum(grid_mix_data$hydro_MWh[temp_us]+
             grid_mix_data$geothermal_MWh[temp_us]+
-            rowSums(grid_mix_data[temp_us, grep("biomass", colnames(grid_mix_data))])+
+            #rowSums(grid_mix_data[temp_us, grep("biomass", colnames(grid_mix_data))])+
             rowSums(grid_mix_data[temp_us, grep("wind", colnames(grid_mix_data))])+
             grid_mix_data$upv_MWh[temp_us]+
             grid_mix_data$distpv_MWh[temp_us]+
@@ -75,17 +75,20 @@ cambium_el_grid_scenario_f <- function(output, elec_mix_mdl=NA, first_yr=NA, las
             rowSums(grid_mix_data[temp_us, grep("csp", colnames(grid_mix_data)), drop = FALSE])+
             grid_mix_data$canada_MWh[temp_us]+
             rowSums(grid_mix_data[temp_us, grep("battery", colnames(grid_mix_data))]))
+          total_biomass <- sum(rowSums(grid_mix_data[temp_us, grep("biomass", colnames(grid_mix_data))]))
           total_other <- sum(grid_mix_data$`o-g-s_MWh`[temp_us])
           fraction_coal <- total_coal/total_generation
           fraction_NG <- total_NG/total_generation
           fraction_nuclear <- total_nuclear/total_generation
           fraction_renewables <- total_renewables/total_generation
+          fraction_biomass <- total_biomass/total_generation
           fraction_other <- total_other/total_generation
         } else {
           fraction_coal <- 0
           fraction_NG <- 0
           fraction_nuclear <- 0
           fraction_renewables <- 0
+          fraction_biomass <- 0
           fraction_other <- 0
         }
         if (years[i] == min(grid_mix_data$Years)) {
@@ -94,14 +97,14 @@ cambium_el_grid_scenario_f <- function(output, elec_mix_mdl=NA, first_yr=NA, las
           matrix_mix[nrow(matrix_mix)+1,] <- c(years[i], "Nuclear", fraction_nuclear)
           matrix_mix[nrow(matrix_mix)+1,] <- c(years[i], "Other", fraction_other)
           matrix_mix[nrow(matrix_mix)+1,] <- c(years[i], "Renewable", fraction_renewables)
-          #matrix_mix[nrow(matrix_mix)+1,] <- c(years[i], "Canada", fraction_canada)
+          matrix_mix[nrow(matrix_mix)+1,] <- c(years[i], "Biomass", fraction_biomass)
         } else {
           matrix_mix[nrow(matrix_mix)+1,] <- c(years[i], "Coal", fraction_coal)
           matrix_mix[nrow(matrix_mix)+1,] <- c(years[i], "Natural Gas", fraction_NG)
           matrix_mix[nrow(matrix_mix)+1,] <- c(years[i], "Nuclear", fraction_nuclear)
           matrix_mix[nrow(matrix_mix)+1,] <- c(years[i], "Other", fraction_other)
           matrix_mix[nrow(matrix_mix)+1,] <- c(years[i], "Renewable", fraction_renewables)
-          #matrix_mix[nrow(matrix_mix)+1,] <- c(years[i], "Canada", fraction_canada)
+          matrix_mix[nrow(matrix_mix)+1,] <- c(years[i], "Biomass", fraction_biomass)
         }
       }
       for (j in 1:length(regions)) {
@@ -113,7 +116,7 @@ cambium_el_grid_scenario_f <- function(output, elec_mix_mdl=NA, first_yr=NA, las
           total_nuclear <- sum(grid_mix_data[temp, grep("nuclear", colnames(grid_mix_data))])
           total_renewables <- grid_mix_data$hydro_MWh[temp]+
             grid_mix_data$geothermal_MWh[temp]+
-            sum(grid_mix_data[temp, grep("biomass", colnames(grid_mix_data))])+
+            #sum(grid_mix_data[temp, grep("biomass", colnames(grid_mix_data))])+
             sum(grid_mix_data[temp, grep("wind", colnames(grid_mix_data))])+
             grid_mix_data$upv_MWh[temp]+
             grid_mix_data$distpv_MWh[temp]+
@@ -121,17 +124,20 @@ cambium_el_grid_scenario_f <- function(output, elec_mix_mdl=NA, first_yr=NA, las
             sum(grid_mix_data[temp, grep("csp", colnames(grid_mix_data))])+
             grid_mix_data$canada_MWh[temp]+
             sum(grid_mix_data[temp, grep("battery", colnames(grid_mix_data))])
+          total_biomass <- sum(grid_mix_data[temp, grep("biomass", colnames(grid_mix_data))])
           total_other <- grid_mix_data$`o-g-s_MWh`[temp]
           fraction_coal <- total_coal/total_generation
           fraction_NG <- total_NG/total_generation
           fraction_nuclear <- total_nuclear/total_generation
           fraction_renewables <- total_renewables/total_generation
+          fraction_biomass <- total_biomass/total_generation 
           fraction_other <- total_other/total_generation
         } else {
           fraction_coal <- 0
           fraction_NG <- 0
           fraction_nuclear <- 0
           fraction_renewables <- 0
+          fraction_biomass <- 0
           fraction_other <- 0
         }
         if (m == 0) {
@@ -140,14 +146,14 @@ cambium_el_grid_scenario_f <- function(output, elec_mix_mdl=NA, first_yr=NA, las
           reg_matrix_mix[nrow(reg_matrix_mix)+1,] <- c(years[i], regions[j], "Nuclear", fraction_nuclear)
           reg_matrix_mix[nrow(reg_matrix_mix)+1,] <- c(years[i], regions[j], "Other", fraction_other)
           reg_matrix_mix[nrow(reg_matrix_mix)+1,] <- c(years[i], regions[j], "Renewable", fraction_renewables)
-          #reg_matrix_mix[nrow(reg_matrix_mix)+1,] <- c(years[i], regions[j], "Canada", fraction_canada)
+          reg_matrix_mix[nrow(reg_matrix_mix)+1,] <- c(years[i], regions[j], "Biomass", fraction_biomass)
         } else {
           reg_matrix_mix[nrow(reg_matrix_mix)+1,] <- c(years[i], regions[j], "Coal", fraction_coal)
           reg_matrix_mix[nrow(reg_matrix_mix)+1,] <- c(years[i], regions[j], "Natural Gas", fraction_NG)
           reg_matrix_mix[nrow(reg_matrix_mix)+1,] <- c(years[i], regions[j], "Nuclear", fraction_nuclear)
           reg_matrix_mix[nrow(reg_matrix_mix)+1,] <- c(years[i], regions[j], "Other", fraction_other)
           reg_matrix_mix[nrow(reg_matrix_mix)+1,] <- c(years[i], regions[j], "Renewable", fraction_renewables)
-          #reg_matrix_mix[nrow(reg_matrix_mix)+1,] <- c(years[i], regions[j], "Canada", fraction_canada)
+          reg_matrix_mix[nrow(reg_matrix_mix)+1,] <- c(years[i], regions[j], "Biomass", fraction_biomass)
         }
         m <- m+1
       }

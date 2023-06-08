@@ -15,6 +15,14 @@ elec_source_ev_f <- function(aeo_scen=NA,elec_mix_adj_mdl=NA,elec_mix_adj_coef=N
     matrix_mix_cambium <- acast(data=cambium_scenario, Source ~ Year , value.var='Value',fun.aggregate=sum, margins=FALSE)
     matrix_mix_hist <- acast(data=subset(us_elec_mix_hist, Year>=first_yr & Region=="United States"), Source ~ Year , value.var='Mix',fun.aggregate=sum, margins=FALSE)
     matrix_mix_proj <- acast(data=subset(us_elec_mix_proj,Aeo_case==aeo_scen & Year > last_hist_yr & Year < min(cambium_scenario$Year) & Region==region_tbc), Source ~ Year , value.var='Mix',fun.aggregate=sum, margins=FALSE)
+    # Add missing energy sources that are present in cambium
+    differences <- setdiff(rownames(matrix_mix_cambium), rownames(matrix_mix_hist)) 
+    for (i in differences) {
+      matrix_mix_hist <- rbind(matrix_mix_hist, matrix(data = 0, nrow = 1, ncol = dim(matrix_mix_hist)[2]))
+      rownames(matrix_mix_hist)[dim(matrix_mix_hist)[1]] <- i
+      matrix_mix_proj <- rbind(matrix_mix_proj, matrix(data = 0, nrow = 1, ncol = dim(matrix_mix_proj)[2]))
+      rownames(matrix_mix_proj)[dim(matrix_mix_proj)[1]] <- i
+    }
     matrix_mix <- cbind(matrix_mix_hist, matrix_mix_proj, matrix_mix_cambium[rownames(matrix_mix_hist),])
   } else if (grepl("aeo",elec_mix_mdl)){
     #Inputs

@@ -468,6 +468,8 @@ cobra_health_impact_f <- function(state_resolved_fleet_direct_emissions, fleet_e
     }
   }
   # Calculate health benefits
+  # Calculate the non-monetized health benefits
+  
   # by year and by county + by year and by state + overall health benefits
   cobra_output_file <- add_column(cobra_output_file, 'X..Acute.Myocardial.Infarction..Nonfatal')
   cobra_output_file <- add_column(cobra_output_file, 'X..Mortality..All.Cause')
