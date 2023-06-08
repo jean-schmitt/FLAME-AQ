@@ -473,12 +473,55 @@ cobra_health_impact_f <- function(state_resolved_fleet_direct_emissions, fleet_e
   # by year and by county + by year and by state + overall health benefits
   cobra_output_file <- add_column(cobra_output_file, 'X..Acute.Myocardial.Infarction..Nonfatal')
   cobra_output_file <- add_column(cobra_output_file, 'X..Mortality..All.Cause')
+  cobra_output_file <- add_column(cobra_output_file, 'Acute.Myocardial.Infarction..Nonfatal')
+  cobra_output_file <- add_column(cobra_output_file, 'Mortality..All.Cause')
   #cobra_output_file$`"X..Acute.Myocardial.Infarction..Nonfatal"` <- (cobra_output_file$X..Acute.Myocardial.Infarction..Nonfatal..high.+cobra_output_file$X..Acute.Myocardial.Infarction..Nonfatal..low.)
   #cobra_output_file$`"X..Mortality..All.Cause"` <- (cobra_output_file$X..Mortality..All.Cause..low.+cobra_output_file$X..Mortality..All.Cause..high.)
   #cobra_output_file$`"X..Acute.Myocardial.Infarction..Nonfatal"` <- (cobra_output_file$X..Acute.Myocardial.Infarction..Nonfatal..high.+cobra_output_file$X..Acute.Myocardial.Infarction..Nonfatal..low.)/2
   #cobra_output_file$`"X..Mortality..All.Cause"` <- (cobra_output_file$X..Mortality..All.Cause..low.+cobra_output_file$X..Mortality..All.Cause..high.)/2
   cobra_output_file$`"X..Acute.Myocardial.Infarction..Nonfatal"` <- cobra_output_file$X..Acute.Myocardial.Infarction..Nonfatal..high.
   cobra_output_file$`"X..Mortality..All.Cause"` <- cobra_output_file$X..Mortality..All.Cause..high.
+  cobra_output_file$`"Acute.Myocardial.Infarction..Nonfatal"` <- cobra_output_file$Acute.Myocardial.Infarction..Nonfatal..high.
+  cobra_output_file$`"Mortality..All.Cause"` <- cobra_output_file$Mortality..All.Cause..high.
+  # Calculation of the real benefits, i.e. not monetized
+  non_monetized_benefits <- cobra_output_file[which(!is.na(cobra_output_file$Destination)),which(!grepl(pattern = "X..", colnames(cobra_output_file)) & !grepl(pattern = "low", colnames(cobra_output_file)) & !grepl(pattern = "high", colnames(cobra_output_file)))]
+  non_monetized_benefits <- non_monetized_benefits[,6:length(colnames(non_monetized_benefits))]
+  non_monetized_benefits <- select(non_monetized_benefits, -c(state_id))
+  non_monetized_benefits <- aggregate(.~year, data = non_monetized_benefits, FUN = sum)
+  colnames(non_monetized_benefits) <- c("Year",
+                                        "Acute_Bronchitis", 
+                                        "Asthma_Exacerbation_Cough",
+                                        "Asthma_Exacerbation_Shortness_of_Breath",
+                                        "Asthma_Exacerbation_Wheeze",
+                                        "Emergency_Room_Visits_Asthma",
+                                        "HA_All_Cardiovascular_less_Myocardial_Infarctions",
+                                        "HA_All_Respiratory",
+                                        "HA_Asthma",
+                                        "HA_Chronic_Lung_Disease",
+                                        "Lower_Respiratory_Symptoms",
+                                        "Minor_Restricted_Activity_Days",
+                                        "Infant_Mortality",
+                                        "Upper_Respiratory_Symptoms",
+                                        "Work_Loss_Days",
+                                        "Acute_Myocardial_Infarction_Nonfatal",
+                                        "Mortality_All_Cause")
+  # Breakdown the monetized benefit by source
+  benefits_breakdown <- cobra_output_file[!is.na(cobra_output_file$Destination),]
+  benefits_breakdown <- select(benefits_breakdown, c(colnames(cobra_output_file)[which(grepl(pattern = "X..", colnames(cobra_output_file)) & !grepl(pattern = "low", colnames(cobra_output_file)) & !grepl(pattern = "high", colnames(cobra_output_file)))], year))
+  benefits_breakdown <- aggregate(.~year, data = benefits_breakdown, FUN = sum)
+  colnames(benefits_breakdown) <- c("Year",
+                                    "Acute_Bronchitis", 
+                                    "Asthma_Exacerbation",
+                                    "Emergency_Room_Visits_Asthma",
+                                    "CVD_Hosp_Adm",
+                                    "Resp_Hosp_Adm",
+                                    "Lower_Respiratory_Symptoms",
+                                    "Minor_Restricted_Activity_Days",
+                                    "Infant_Mortality",
+                                    "Upper_Respiratory_Symptoms",
+                                    "Work_Loss_Days",
+                                    "Acute_Myocardial_Infarction_Nonfatal",
+                                    "Mortality_All_Cause")
   if (calculation_mode == "default" | calculation_mode == "all") {
     print("Calculating the health benefits by county")
     FIPS_counties <- get_input_f(input_name = 'COBRA_SOURCEINDX to FIPS crosswalk')
@@ -583,6 +626,8 @@ cobra_health_impact_f <- function(state_resolved_fleet_direct_emissions, fleet_e
     write.csv(health_benefits, paste0(results_path, "/health_benefits.csv"))
     write.csv(health_benefits_by_state, paste0(results_path, "/health_benefits_by_state.csv"))
     write.csv(health_benefits_by_county, paste0(results_path, "/health_benefits_by_county.csv"))
+    write.csv(non_monetized_benefits, paste0(results_path, "/non_monetized_health_benefits.csv"))
+    write.csv(benefits_breakdown, paste0(results_path, "/monetized_benefits_breakdown.csv"))
     print("Health impact files generated")
   } 
   if (calculation_mode == "aggregated" | calculation_mode == "all") {
