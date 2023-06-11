@@ -91,6 +91,9 @@ cobra_health_impact_f <- function(state_resolved_fleet_direct_emissions, fleet_e
         scenario$PM25[intersect(index_ng, index_state)] <- baseline$PM25[intersect(index_ng, index_state)]*rel_ng
         scenario$VOC[intersect(index_ng, index_state)] <- baseline$VOC[intersect(index_ng, index_state)]*rel_ng
         # Generate the output file for oil-related emissions
+        if (i == first_proj_yr+1) {
+          emissions_oil_related_activities[nrow(emissions_oil_related_activities)+1,] <- c(states_correspondence$COBRA_code[j], i, "tons", sum(baseline$NO2[intersect(index_total_oil, index_state)]), sum(baseline$SO2[intersect(index_total_oil, index_state)]), sum(baseline$PM25[intersect(index_total_oil, index_state)]), sum(baseline$NH3[intersect(index_total_oil, index_state)]), sum(baseline$VOC[intersect(index_total_oil, index_state)])) 
+        }
         emissions_oil_related_activities[nrow(emissions_oil_related_activities)+1,] <- c(states_correspondence$COBRA_code[j], i, "tons", sum(scenario$NO2[intersect(index_total_oil, index_state)]), sum(scenario$SO2[intersect(index_total_oil, index_state)]), sum(scenario$PM25[intersect(index_total_oil, index_state)]), sum(scenario$NH3[intersect(index_total_oil, index_state)]), sum(scenario$VOC[intersect(index_total_oil, index_state)])) 
         # Generation of the county-resolved emissions
         counties <- data.frame(GIS_matching_matrix$COBRA_SOURCEINDX[which(GIS_matching_matrix$ST_FIPS == states_correspondence$COBRA_code[j])], GIS_matching_matrix$FIPS[which(GIS_matching_matrix$ST_FIPS == states_correspondence$COBRA_code[j])])
