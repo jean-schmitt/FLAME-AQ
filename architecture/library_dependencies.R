@@ -35,5 +35,6 @@ install.packages(c("cowplot",
                    "tidyverse",
                    "readxl",
                    "tmaptools",
-                   "future.apply"))
+                   "future.apply",
+                   "arsenal"))
 devtools::install_github('JGCRI/rgcam')

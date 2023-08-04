@@ -1,4 +1,4 @@
-cambium_el_grid_scenario_f <- function(output, elec_mix_mdl=NA, first_yr=NA, last_yr=NA, first_proj_yr = NA) {
+cambium_el_grid_scenario_f <- function(output, elec_mix_mdl=NA, first_yr=NA, last_yr=NA, first_proj_yr = NA, include_biomass = NA) {
   attribute_f("cambium_el_grid_scenario_f")
   if (tolower(elec_mix_mdl) == "current_mix") {
     data <- filter(get_input_f(input_name = "NREL_elec_intermediate"), t == "2022")
@@ -75,7 +75,13 @@ cambium_el_grid_scenario_f <- function(output, elec_mix_mdl=NA, first_yr=NA, las
             rowSums(grid_mix_data[temp_us, grep("csp", colnames(grid_mix_data)), drop = FALSE])+
             grid_mix_data$canada_MWh[temp_us]+
             rowSums(grid_mix_data[temp_us, grep("battery", colnames(grid_mix_data))]))
-          total_biomass <- sum(rowSums(grid_mix_data[temp_us, grep("biomass", colnames(grid_mix_data))]))
+          if (include_biomass == "yes") {
+            total_biomass <- sum(rowSums(grid_mix_data[temp_us, grep("biomass", colnames(grid_mix_data))]))
+          } else {
+            total_renewables <- total_renewables+sum(rowSums(grid_mix_data[temp_us, grep("biomass", colnames(grid_mix_data))]))
+            total_biomass <- 0
+          }
+          #total_biomass <- sum(rowSums(grid_mix_data[temp_us, grep("biomass", colnames(grid_mix_data))]))
           total_other <- sum(grid_mix_data$`o-g-s_MWh`[temp_us])
           fraction_coal <- total_coal/total_generation
           fraction_NG <- total_NG/total_generation
@@ -124,7 +130,13 @@ cambium_el_grid_scenario_f <- function(output, elec_mix_mdl=NA, first_yr=NA, las
             sum(grid_mix_data[temp, grep("csp", colnames(grid_mix_data))])+
             grid_mix_data$canada_MWh[temp]+
             sum(grid_mix_data[temp, grep("battery", colnames(grid_mix_data))])
-          total_biomass <- sum(grid_mix_data[temp, grep("biomass", colnames(grid_mix_data))])
+          if (include_biomass == "yes") {
+            total_biomass <- sum(grid_mix_data[temp, grep("biomass", colnames(grid_mix_data))])
+          } else {
+            total_renewables <- total_renewables+sum(grid_mix_data[temp, grep("biomass", colnames(grid_mix_data))])
+            total_biomass <- 0
+          }
+          #total_biomass <- sum(grid_mix_data[temp, grep("biomass", colnames(grid_mix_data))])
           total_other <- grid_mix_data$`o-g-s_MWh`[temp]
           fraction_coal <- total_coal/total_generation
           fraction_NG <- total_NG/total_generation

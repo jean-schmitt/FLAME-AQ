@@ -28,6 +28,7 @@
 "cambium_el_grid_scenario_f","first_yr",,"External"
 "cambium_el_grid_scenario_f","last_yr",,"External"
 "cambium_el_grid_scenario_f","first_proj_yr",,"External"
+"cambium_el_grid_scenario_f","include_biomass",,"External"
 "climate_change_metric_f","emission_matrix","","Internal"
 "climate_change_metric_f","ghg",,"Internal"
 "climate_change_metric_f","gwp_th",,"External"
@@ -47,6 +48,8 @@
 "cobra_health_impact_f","relative_transportation_electricity_demand",,"External"
 "cobra_health_impact_f","calculation_mode",,"External"
 "cobra_health_impact_f","discount_rate",,"External"
+"cobra_health_impact_f","year_break",,"External"
+"cobra_health_impact_f","fleet_id",,"External"
 "COBRA_population_data_generation_f","ssp_scen",,"External"
 "COBRA_population_data_generation_f","last_yr",,"External"
 "county_level_elec_prod_f",,,
@@ -81,6 +84,7 @@
 "electric_grid_emissions_f","emissions_multiplier_NOx",,"External"
 "electric_grid_emissions_f","emissions_multiplier_PM25",,"External"
 "electric_read_scenario_f","electric_grid_scenario",,"External"
+"electricity_emission_factors_NEI_f",,,
 "FLAME_AQ_f","scenario_id",,"External"
 "FLAME_format_conversion_f","fleet_dataset","","External"
 "FLAME_to_MOVES_f","fleet_composition","","Internal"
@@ -97,6 +101,7 @@
 "fleet_composition_scenario_f","fleet_initial_year",,"External"
 "fleet_composition_scenario_f","fleet_final_year",,"External"
 "fleet_composition_scenario_f","first_proj_yr",,"External"
+"fleet_composition_scenario_f","fleet_id",,"External"
 "fleet_demand_matrix_f","results_path","","Internal"
 "fleet_demand_matrix_f","first_yr",,"External"
 "fleet_demand_matrix_f","last_yr",,"External"
@@ -206,6 +211,7 @@
 "fuel_wtp_ef_f","share_ldv_crude_oil",,"External"
 "fuel_wtp_ef_f","share_prod_ethanol_fuel",,"External"
 "fuel_wtp_ef_f","share_ng_cons_elec",,"External"
+"fuel_wtp_ef_f","fleet_id",,"External"
 "GIS_matching_f",,,
 "graph_template_fleet_f","input_data","","External"
 "graph_template_fleet_f","x_axis","","External"
@@ -268,7 +274,10 @@
 "total_benefits_calculation_f","cost_of_carbon",,"External"
 "total_benefits_calculation_f","scenario_id",,"External"
 "total_benefits_calculation_f","calculation_mode",,"External"
+"total_benefits_calculation_f","discount_rate",,"External"
 "total_fleet_size_f","fleet_vint_stock","","External"
+"vehicle_average_age_f","fleet","","Internal"
+"vehicle_average_age_f","first_proj_yr",,"External"
 "vehicle_climate_change_metric_f",,,
 "vehicle_fc_changes_efficiency_f","vehicle","","Internal"
 "vehicle_fc_changes_efficiency_f","model_year","","Internal"

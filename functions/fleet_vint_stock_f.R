@@ -103,9 +103,13 @@ fleet_vint_stock_f <- function(first_yr=NA,last_yr=NA,fleet_vint_procedure=NA,fl
       fleet_composition_scrap_state_temp <- fleet_composition_scrap %>%
         add_column("State" = NA)
       fleet_composition_stock_state_temp$State <- i
-      fleet_composition_stock_state_temp$Value <- fleet_composition_stock_state_temp$Value*population_distribution_states$Activity[which(population_distribution_states$State == i)]
       fleet_composition_scrap_state_temp$State <- i
-      fleet_composition_scrap_state_temp$Value <- fleet_composition_scrap_state_temp$Value*population_distribution_states$Activity[which(population_distribution_states$State == i)]
+      for (j in ((first_proj_yr+1):last_yr)) {
+        fleet_composition_stock_state_temp$Value[which(fleet_composition_stock_state_temp$Year == j)] <- fleet_composition_stock_state_temp$Value[which(fleet_composition_stock_state_temp$Year == j)]*population_distribution_states$Activity[which(population_distribution_states$State == i & 
+                                                                                                                                                                                                population_distribution_states$Year == j)]
+        fleet_composition_scrap_state_temp$Value[which(fleet_composition_scrap_state_temp$Year == j)] <- fleet_composition_scrap_state_temp$Value[which(fleet_composition_scrap_state_temp$Year == j)]*population_distribution_states$Activity[which(population_distribution_states$State == i &
+                                                                                                                                                                                                population_distribution_states$Year == j)]
+      }
       if (i == states[1]) {
         fleet_composition_stock_state <- fleet_composition_stock_state_temp
         fleet_composition_scrap_state <- fleet_composition_scrap_state_temp

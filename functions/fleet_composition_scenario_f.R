@@ -5,13 +5,13 @@ fleet_composition_scenario_f <- function(fleet, fleet_initial_year = NA, fleet_f
   if (fleet_id == "no_EVs") {
     #Update the stock dataset
     bevs_stock <- fleet_vint_stock[which(grepl("BEV", fleet_vint_stock$Technology)),]
-    bevs_stock$Value <- 0
+    bevs_stock$Value <- 1
     fleet_vint_stock$Technology[which(grepl("BEV", fleet_vint_stock$Technology))] <- "ICEV-G"
     fleet_vint_stock <- aggregate(Value ~ Age+Year+Size+Technology, fleet_vint_stock, FUN = sum)
     fleet_vint_stock <- rbind(fleet_vint_stock, bevs_stock)
     # Update the scrap dataset
     bevs_scrap <- fleet_vint_scrap[which(grepl("BEV", fleet_vint_scrap$Technology)),]
-    bevs_scrap$Value <- 0
+    bevs_scrap$Value <- 1
     fleet_vint_scrap$Technology[which(grepl("BEV", fleet_vint_scrap$Technology))] <- "ICEV-G"
     fleet_vint_scrap <- aggregate(Value ~ Age+Year+Size+Technology, fleet_vint_scrap, FUN = sum)
     fleet_vint_scrap <- rbind(fleet_vint_scrap, bevs_scrap)
@@ -106,59 +106,59 @@ fleet_composition_scenario_f <- function(fleet, fleet_initial_year = NA, fleet_f
     #  }
     #}
     # Replacement with a lapply function
-    fleet_vint_survival_rate <- fleet_vint_stock
-    fleet_vint_survival_rate$Value <- 0
-    index <- which(fleet_vint_survival_rate$Age != 0 & fleet_vint_survival_rate$Year >= (fleet_initial_year)-1)
-    scrap <- future_lapply(index, function(i) {
-      value_old <- fleet_vint_stock$Value[which(fleet_vint_stock$Size == fleet_vint_survival_rate$Size[i] & fleet_vint_stock$Technology == fleet_vint_survival_rate$Technology[i] & fleet_vint_stock$Year == (fleet_vint_survival_rate$Year[i]-1) & (fleet_vint_stock$Age == fleet_vint_survival_rate$Age[i]-1))]
-      value_new <- fleet_vint_stock$Value[i]
-      if (length(value_old) == 0) {
-        value_old <- 0
-      }
-      return(list(value_new = value_new, value_old = value_old))
-    })
-    for (i in 1:length(index)) {
-      if (scrap[[i]]$value_old != 0) {
-        fleet_vint_survival_rate$Value[index[i]] <- scrap[[i]]$value_new/scrap[[i]]$value_old
-      } else {
-        fleet_vint_survival_rate$Value[index[i]] <- 0
-      }
-    }
-    fleet_vint_survival_rate <- filter(fleet_vint_survival_rate, fleet_vint_survival_rate$Age != 0)
+    #fleet_vint_survival_rate <- fleet_vint_stock
+    #fleet_vint_survival_rate$Value <- 0
+    #index <- which(fleet_vint_survival_rate$Age != 0 & fleet_vint_survival_rate$Year >= (fleet_initial_year)-1)
+    #scrap <- future_lapply(index, function(i) {
+    #  value_old <- fleet_vint_stock$Value[which(fleet_vint_stock$Size == fleet_vint_survival_rate$Size[i] & fleet_vint_stock$Technology == fleet_vint_survival_rate$Technology[i] & fleet_vint_stock$Year == (fleet_vint_survival_rate$Year[i]-1) & (fleet_vint_stock$Age == fleet_vint_survival_rate$Age[i]-1))]
+    #  value_new <- fleet_vint_stock$Value[i]
+    #  if (length(value_old) == 0) {
+    #    value_old <- 0
+    #  }
+    #  return(list(value_new = value_new, value_old = value_old))
+    #})
+    #for (i in 1:length(index)) {
+    #  if (scrap[[i]]$value_old != 0) {
+    #    fleet_vint_survival_rate$Value[index[i]] <- scrap[[i]]$value_new/scrap[[i]]$value_old
+    #  } else {
+    #    fleet_vint_survival_rate$Value[index[i]] <- 0
+    #  }
+    #}
+    #fleet_vint_survival_rate <- filter(fleet_vint_survival_rate, fleet_vint_survival_rate$Age != 0)
     # Modifications of the scrap rate according to the scenario
-    scenario_scrap <- arrange(scenario[which(scenario$Event == "road_ban"),], Year)
-    if (dim(scenario_scrap)[1] != 0) {
-      for (i in 1:dim(scenario_scrap)[1]) {
-        scenario[nrow(scenario)+1,] <- list(scenario_scrap$Year[i], "sales_ban", scenario$Size[i], scenario$Technology[i], scenario_scrap$Value[i], scenario_scrap$Interpolation_type[i])
-      }
-    }
-    scenario <- scenario[!duplicated(scenario),]
-    if (dim(scenario_scrap)[1]!=0) {
-      fleet_vint_survival_rate_scenario <- fleet_vint_survival_rate
-      for (i in 1:dim(scenario_scrap)[1]) {
-        if (scenario_scrap$Technology[i] == "all") {
-          technologies <- c("all")
-        } else if (scenario_scrap$Technology[i] == "electric") {
-          technologies <- c("BEV100", "BEV300")
-        } else if (scenario_scrap$Technology[i] == "icev") {
-          technologies <- c("CNG", "FFV", "ICEV-D", "ICEV-G")
-        } else if (scenario_scrap$Technology[i] == "hybrid") {
-          technologies <- c("HEV", "PHEV20", "PHEV40")
-        } else if (scenario_scrap$Technology[i] == "hydrogen") {
-          technologies <- "FCV" 
-        } else {
-          technologies <- scenario_scrap$Technology[i]
-        }
-        if (scenario_scrap$Size[i] == "all") {
-          sizes <- c("Car", "Light truck")
-        } else {
-          sizes <- scenario_scrap$Size[i]
-        }
-        fleet_vint_survival_rate_scenario$Value[which(fleet_vint_survival_rate_scenario$Year >= scenario_scrap$Year[i] & fleet_vint_survival_rate_scenario$Size%in%sizes & fleet_vint_survival_rate_scenario$Technology%in%technologies)] <- 0
-      }
-    } else {
-      fleet_vint_survival_rate_scenario <- fleet_vint_survival_rate
-    }
+    #scenario_scrap <- arrange(scenario[which(scenario$Event == "road_ban"),], Year)
+    #if (dim(scenario_scrap)[1] != 0) {
+    #  for (i in 1:dim(scenario_scrap)[1]) {
+    #    scenario[nrow(scenario)+1,] <- list(scenario_scrap$Year[i], "sales_ban", scenario$Size[i], scenario$Technology[i], scenario_scrap$Value[i], scenario_scrap$Interpolation_type[i])
+    #  }
+    #}
+    #scenario <- scenario[!duplicated(scenario),]
+    #if (dim(scenario_scrap)[1]!=0) {
+    #  fleet_vint_survival_rate_scenario <- fleet_vint_survival_rate
+    #  for (i in 1:dim(scenario_scrap)[1]) {
+    #    if (scenario_scrap$Technology[i] == "all") {
+    #      technologies <- c("all")
+    #    } else if (scenario_scrap$Technology[i] == "electric") {
+    #      technologies <- c("BEV100", "BEV300")
+    #    } else if (scenario_scrap$Technology[i] == "icev") {
+    #      technologies <- c("CNG", "FFV", "ICEV-D", "ICEV-G")
+    #    } else if (scenario_scrap$Technology[i] == "hybrid") {
+    #      technologies <- c("HEV", "PHEV20", "PHEV40")
+    #    } else if (scenario_scrap$Technology[i] == "hydrogen") {
+    #      technologies <- "FCV" 
+    #    } else {
+    #      technologies <- scenario_scrap$Technology[i]
+    #    }
+    #    if (scenario_scrap$Size[i] == "all") {
+    #      sizes <- c("Car", "Light truck")
+    #    } else {
+    #      sizes <- scenario_scrap$Size[i]
+    #    }
+    #    fleet_vint_survival_rate_scenario$Value[which(fleet_vint_survival_rate_scenario$Year >= scenario_scrap$Year[i] & fleet_vint_survival_rate_scenario$Size%in%sizes & fleet_vint_survival_rate_scenario$Technology%in%technologies)] <- 0
+    #  }
+    #} else {
+    #  fleet_vint_survival_rate_scenario <- fleet_vint_survival_rate
+    #}
     
     # Calculation of the market share
     market_share_rel <- market_share_matrix_f(fleet_vint_stock)[["market_share_rel"]]
@@ -380,13 +380,16 @@ fleet_composition_scenario_f <- function(fleet, fleet_initial_year = NA, fleet_f
                 targeted_ratio <- tech_market_shares$Value[which(tech_market_shares$Year == i & tech_market_shares$Size_Tech == rownames(market_share_rel_temp)[non_modified_values[k]])]
               } else {
                 targeted_ratio <- market_share_rel[non_modified_values[k],which(colnames(market_share_rel_temp) == i)]/sum(market_share_rel[non_modified_values[grep(vehicles_sizes[j], rownames(market_share_rel)[non_modified_values])],which(colnames(market_share_rel) == i)])
+                if (is.na(targeted_ratio)) {
+                  targeted_ratio <- 0
+                }
               }
               market_share_rel_temp[non_modified_values[k],which(colnames(market_share_rel_temp) == i)] <- targeted_share*targeted_ratio
             }
           }
         }
       }
-        
+
         # Fifth step - Add the missing values
         
         
@@ -458,15 +461,20 @@ fleet_composition_scenario_f <- function(fleet, fleet_initial_year = NA, fleet_f
     #  return(list(stock_new = stock_new))
     #})
     for (i in 2:length(years)) {
+      matrix_sur_rate <- t(sapply(rownames(fleet$ldv_sales),function(x) do.call(survival_rate_f,list(year=years[i], size=strsplit(x,"_")[[1]][1], techno=strsplit(x,"_")[[1]][2], cumulative_rate="n"))[1,]))
       total_vehicles_new <- 0
       for (j in 1:length(sizes)) {
         for (k in 1:length(technologies)) {
           for (l in 2:length(ages)) {
+            survival_rate <- matrix_sur_rate[which(rownames(matrix_sur_rate) == paste0(sizes[j], "_",technologies[k])), which(colnames(matrix_sur_rate) == ages[l])]
             stock_old <- fleet_vint_stock_scenario_temp$Value[which(fleet_vint_stock_scenario_temp$Year == years[i-1] & fleet_vint_stock_scenario_temp$Size == sizes[j] & fleet_vint_stock_scenario_temp$Technology == technologies[k] & fleet_vint_stock_scenario_temp$Age == ages[l-1])]
-            survival_rate <- fleet_vint_survival_rate_scenario$Value[which(fleet_vint_survival_rate_scenario$Year == years[i] & fleet_vint_survival_rate_scenario$Size == sizes[j] & fleet_vint_survival_rate_scenario$Technology == technologies[k] & fleet_vint_survival_rate_scenario$Age == ages[l])]
+            #survival_rate <- fleet_vint_survival_rate_scenario$Value[which(fleet_vint_survival_rate_scenario$Year == years[i] & fleet_vint_survival_rate_scenario$Size == sizes[j] & fleet_vint_survival_rate_scenario$Technology == technologies[k] & fleet_vint_survival_rate_scenario$Age == ages[l])]
             stock_new <- stock_old*survival_rate
             fleet_vint_stock_scenario_temp$Value[which(fleet_vint_stock_scenario_temp$Year == years[i] & fleet_vint_stock_scenario_temp$Size == sizes[j] & fleet_vint_stock_scenario_temp$Technology == technologies[k] & fleet_vint_stock_scenario_temp$Age == ages[l])] <- stock_new
             total_vehicles_new <- total_vehicles_new + stock_new
+            #if (is.nan(total_vehicles_new)) {
+            #  total_vehicles_new <- 0
+            #}
             fleet_vint_scrap_scenario_temp$Value[which(fleet_vint_scrap_scenario_temp$Year == years[i] & fleet_vint_scrap_scenario_temp$Size == sizes[j] & fleet_vint_scrap_scenario_temp$Technology == technologies[k] & fleet_vint_scrap_scenario_temp$Age == ages[l])] <- stock_old-stock_new
           }
         }
@@ -494,24 +502,65 @@ fleet_composition_scenario_f <- function(fleet, fleet_initial_year = NA, fleet_f
       }
     }
     #fleet_vint_stock_scenario_temp$Value <- round(fleet_vint_stock_scenario_temp$Value,0)
-    fleet_vint_stock_scenario_temp <- add_column(fleet_vint_stock_scenario_temp, "State" = NA)
+    fleet_vint_stock_scenario_temp <- add_column(fleet_vint_stock_scenario_temp, "State" = NA) %>%
+      add_column("State_factor" = NA)
     #fleet_vint_scrap_scenario_temp$Value <- round(fleet_vint_scrap_scenario_temp$Value,0)
-    fleet_vint_scrap_scenario_temp <- add_column(fleet_vint_scrap_scenario_temp, "State" = NA)
+    fleet_vint_scrap_scenario_temp <- add_column(fleet_vint_scrap_scenario_temp, "State" = NA) %>%
+      add_column("State_factor" = NA)
     if (length(states_in_group) != 0) {
       for (j in 1:length(states_in_group)) {
-        fleet_vint_stock_scenario_temp$State <- states_in_group[j]
-        fleet_vint_scrap_scenario_temp$State <- states_in_group[j]
-        state_population_adjustment_factor <- population_distribution_states$Activity[which(population_distribution_states$State == states_in_group[j])]
-        #fleet_vint_stock_scenario_temp$Value <- fleet_vint_stock_scenario_temp$Value*state_population_adjustment_factor
-        #fleet_vint_scrap_scenario_temp$Value <- fleet_vint_scrap_scenario_temp$Value*state_population_adjustment_factor
-        fleet_vint_stock_scenario <- rbind(fleet_vint_stock_scenario, fleet_vint_stock_scenario_temp)
-        fleet_vint_scrap_scenario <- rbind(fleet_vint_scrap_scenario, fleet_vint_scrap_scenario_temp)
-        fleet_vint_stock_scenario$Value[which(fleet_vint_stock_scenario$State == states_in_group[j])] <- fleet_vint_stock_scenario$Value[which(fleet_vint_stock_scenario$State == states_in_group[j])]*state_population_adjustment_factor
-        fleet_vint_scrap_scenario$Value[which(fleet_vint_scrap_scenario$State == states_in_group[j])] <- fleet_vint_scrap_scenario$Value[which(fleet_vint_scrap_scenario$State == states_in_group[j])]*state_population_adjustment_factor
+        fleet_vint_stock_scenario_state <- fleet_vint_stock_scenario_temp
+        fleet_vint_scrap_scenario_state <- fleet_vint_scrap_scenario_temp
+        fleet_vint_stock_scenario_state$State <- states_in_group[j]
+        fleet_vint_scrap_scenario_state$State <- states_in_group[j]
+        plan(multisession)
+        evaluation <- unique(fleet_vint_stock_scenario_state$Year)
+        data <- future_lapply(evaluation, function(k) {
+          if (i < min(population_distribution_states$Year)) {
+            state_population_adjustment_factor <- population_distribution_states$Activity[which(population_distribution_states$State == states_in_group[j] &
+                                                                                                  population_distribution_states$Year == min(population_distribution_states$Year))]
+          } else {
+            state_population_adjustment_factor <- population_distribution_states$Activity[which(population_distribution_states$State == states_in_group[j] &
+                                                                                                  population_distribution_states$Year == k)]
+          }
+          index_stock <- which(fleet_vint_stock_scenario_state$Year == k)
+          index_scrap <- which(fleet_vint_scrap_scenario_state$Year == k)
+          return(list(state_population_adjustment_factor = state_population_adjustment_factor, index_stock = index_stock, index_scrap = index_scrap))
+        })
+        for (k in 1:length(evaluation)) {
+          fleet_vint_stock_scenario_state$State_factor[data[[k]]$index_stock] <- data[[k]]$state_population_adjustment_factor
+          if (length(data[[k]]$index_scrap) != 0) {
+            fleet_vint_scrap_scenario_state$State_factor[data[[k]]$index_scrap] <- data[[k]]$state_population_adjustment_factor
+          }
+        }
+        #fleet_vint_stock_scenario_temp$Value <- fleet_vint_stock_scenario_temp$Value*fleet_vint_stock_scenario_temp$State_factor
+        #fleet_vint_scrap_scenario_temp$Value <- fleet_vint_scrap_scenario_temp$Value*fleet_vint_scrap_scenario_temp$State_factor
+        #fleet_vint_stock_scenario_temp <- select(fleet_vint_stock_scenario_temp, -c("State_factor"))
+        #fleet_vint_scrap_scenario_temp <- select(fleet_vint_scrap_scenario_temp, -c("State_factor"))
+        fleet_vint_stock_scenario <- rbind(fleet_vint_stock_scenario, fleet_vint_stock_scenario_state)
+        fleet_vint_scrap_scenario <- rbind(fleet_vint_scrap_scenario, fleet_vint_scrap_scenario_state)
       }
+      fleet_vint_stock_scenario$Value <- fleet_vint_stock_scenario$Value*fleet_vint_stock_scenario$State_factor
+      fleet_vint_scrap_scenario$Value <- fleet_vint_scrap_scenario$Value*fleet_vint_scrap_scenario$State_factor
+      fleet_vint_stock_scenario <- select(fleet_vint_stock_scenario, -c("State_factor"))
+      fleet_vint_scrap_scenario <- select(fleet_vint_scrap_scenario, -c("State_factor"))
     }
   }
   # Distribution into the final fleet composition according to the relative weight of each state
+  if (fleet_id == "Evs100") {
+    #Update the stock dataset
+    bevs_stock <- fleet_vint_stock_scenario[which(!grepl("BEV", fleet_vint_stock_scenario$Technology)),]
+    bevs_stock$Value <- 1
+    fleet_vint_stock_scenario$Technology[which(!grepl("BEV", fleet_vint_stock_scenario$Technology))] <- "BEV300"
+    fleet_vint_stock_scenario <- aggregate(Value ~ Age+Year+Size+Technology+State, fleet_vint_stock_scenario, FUN = sum)
+    fleet_vint_stock_scenario <- rbind(fleet_vint_stock_scenario, bevs_stock)
+    # Update the scrap dataset
+    bevs_scrap <- fleet_vint_scrap_scenario[which(!grepl("BEV", fleet_vint_scrap_scenario$Technology)),]
+    bevs_scrap$Value <- 1
+    fleet_vint_scrap_scenario$Technology[which(!grepl("BEV", fleet_vint_scrap_scenario$Technology))] <- "BEV300"
+    fleet_vint_scrap_scenario <- aggregate(Value ~ Age+Year+Size+Technology+State, fleet_vint_scrap_scenario, FUN = sum)
+    fleet_vint_scrap_scenario <- rbind(fleet_vint_scrap_scenario, bevs_scrap)
+  }
   fleet_vint_stock_scenario_state_breakdown <- fleet_vint_stock_scenario
   fleet_vint_scrap_scenario_state_breakdown <- fleet_vint_scrap_scenario
   fleet_vint_stock_scenario_state_breakdown$Value <- round(fleet_vint_stock_scenario_state_breakdown$Value, 0)

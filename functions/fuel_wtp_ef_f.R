@@ -1,4 +1,4 @@
-fuel_wtp_ef_f <- function(fleet_fuel_use_tot, fleet_fuel_use_tot_state, first_proj_yr = NA, share_diesel_ldv_cons = NA, share_gasoline_ldv_cons = NA, share_ldv_crude_oil = NA, share_prod_ethanol_fuel = NA, share_ng_cons_elec = NA) {
+fuel_wtp_ef_f <- function(fleet_fuel_use_tot, fleet_fuel_use_tot_state, first_proj_yr = NA, share_diesel_ldv_cons = NA, share_gasoline_ldv_cons = NA, share_ldv_crude_oil = NA, share_prod_ethanol_fuel = NA, share_ng_cons_elec = NA, fleet_id = NA) {
   attribute_f("fuel_wtp_ef_f")
   GIS_matching_matrix <- read.csv(paste0(getwd(), "/inputs/air_quality/GIS_matching_matrix.csv"))
   production_change_matrix <- data.frame(matrix(data = NA, nrow = 0, ncol = 7))
@@ -18,6 +18,9 @@ fuel_wtp_ef_f <- function(fleet_fuel_use_tot, fleet_fuel_use_tot_state, first_pr
       value <- production + flows_in - flows_out
       fuel_prod_US[nrow(fuel_prod_US)+1,] <- list(j, i, "Available", value, "L", 2021)
     }
+  }
+  if (fleet_id == "No_LDVs") {
+    fleet_fuel_use_tot_state$Value[which(fleet_fuel_use_tot_state$Year > first_proj_yr)] <- 1
   }
   fleet_fuel_use_tot_padd <- fleet_fuel_use_tot_state %>%
     add_column("PADD" = NA) %>%

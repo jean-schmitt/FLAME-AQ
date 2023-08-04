@@ -80,8 +80,8 @@ air_quality_module_f <- function(fleet_composition_state_breakdown, fleet_compos
   }
   write.csv(normalized_emissions_by_state, paste0(results_path, "/TEMP_normalized_emissions_by_state.csv"))
   fleet_emissions_by_state <- select(normalized_emissions_by_state, -c("Order_key"))
-  fleet_emissions_by_state[,7:16] <- fleet_emissions_by_state[,7:16]*fleet_emissions_by_state$Vehicles_population/1e6
-  fleet_emissions_by_state <- select(fleet_emissions_by_state, -c(Source, Fuel, ModelYr, Run, Vehicles_population))
+  fleet_emissions_by_state[,6:15] <- fleet_emissions_by_state[,6:15]*fleet_emissions_by_state$Vehicles_population/1e6
+  fleet_emissions_by_state <- select(fleet_emissions_by_state, -c(Source, Fuel, ModelYr, Vehicles_population))
   fleet_emissions_by_state <- aggregate(.~Year+State, data = fleet_emissions_by_state, FUN = sum)
   fleet_emissions_by_state <- add_column(fleet_emissions_by_state, "Unit" = "tons")
   fleet_emissions_national <- aggregate(.~Year+Unit, data = select(fleet_emissions_by_state, -c(State)), FUN = sum)

@@ -148,8 +148,8 @@ fleet_fuel_u_f<-function (first_yr = NA,last_yr = NA, fc_deg=NA, fc_deg_mdl = NA
   fleet_elec_use_tot_state <- aggregate(data = fleet_elec_use_state,Value ~ State + Fuel + Year + Unit,FUN=sum)
   fleet_fuel_use <- filter(fleet_vint_fuel_use, fleet_vint_fuel_use$Fuel != "Electricity")
   fleet_fuel_use <- filter(fleet_fuel_use, fleet_fuel_use$Value != 0)
-  fleet_norm_fuel_use <- fleet_fuel_use
-  fleet_norm_fuel_use$Value <- 0
+  #fleet_norm_fuel_use <- fleet_fuel_use
+  #fleet_norm_fuel_use$Value <- 0
   fleet_state <- fleet_vkt_f_res[["fleet_composition"]][["fleet_vint_stock_scenario_state_breakdown"]] %>%
     add_column("Fuel" = NA) %>%
     add_column("Unit" = NA) %>%

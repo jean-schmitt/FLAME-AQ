@@ -7,7 +7,7 @@ modify_brake_tire_wear_f <- function(normalized_total_emissions, normalized_emis
     temp <- which(normalized_total_emissions_temp$Source == BTW_scenario$Size[i] & normalized_total_emissions_temp$Fuel == BTW_scenario$Fuel[i])
     temp_state <- which(normalized_emissions_by_state_temp$Source == BTW_scenario$Size[i] & normalized_emissions_by_state_temp$Fuel == BTW_scenario$Fuel[i])
     normalized_total_emissions_temp[temp, which(colnames(normalized_total_emissions_temp) == BTW_scenario$Pollutant[i])] <- normalized_total_emissions[temp, which(colnames(normalized_total_emissions_temp) == BTW_scenario$Pollutant[i])]*BTW_scenario$Factor[i]
-    normalized_emissions_by_state_temp[temp, which(colnames(normalized_emissions_by_state_temp) == BTW_scenario$Pollutant[i])] <- normalized_emissions_by_state[temp, which(colnames(normalized_emissions_by_state_temp) == BTW_scenario$Pollutant[i])]*BTW_scenario$Factor[i]
+    normalized_emissions_by_state_temp[temp_state, which(colnames(normalized_emissions_by_state_temp) == BTW_scenario$Pollutant[i])] <- normalized_emissions_by_state[temp_state, which(colnames(normalized_emissions_by_state_temp) == BTW_scenario$Pollutant[i])]*BTW_scenario$Factor[i]
   }
   normalized_total_emissions <- normalized_total_emissions_temp
   normalized_emissions_by_state <- normalized_emissions_by_state_temp

@@ -149,8 +149,8 @@ electric_grid_emissions_f <- function(fleet_composition, fleet_elec_use_tot_stat
             source_EF_SO2 <- EF_elec_egrid$Emission_rate[which(EF_elec_egrid$eGrid_region == egrid_region & EF_elec_egrid$Fuel == fuel & EF_elec_egrid$Pollutant == "SO2")]
             source_EF_NOx <- EF_elec_egrid$Emission_rate[which(EF_elec_egrid$eGrid_region == egrid_region & EF_elec_egrid$Fuel == fuel & EF_elec_egrid$Pollutant == "NOx")]
             source_EF_PM25 <- EF_elec_egrid$Emission_rate[which(EF_elec_egrid$eGrid_region == egrid_region & EF_elec_egrid$Fuel == fuel & EF_elec_egrid$Pollutant == "PM25")]
-            source_EF_VOC <- 0
-            source_EF_NH3 <- 0
+            source_EF_VOC <- EF_elec_egrid$Emission_rate[which(EF_elec_egrid$eGrid_region == egrid_region & EF_elec_egrid$Fuel == fuel & EF_elec_egrid$Pollutant == "VOC")]
+            source_EF_NH3 <- EF_elec_egrid$Emission_rate[which(EF_elec_egrid$eGrid_region == egrid_region & EF_elec_egrid$Fuel == fuel & EF_elec_egrid$Pollutant == "NH3")]
             if (length(source_EF_SO2) == 0) {
               source_EF_SO2 <- EF_elec_egrid$Emission_rate[which(EF_elec_egrid$eGrid_region == "Average" & EF_elec_egrid$Fuel == fuel & EF_elec_egrid$Pollutant == "SO2")]
             }
@@ -159,6 +159,12 @@ electric_grid_emissions_f <- function(fleet_composition, fleet_elec_use_tot_stat
             }
             if (length(source_EF_PM25) == 0) {
               source_EF_PM25 <- EF_elec_egrid$Emission_rate[which(EF_elec_egrid$eGrid_region == "Average" & EF_elec_egrid$Fuel == fuel & EF_elec_egrid$Pollutant == "PM25")]
+            }
+            if (length(source_EF_VOC) == 0) {
+              source_EF_VOC <- EF_elec_egrid$Emission_rate[which(EF_elec_egrid$eGrid_region == "Average" & EF_elec_egrid$Fuel == fuel & EF_elec_egrid$Pollutant == "VOC")]
+            }
+            if (length(source_EF_NH3) == 0) {
+              source_EF_NH3 <- EF_elec_egrid$Emission_rate[which(EF_elec_egrid$eGrid_region == "Average" & EF_elec_egrid$Fuel == fuel & EF_elec_egrid$Pollutant == "NH3")]
             }
             if (source_EF_SO2 == 0) {
               source_EF_SO2 <- EF_elec_egrid$Emission_rate[which(EF_elec_egrid$eGrid_region == "Average" & EF_elec_egrid$Fuel == fuel & EF_elec_egrid$Pollutant == "SO2")]

@@ -15,6 +15,7 @@
 "elec_source_reg_ev_f","Result","DEPRECIATED. Calculate electricity sources mixes that are weighted by regional deployment of EVs"
 "electric_grid_emissions_f","Internal",
 "electric_read_scenario_f","Result",
+"electricity_emission_factors_NEI_f","Result",
 "FLAME_AQ_f","Result",
 "FLAME_format_conversion_f","Result",
 "FLAME_to_MOVES_f","Internal",
@@ -72,6 +73,7 @@
 "technology_market_share_diffusion_f","Internal","Calculate prospective deployment of alternative technology from a specified model."
 "total_benefits_calculation_f","Result",
 "total_fleet_size_f","Result",
+"vehicle_average_age_f","Internal",
 "vehicle_climate_change_metric_f","Result","Calculate the resulting climate change metric of the fleet life cycle GHG emission inventory"
 "vehicle_fc_changes_efficiency_f","Internal","Calculate prospective fuel consumption values of LDVs from previous year fuel consumption value and changes in vehicle efficiency. Update the information in the vehicleClass object."
 "vehicle_fc_changes_weight_f","Internal","Calculate prospective fuel consumption values of LDVs from previous year fuel consumption value and changes in vehicle weight. Update the information in the vehicleClass object."

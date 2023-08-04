@@ -1,7 +1,12 @@
-cobra_health_impact_f <- function(state_resolved_fleet_direct_emissions, fleet_emissions_elec_state, fleet_emissions_elec_county, fleet_fuel_usage_US, last_yr = NA, scenario_id = NA, fleet_electricity_consumption_source = NA, relative_transportation_electricity_demand = NA, calculation_mode = NA, discount_rate = NA) {
+cobra_health_impact_f <- function(state_resolved_fleet_direct_emissions, fleet_emissions_elec_state, fleet_emissions_elec_county, fleet_fuel_usage_US, last_yr = NA, scenario_id = NA, fleet_electricity_consumption_source = NA, relative_transportation_electricity_demand = NA, calculation_mode = NA, discount_rate = NA, year_break = NA, fleet_id = NA) {
   attribute_f("cobra_health_impact_f")
-  results_path <- paste0(getwd(), "/outputs/air_quality/", Sys.Date(), "_", scenario_id, "_results")
   first_proj_yr <- 2022
+  if (fleet_id == "No_LDVs") {
+    fleet_emissions_elec_state[which(fleet_emissions_elec_state$Year>first_proj_yr),5:9] <- 0
+    fleet_emissions_elec_county[which(fleet_emissions_elec_county$Year>first_proj_yr),6:10] <- 0
+    state_resolved_fleet_direct_emissions[which(state_resolved_fleet_direct_emissions$Year>first_proj_yr),3:12] <- 0
+  }
+  results_path <- paste0(getwd(), "/outputs/air_quality/", Sys.Date(), "_", scenario_id, "_results")
   fleet_direct_emissions_state_breakdown <- state_resolved_fleet_direct_emissions
   GIS_matching_matrix <- read.csv(paste0(getwd(), "/inputs/air_quality/GIS_matching_matrix.csv"))
   # Generate proper baseline and scenario inputs for COBRA
@@ -92,7 +97,7 @@ cobra_health_impact_f <- function(state_resolved_fleet_direct_emissions, fleet_e
         scenario$VOC[intersect(index_ng, index_state)] <- baseline$VOC[intersect(index_ng, index_state)]*rel_ng
         # Generate the output file for oil-related emissions
         if (i == first_proj_yr+1) {
-          emissions_oil_related_activities[nrow(emissions_oil_related_activities)+1,] <- c(states_correspondence$COBRA_code[j], i, "tons", sum(baseline$NO2[intersect(index_total_oil, index_state)]), sum(baseline$SO2[intersect(index_total_oil, index_state)]), sum(baseline$PM25[intersect(index_total_oil, index_state)]), sum(baseline$NH3[intersect(index_total_oil, index_state)]), sum(baseline$VOC[intersect(index_total_oil, index_state)])) 
+          emissions_oil_related_activities[nrow(emissions_oil_related_activities)+1,] <- c(states_correspondence$COBRA_code[j], i-1, "tons", sum(baseline$NO2[intersect(index_total_oil, index_state)]), sum(baseline$SO2[intersect(index_total_oil, index_state)]), sum(baseline$PM25[intersect(index_total_oil, index_state)]), sum(baseline$NH3[intersect(index_total_oil, index_state)]), sum(baseline$VOC[intersect(index_total_oil, index_state)])) 
         }
         emissions_oil_related_activities[nrow(emissions_oil_related_activities)+1,] <- c(states_correspondence$COBRA_code[j], i, "tons", sum(scenario$NO2[intersect(index_total_oil, index_state)]), sum(scenario$SO2[intersect(index_total_oil, index_state)]), sum(scenario$PM25[intersect(index_total_oil, index_state)]), sum(scenario$NH3[intersect(index_total_oil, index_state)]), sum(scenario$VOC[intersect(index_total_oil, index_state)])) 
         # Generation of the county-resolved emissions
@@ -141,11 +146,11 @@ cobra_health_impact_f <- function(state_resolved_fleet_direct_emissions, fleet_e
     for (j in 1:length(states_correspondence$COBRA_code)) {
       index_state <- which(scenario$stid == states_correspondence$COBRA_code[j])
       padd <- unique(GIS_matching_matrix$PADD[which(GIS_matching_matrix$ST_FIPS == states_correspondence$COBRA_code[j])])
-      rel_demand <- prod(fleet_fuel_usage_US$Rel_Demand[which(fleet_fuel_usage_US$PADD == padd)])
-      rel_refining <- prod(fleet_fuel_usage_US$Rel_Refining[which(fleet_fuel_usage_US$PADD == padd)])
-      rel_crude <- prod(fleet_fuel_usage_US$Rel_Crude_oil[which(fleet_fuel_usage_US$PADD == padd)])
-      rel_ethanol <- prod(fleet_fuel_usage_US$Rel_Ethanol[which(fleet_fuel_usage_US$PADD == padd)])
-      rel_ng <- prod(fleet_fuel_usage_US$Rel_Natural_Gas[which(fleet_fuel_usage_US$PADD == padd)])
+      rel_demand <- prod(fleet_fuel_usage_US$Rel_Demand[which(fleet_fuel_usage_US$PADD == padd & fleet_fuel_usage_US$Year <= year_break)])
+      rel_refining <- prod(fleet_fuel_usage_US$Rel_Refining[which(fleet_fuel_usage_US$PADD == padd & fleet_fuel_usage_US$Year <= year_break)])
+      rel_crude <- prod(fleet_fuel_usage_US$Rel_Crude_oil[which(fleet_fuel_usage_US$PADD == padd & fleet_fuel_usage_US$Year <= year_break)])
+      rel_ethanol <- prod(fleet_fuel_usage_US$Rel_Ethanol[which(fleet_fuel_usage_US$PADD == padd & fleet_fuel_usage_US$Year <= year_break)])
+      rel_ng <- prod(fleet_fuel_usage_US$Rel_Natural_Gas[which(fleet_fuel_usage_US$PADD == padd & fleet_fuel_usage_US$Year <= year_break)])
       # Petroleum extraction and storage are linked to the crude oil factor
       scenario$NO2[intersect(index_petroleum, index_state)] <- baseline$NO2[intersect(index_petroleum, index_state)]*rel_crude
       scenario$SO2[intersect(index_petroleum, index_state)] <- baseline$SO2[intersect(index_petroleum, index_state)]*rel_crude
@@ -192,13 +197,13 @@ cobra_health_impact_f <- function(state_resolved_fleet_direct_emissions, fleet_e
         baseline$NH3[intersect(index_fleet, index_county)] <- fleet_emissions_state$NH3[which(fleet_emissions_state$Year == first_proj_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[j])]*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
         baseline$VOC[intersect(index_fleet, index_county)] <- fleet_emissions_state$VOC[which(fleet_emissions_state$Year == first_proj_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[j])]*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
         # Calculation of the emissions from the fleet - county-based with data taken directly from MOVES (overwrites original data from COBRA)
-        scenario$NO2[intersect(index_fleet, index_county)] <- fleet_emissions_state$NOx[which(fleet_emissions_state$Year == last_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[j])]*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
-        scenario$SO2[intersect(index_fleet, index_county)] <- fleet_emissions_state$SO2[which(fleet_emissions_state$Year == last_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[j])]*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
-        scenario$PM25[intersect(index_fleet, index_county)] <- (fleet_emissions_state$Total_PM25[which(fleet_emissions_state$Year == last_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[j])]+fleet_emissions_state$Brake_PM25[which(fleet_emissions_state$Year == last_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[j])]+fleet_emissions_state$Tire_PM25[which(fleet_emissions_state$Year == last_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[j])])*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
-        scenario$NH3[intersect(index_fleet, index_county)] <- fleet_emissions_state$NH3[which(fleet_emissions_state$Year == last_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[j])]*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
-        scenario$VOC[intersect(index_fleet, index_county)] <- fleet_emissions_state$VOC[which(fleet_emissions_state$Year == last_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[j])]*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
+        scenario$NO2[intersect(index_fleet, index_county)] <- fleet_emissions_state$NOx[which(fleet_emissions_state$Year == year_break & fleet_emissions_state$State == states_correspondence$COBRA_code[j])]*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
+        scenario$SO2[intersect(index_fleet, index_county)] <- fleet_emissions_state$SO2[which(fleet_emissions_state$Year == year_break & fleet_emissions_state$State == states_correspondence$COBRA_code[j])]*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
+        scenario$PM25[intersect(index_fleet, index_county)] <- (fleet_emissions_state$Total_PM25[which(fleet_emissions_state$Year == year_break & fleet_emissions_state$State == states_correspondence$COBRA_code[j])]+fleet_emissions_state$Brake_PM25[which(fleet_emissions_state$Year == year_break & fleet_emissions_state$State == states_correspondence$COBRA_code[j])]+fleet_emissions_state$Tire_PM25[which(fleet_emissions_state$Year == year_break & fleet_emissions_state$State == states_correspondence$COBRA_code[j])])*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
+        scenario$NH3[intersect(index_fleet, index_county)] <- fleet_emissions_state$NH3[which(fleet_emissions_state$Year == year_break & fleet_emissions_state$State == states_correspondence$COBRA_code[j])]*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
+        scenario$VOC[intersect(index_fleet, index_county)] <- fleet_emissions_state$VOC[which(fleet_emissions_state$Year == year_break & fleet_emissions_state$State == states_correspondence$COBRA_code[j])]*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
         # Calculation of the emissions from electricity
-        index_fips <- which(fleet_emissions_elec_county$FIPS == counties$FIPS[k] & fleet_emissions_elec_county$Year == last_yr)
+        index_fips <- which(fleet_emissions_elec_county$FIPS == counties$FIPS[k] & fleet_emissions_elec_county$Year == year_break)
         scenario$NO2[intersect(index_electricity, index_county)] <- baseline$NO2[intersect(index_electricity, index_county)] + (fleet_emissions_elec_county$NOx[index_fips]-fleet_emissions_elec_county$NOx[which(fleet_emissions_elec_county$FIPS == counties$FIPS[k] & fleet_emissions_elec_county$Year == first_proj_yr+1)])/length(scenario$NO2[intersect(index_electricity, index_county)])
         scenario$SO2[intersect(index_electricity, index_county)] <- baseline$SO2[intersect(index_electricity, index_county)] + (fleet_emissions_elec_county$SO2[index_fips]-fleet_emissions_elec_county$SO2[which(fleet_emissions_elec_county$FIPS == counties$FIPS[k] & fleet_emissions_elec_county$Year == first_proj_yr+1)])/length(scenario$SO2[intersect(index_electricity, index_county)])
         scenario$NH3[intersect(index_electricity, index_county)] <- baseline$NH3[intersect(index_electricity, index_county)] + (fleet_emissions_elec_county$NH3[index_fips]-fleet_emissions_elec_county$NH3[which(fleet_emissions_elec_county$FIPS == counties$FIPS[k] & fleet_emissions_elec_county$Year == first_proj_yr+1)])/length(scenario$NH3[intersect(index_electricity, index_county)])
@@ -225,13 +230,13 @@ cobra_health_impact_f <- function(state_resolved_fleet_direct_emissions, fleet_e
         m <- m+1
         for (k in 1:length(states_correspondence$COBRA_code)) {
           if (j == "OilIndustry") {
-            index_state <- which(scenario$stid == states_correspondence$COBRA_code[j])
+            index_state <- which(scenario$stid == states_correspondence$COBRA_code[k])
             padd <- unique(GIS_matching_matrix$PADD[which(GIS_matching_matrix$ST_FIPS == states_correspondence$COBRA_code[k])])
-            rel_demand <- prod(fleet_fuel_usage_US$Rel_Demand[which(fleet_fuel_usage_US$PADD == padd)])
-            rel_refining <- prod(fleet_fuel_usage_US$Rel_Refining[which(fleet_fuel_usage_US$PADD == padd)])
-            rel_crude <- prod(fleet_fuel_usage_US$Rel_Crude_oil[which(fleet_fuel_usage_US$PADD == padd)])
-            rel_ethanol <- prod(fleet_fuel_usage_US$Rel_Ethanol[which(fleet_fuel_usage_US$PADD == padd)])
-            rel_ng <- prod(fleet_fuel_usage_US$Rel_Natural_Gas[which(fleet_fuel_usage_US$PADD == padd)])
+            rel_demand <- prod(fleet_fuel_usage_US$Rel_Demand[which(fleet_fuel_usage_US$PADD == padd & fleet_fuel_usage_US$Year <= year_break)])
+            rel_refining <- prod(fleet_fuel_usage_US$Rel_Refining[which(fleet_fuel_usage_US$PADD == padd & fleet_fuel_usage_US$Year <= year_break)])
+            rel_crude <- prod(fleet_fuel_usage_US$Rel_Crude_oil[which(fleet_fuel_usage_US$PADD == padd & fleet_fuel_usage_US$Year <= year_break)])
+            rel_ethanol <- prod(fleet_fuel_usage_US$Rel_Ethanol[which(fleet_fuel_usage_US$PADD == padd & fleet_fuel_usage_US$Year <= year_break)])
+            rel_ng <- prod(fleet_fuel_usage_US$Rel_Natural_Gas[which(fleet_fuel_usage_US$PADD == padd & fleet_fuel_usage_US$Year <= year_break)])
             if (i == "NOx") {
               scenario$NO2[intersect(index_petroleum, index_state)] <- baseline$NO2[intersect(index_petroleum, index_state)]*rel_crude
               scenario$NO2[intersect(index_refining, index_state)] <- baseline$NO2[intersect(index_refining, index_state)]*rel_refining
@@ -268,7 +273,7 @@ cobra_health_impact_f <- function(state_resolved_fleet_direct_emissions, fleet_e
             colnames(counties) <- c("sourceindx", "FIPS")
             for (l in 1:dim(counties)[1]) {
               index_county <- which(scenario$sourceindx == counties$sourceindx[l])
-              index_fips <- which(fleet_emissions_elec_county$FIPS == counties$FIPS[l] & fleet_emissions_elec_county$Year == last_yr)
+              index_fips <- which(fleet_emissions_elec_county$FIPS == counties$FIPS[l] & fleet_emissions_elec_county$Year == year_break)
               if (i == "NOx") {
                 scenario$NO2[intersect(index_electricity, index_county)] <- baseline$NO2[intersect(index_electricity, index_county)] + (fleet_emissions_elec_county$NOx[index_fips]-fleet_emissions_elec_county$NOx[which(fleet_emissions_elec_county$FIPS == counties$FIPS[l] & fleet_emissions_elec_county$Year == first_proj_yr+1)])/length(scenario$NO2[intersect(index_electricity, index_county)])
               } else if (i == "SO2") {
@@ -287,29 +292,31 @@ cobra_health_impact_f <- function(state_resolved_fleet_direct_emissions, fleet_e
             counties <- data.frame(GIS_matching_matrix$COBRA_SOURCEINDX[which(GIS_matching_matrix$ST_FIPS == states_correspondence$COBRA_code[k])], GIS_matching_matrix$FIPS[which(GIS_matching_matrix$ST_FIPS == states_correspondence$COBRA_code[k])])
             colnames(counties) <- c("sourceindx", "FIPS")
             for (l in 1:dim(counties)[1]) {
+              index_county <- which(scenario$sourceindx == counties$sourceindx[l])
+              index_fips <- which(fleet_emissions_elec_county$FIPS == counties$FIPS[l] & fleet_emissions_elec_county$Year == year_break)
               county_FIPS <- GIS_matching_matrix$FIPS[which(GIS_matching_matrix$COBRA_SOURCEINDX == counties$sourceindx[l])]
               county_pop_factor <- county_allocation_factor$county_allocation_factor[which(county_allocation_factor$FIPS == county_FIPS)]
               if (i == "NOx") {
                 baseline$NO2[intersect(index_fleet, index_county)] <- fleet_emissions_state$NOx[which(fleet_emissions_state$Year == first_proj_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
-                scenario$NO2[intersect(index_fleet, index_county)] <- fleet_emissions_state$NOx[which(fleet_emissions_state$Year == last_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
+                scenario$NO2[intersect(index_fleet, index_county)] <- fleet_emissions_state$NOx[which(fleet_emissions_state$Year == year_break & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
               } else if (i == "SO2") {
                 baseline$SO2[intersect(index_fleet, index_county)] <- fleet_emissions_state$SO2[which(fleet_emissions_state$Year == first_proj_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
-                scenario$SO2[intersect(index_fleet, index_county)] <- fleet_emissions_state$SO2[which(fleet_emissions_state$Year == last_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
+                scenario$SO2[intersect(index_fleet, index_county)] <- fleet_emissions_state$SO2[which(fleet_emissions_state$Year == year_break & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
               } else if (i == "PM25Combustion") {
                 baseline$PM25[intersect(index_fleet, index_county)] <- (fleet_emissions_state$Total_PM25[which(fleet_emissions_state$Year == first_proj_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]+fleet_emissions_state$Brake_PM25[which(fleet_emissions_state$Year == first_proj_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]+fleet_emissions_state$Tire_PM25[which(fleet_emissions_state$Year == first_proj_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[k])])*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
-                scenario$PM25[intersect(index_fleet, index_county)] <- (fleet_emissions_state$Total_PM25[which(fleet_emissions_state$Year == last_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]+fleet_emissions_state$Brake_PM25[which(fleet_emissions_state$Year == first_proj_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]+fleet_emissions_state$Tire_PM25[which(fleet_emissions_state$Year == first_proj_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[k])])*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
+                scenario$PM25[intersect(index_fleet, index_county)] <- (fleet_emissions_state$Total_PM25[which(fleet_emissions_state$Year == year_break & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]+fleet_emissions_state$Brake_PM25[which(fleet_emissions_state$Year == year_break & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]+fleet_emissions_state$Tire_PM25[which(fleet_emissions_state$Year == year_break & fleet_emissions_state$State == states_correspondence$COBRA_code[k])])*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
               } else if (i == "PM25Tire") {
-                baseline$PM25[intersect(index_fleet, index_county)] <- (fleet_emissions_state$Total_PM25[which(fleet_emissions_state$Year == first_proj_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]+fleet_emissions_state$Brake_PM25[which(fleet_emissions_state$Year == first_proj_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]+fleet_emissions_state$Tire_PM25[which(fleet_emissions_state$Year == first_proj_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[k])])*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
-                scenario$PM25[intersect(index_fleet, index_county)] <- (fleet_emissions_state$Total_PM25[which(fleet_emissions_state$Year == first_proj_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]+fleet_emissions_state$Brake_PM25[which(fleet_emissions_state$Year == first_proj_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]+fleet_emissions_state$Tire_PM25[which(fleet_emissions_state$Year == last_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[k])])*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
+                baseline$PM25[intersect(index_fleet, index_county)] <- (fleet_emissions_state$Tire_PM25[which(fleet_emissions_state$Year == first_proj_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]+fleet_emissions_state$Brake_PM25[which(fleet_emissions_state$Year == first_proj_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]+fleet_emissions_state$Tire_PM25[which(fleet_emissions_state$Year == first_proj_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[k])])*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
+                scenario$PM25[intersect(index_fleet, index_county)] <- (fleet_emissions_state$Tire_PM25[which(fleet_emissions_state$Year == year_break & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]+fleet_emissions_state$Brake_PM25[which(fleet_emissions_state$Year == year_break & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]+fleet_emissions_state$Tire_PM25[which(fleet_emissions_state$Year == year_break & fleet_emissions_state$State == states_correspondence$COBRA_code[k])])*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
               } else if (i == "PM25Brake") {
-                baseline$PM25[intersect(index_fleet, index_county)] <- (fleet_emissions_state$Total_PM25[which(fleet_emissions_state$Year == first_proj_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]+fleet_emissions_state$Brake_PM25[which(fleet_emissions_state$Year == first_proj_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]+fleet_emissions_state$Tire_PM25[which(fleet_emissions_state$Year == first_proj_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[k])])*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
-                scenario$PM25[intersect(index_fleet, index_county)] <- (fleet_emissions_state$Total_PM25[which(fleet_emissions_state$Year == first_proj_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]+fleet_emissions_state$Brake_PM25[which(fleet_emissions_state$Year == last_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]+fleet_emissions_state$Tire_PM25[which(fleet_emissions_state$Year == first_proj_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[k ])])*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
+                baseline$PM25[intersect(index_fleet, index_county)] <- (fleet_emissions_state$Brake_PM25[which(fleet_emissions_state$Year == first_proj_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]+fleet_emissions_state$Brake_PM25[which(fleet_emissions_state$Year == first_proj_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]+fleet_emissions_state$Tire_PM25[which(fleet_emissions_state$Year == first_proj_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[k])])*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
+                scenario$PM25[intersect(index_fleet, index_county)] <- (fleet_emissions_state$Brake_PM25[which(fleet_emissions_state$Year == year_break & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]+fleet_emissions_state$Brake_PM25[which(fleet_emissions_state$Year == year_break & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]+fleet_emissions_state$Tire_PM25[which(fleet_emissions_state$Year == year_break & fleet_emissions_state$State == states_correspondence$COBRA_code[k ])])*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
               } else if (i == "NH3") {
                 baseline$NH3[intersect(index_fleet, index_county)] <- fleet_emissions_state$NOx[which(fleet_emissions_state$Year == first_proj_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]*county_pop_factor/length(scenario$NH3[intersect(index_fleet, index_county)])
-                scenario$NH3[intersect(index_fleet, index_county)] <- fleet_emissions_state$NOx[which(fleet_emissions_state$Year == last_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]*county_pop_factor/length(scenario$NH3[intersect(index_fleet, index_county)])
+                scenario$NH3[intersect(index_fleet, index_county)] <- fleet_emissions_state$NOx[which(fleet_emissions_state$Year == year_break & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]*county_pop_factor/length(scenario$NH3[intersect(index_fleet, index_county)])
               } else if (i == "VOC") {
                 baseline$VOC[intersect(index_fleet, index_county)] <- fleet_emissions_state$VOC[which(fleet_emissions_state$Year == first_proj_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]*county_pop_factor/length(scenario$VOC[intersect(index_fleet, index_county)])
-                scenario$VOC[intersect(index_fleet, index_county)] <- fleet_emissions_state$VOC[which(fleet_emissions_state$Year == last_yr & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]*county_pop_factor/length(scenario$VOC[intersect(index_fleet, index_county)])
+                scenario$VOC[intersect(index_fleet, index_county)] <- fleet_emissions_state$VOC[which(fleet_emissions_state$Year == year_break & fleet_emissions_state$State == states_correspondence$COBRA_code[k])]*county_pop_factor/length(scenario$VOC[intersect(index_fleet, index_county)])
               }
             }
           }
@@ -397,7 +404,8 @@ cobra_health_impact_f <- function(state_resolved_fleet_direct_emissions, fleet_e
     E <- paste0(results_path, "/COBRA_results/COBRA_aggregated.csv")
     F <- "YES"
     G <- 2023
-    command <- paste0(executable_path, ' -d ', db_path, ' -b', A, ' -c ', B, ' ', C, ' ', D, ' -o ', E, ' --pct3 ', F, ' -y ', G)
+    command <- paste0(executable_path, ' -d ', db_path, ' -b', A, ' -c ', B, ' ', C, ' ', D, ' -o ', E, ' --pct3 ', F, ' -y ', G, "\n")
+    #command <- paste0(executable_path, ' -d ', db_path, ' -b', A, ' -c ', B, ' ', C, ' ', D, ' -o ', E, ' --pct3 ', F, ' -y ', G)
     path <- paste0(getwd(), "/inputs/air_quality/COBRA_batch_aggregated.bat")
     write(command, file = path)
     path <- paste0(getwd(), "/inputs/air_quality/COBRA_batch_aggregated.bat")
@@ -436,13 +444,19 @@ cobra_health_impact_f <- function(state_resolved_fleet_direct_emissions, fleet_e
         E <- paste0(results_path, "/COBRA_results/COBRA_breakdown_", i, "_", j, ".csv")
         F <- "YES"
         G <- 2023
-        command <- paste0(executable_path, ' -d ', db_path, ' -b', A, ' -c ', B, ' ', C, ' ', D, ' -o ', E, ' --pct3 ', F, ' -y ', G)
-        path <- paste0(getwd(), "/inputs/air_quality/COBRA_batch_pollutants_breakdown.bat")
         if (m == 1) {
-          write(command, file = path)
+          command <- paste0(executable_path, ' -d ', db_path, ' -b', A, ' -c ', B, ' ', C, ' ', D, ' -o ', E, ' --pct3 ', F, ' -y ', G, "\n")
         } else {
-          write(command, file = path, append = TRUE)
+          command <- paste0(command, executable_path, ' -d ', db_path, ' -b', A, ' -c ', B, ' ', C, ' ', D, ' -o ', E, ' --pct3 ', F, ' -y ', G, "\n")
         }
+        #command <- paste0(executable_path, ' -d ', db_path, ' -b', A, ' -c ', B, ' ', C, ' ', D, ' -o ', E, ' --pct3 ', F, ' -y ', G)
+        path <- paste0(getwd(), "/inputs/air_quality/COBRA_batch_pollutants_breakdown.bat")
+        writeLines(command, path, sep = "\n")
+        #if (m == 1) {
+        #  write(command, file = path)
+        #} else {
+        #  write(command, file = path, append = TRUE)
+        #}
       }
     }
     path <- paste0(getwd(), "/inputs/air_quality/COBRA_batch_pollutants_breakdown.bat")
@@ -474,25 +488,28 @@ cobra_health_impact_f <- function(state_resolved_fleet_direct_emissions, fleet_e
   # Calculate the non-monetized health benefits
   
   # by year and by county + by year and by state + overall health benefits
-  cobra_output_file <- add_column(cobra_output_file, 'X..Acute.Myocardial.Infarction..Nonfatal')
-  cobra_output_file <- add_column(cobra_output_file, 'X..Mortality..All.Cause')
-  cobra_output_file <- add_column(cobra_output_file, 'Acute.Myocardial.Infarction..Nonfatal')
-  cobra_output_file <- add_column(cobra_output_file, 'Mortality..All.Cause')
+  #cobra_output_file <- add_column(cobra_output_file, 'X..Acute.Myocardial.Infarction..Nonfatal')
+  #cobra_output_file <- add_column(cobra_output_file, 'X..Mortality..All.Cause')
+  #cobra_output_file <- add_column(cobra_output_file, 'Acute.Myocardial.Infarction..Nonfatal')
+  #cobra_output_file <- add_column(cobra_output_file, 'Mortality..All.Cause')
   #cobra_output_file$`"X..Acute.Myocardial.Infarction..Nonfatal"` <- (cobra_output_file$X..Acute.Myocardial.Infarction..Nonfatal..high.+cobra_output_file$X..Acute.Myocardial.Infarction..Nonfatal..low.)
   #cobra_output_file$`"X..Mortality..All.Cause"` <- (cobra_output_file$X..Mortality..All.Cause..low.+cobra_output_file$X..Mortality..All.Cause..high.)
   #cobra_output_file$`"X..Acute.Myocardial.Infarction..Nonfatal"` <- (cobra_output_file$X..Acute.Myocardial.Infarction..Nonfatal..high.+cobra_output_file$X..Acute.Myocardial.Infarction..Nonfatal..low.)/2
   #cobra_output_file$`"X..Mortality..All.Cause"` <- (cobra_output_file$X..Mortality..All.Cause..low.+cobra_output_file$X..Mortality..All.Cause..high.)/2
-  cobra_output_file$`"X..Acute.Myocardial.Infarction..Nonfatal"` <- cobra_output_file$X..Acute.Myocardial.Infarction..Nonfatal..high.
-  cobra_output_file$`"X..Mortality..All.Cause"` <- cobra_output_file$X..Mortality..All.Cause..high.
-  cobra_output_file$`"Acute.Myocardial.Infarction..Nonfatal"` <- cobra_output_file$Acute.Myocardial.Infarction..Nonfatal..high.
-  cobra_output_file$`"Mortality..All.Cause"` <- cobra_output_file$Mortality..All.Cause..high.
+  #cobra_output_file$`"X..Acute.Myocardial.Infarction..Nonfatal"` <- cobra_output_file$X..Acute.Myocardial.Infarction..Nonfatal..high.
+  #cobra_output_file$`"X..Mortality..All.Cause"` <- cobra_output_file$X..Mortality..All.Cause..high.
+  #cobra_output_file$`"Acute.Myocardial.Infarction..Nonfatal"` <- cobra_output_file$Acute.Myocardial.Infarction..Nonfatal..high.
+  #cobra_output_file$`"Mortality..All.Cause"` <- cobra_output_file$Mortality..All.Cause..high.
   # Calculation of the real benefits, i.e. not monetized
-  non_monetized_benefits <- cobra_output_file[which(!is.na(cobra_output_file$Destination)),which(!grepl(pattern = "X..", colnames(cobra_output_file)) & !grepl(pattern = "low", colnames(cobra_output_file)) & !grepl(pattern = "high", colnames(cobra_output_file)))]
+  mortality_by_county <- data.frame(Year = cobra_output_file$year, State = cobra_output_file$state_id, County = NA, Destination = cobra_output_file$Destination, FIPS = NA, Avoided_deaths_High = cobra_output_file$Mortality..All.Cause..high., Avoided_deaths_Low = cobra_output_file$Mortality..All.Cause..low.)
+  non_monetized_benefits <- cobra_output_file[which(!is.na(cobra_output_file$Destination)),which(!grepl(pattern = "X..", colnames(cobra_output_file)))]
   non_monetized_benefits <- non_monetized_benefits[,6:length(colnames(non_monetized_benefits))]
   non_monetized_benefits <- select(non_monetized_benefits, -c(state_id))
   non_monetized_benefits <- aggregate(.~year, data = non_monetized_benefits, FUN = sum)
   colnames(non_monetized_benefits) <- c("Year",
-                                        "Acute_Bronchitis", 
+                                        "Acute_Bronchitis",
+                                        "Acute_Myocardial_Infarction_Nonfatal_High",
+                                        "Acute_Myocardial_Infarction_Nonfatal_Low",
                                         "Asthma_Exacerbation_Cough",
                                         "Asthma_Exacerbation_Shortness_of_Breath",
                                         "Asthma_Exacerbation_Wheeze",
@@ -503,28 +520,31 @@ cobra_health_impact_f <- function(state_resolved_fleet_direct_emissions, fleet_e
                                         "HA_Chronic_Lung_Disease",
                                         "Lower_Respiratory_Symptoms",
                                         "Minor_Restricted_Activity_Days",
+                                        "Mortality_All_Cause_Low",
+                                        "Mortality_All_Cause_High",
                                         "Infant_Mortality",
                                         "Upper_Respiratory_Symptoms",
-                                        "Work_Loss_Days",
-                                        "Acute_Myocardial_Infarction_Nonfatal",
-                                        "Mortality_All_Cause")
+                                        "Work_Loss_Days")
   # Breakdown the monetized benefit by source
   benefits_breakdown <- cobra_output_file[!is.na(cobra_output_file$Destination),]
-  benefits_breakdown <- select(benefits_breakdown, c(colnames(cobra_output_file)[which(grepl(pattern = "X..", colnames(cobra_output_file)) & !grepl(pattern = "low", colnames(cobra_output_file)) & !grepl(pattern = "high", colnames(cobra_output_file)))], year))
+  benefits_breakdown <- select(benefits_breakdown, c(colnames(cobra_output_file)[which(grepl(pattern = "X..", colnames(cobra_output_file)))], year))
   benefits_breakdown <- aggregate(.~year, data = benefits_breakdown, FUN = sum)
   colnames(benefits_breakdown) <- c("Year",
                                     "Acute_Bronchitis", 
+                                    "Acute_Myocardial_Infarction_Nonfatal_High",
+                                    "Acute_Myocardial_Infarction_Nonfatal_Low",
                                     "Asthma_Exacerbation",
                                     "Emergency_Room_Visits_Asthma",
                                     "CVD_Hosp_Adm",
                                     "Resp_Hosp_Adm",
                                     "Lower_Respiratory_Symptoms",
                                     "Minor_Restricted_Activity_Days",
+                                    "Mortality_All_Cause_Low",
+                                    "Mortality_All_Cause_High",
                                     "Infant_Mortality",
                                     "Upper_Respiratory_Symptoms",
-                                    "Work_Loss_Days",
-                                    "Acute_Myocardial_Infarction_Nonfatal",
-                                    "Mortality_All_Cause")
+                                    "Work_Loss_Days"
+                                    )
   if (calculation_mode == "default" | calculation_mode == "all") {
     print("Calculating the health benefits by county")
     FIPS_counties <- get_input_f(input_name = 'COBRA_SOURCEINDX to FIPS crosswalk')
@@ -532,98 +552,135 @@ cobra_health_impact_f <- function(state_resolved_fleet_direct_emissions, fleet_e
       add_column("State" = NA) %>%
       add_column("County" = NA) %>%
       add_column("FIPS" = NA) %>%
-      add_column("Total_health_benefits" = NA)
-    health_benefits_by_county$Total_health_benefits <- rowSums(cobra_output_file[which(grepl(pattern = "X..", colnames(cobra_output_file)) & !grepl(pattern = "low", colnames(cobra_output_file)) & !grepl(pattern = "high", colnames(cobra_output_file)))])
-    health_benefits_by_county <- select(health_benefits_by_county, c("Destination", "year", "State", "County", "FIPS", "Total_health_benefits"))
+      add_column("Total_health_benefits_Low" = NA) %>%
+      add_column("Total_health_benefits_High" = NA)
+    health_benefits_by_county$Total_health_benefits_Low <- rowSums(cobra_output_file[which(grepl(pattern = "X..", colnames(cobra_output_file)) & !grepl(pattern = "high", colnames(cobra_output_file)))])
+    health_benefits_by_county$Total_health_benefits_High <- rowSums(cobra_output_file[which(grepl(pattern = "X..", colnames(cobra_output_file)) & !grepl(pattern = "low", colnames(cobra_output_file)))])
+    health_benefits_by_county <- select(health_benefits_by_county, c("Destination", "year", "State", "County", "FIPS", "Total_health_benefits_Low", "Total_health_benefits_High"))
     for (i in 1:dim(FIPS_counties)[1]) {
       health_benefits_by_county$State[which(health_benefits_by_county$Destination == FIPS_counties$SOURCEINDX[i])] <- FIPS_counties$STNAME[i]
       health_benefits_by_county$County[which(health_benefits_by_county$Destination == FIPS_counties$SOURCEINDX[i])] <- FIPS_counties$CYNAME[i]
       health_benefits_by_county$FIPS[which(health_benefits_by_county$Destination == FIPS_counties$SOURCEINDX[i])] <- FIPS_counties$FIPS[i]
+      mortality_by_county$State[which(mortality_by_county$Destination == FIPS_counties$SOURCEINDX[i])] <- FIPS_counties$STNAME[i]
+      mortality_by_county$County[which(mortality_by_county$Destination == FIPS_counties$SOURCEINDX[i])] <- FIPS_counties$CYNAME[i]
+      mortality_by_county$FIPS[which(mortality_by_county$Destination == FIPS_counties$SOURCEINDX[i])] <- FIPS_counties$FIPS[i]
     }
     health_benefits_by_county <- select(health_benefits_by_county, -c("Destination"))
+    mortality_by_county <- select(mortality_by_county, -c("Destination"))
+    mortality_by_county <- filter(mortality_by_county, !is.na(mortality_by_county$FIPS))
     colnames(health_benefits_by_county)[1] <- c("Year")
     health_benefits_by_state <- data.frame() %>%
       add_column("Year" = NA) %>%
       add_column("State" = NA) %>%
-      add_column("Total_health_benefits" = NA)
+      add_column("Total_health_benefits_Low" = NA) %>%
+      add_column("Total_health_benefits_High" = NA)
     health_benefits <- data.frame() %>%
       add_column("Year" = NA) %>%
-      add_column("Total_health_benefits" = NA)
+      add_column("Total_health_benefits_Low" = NA) %>%
+      add_column("Total_health_benefits_High" = NA)
     for (i in unique(health_benefits_by_county$FIPS)) {
       temp <- which(health_benefits_by_county$FIPS == i)
       health_benefits_by_county <- add_row(health_benefits_by_county, Year = "0", 
                                            State = unique(health_benefits_by_county$State[temp]),
                                            County = unique(health_benefits_by_county$County[temp]),
                                            FIPS = i,
-                                           Total_health_benefits = sum(health_benefits_by_county$Total_health_benefits[temp]))
+                                           Total_health_benefits_Low = sum(health_benefits_by_county$Total_health_benefits_Low[temp]),
+                                           Total_health_benefits_High = sum(health_benefits_by_county$Total_health_benefits_High[temp]))
     }
     health_benefits_by_county <- filter(health_benefits_by_county, !is.na(health_benefits_by_county$FIPS))
     health_benefits_by_county$FIPS[which(health_benefits_by_county$FIPS < 10000)] <- paste0("0", health_benefits_by_county$FIPS[which(health_benefits_by_county$FIPS < 10000)])
     print("Calculating the health benefits by state and nationwide")
     n <- 0
     for (i in (first_proj_yr+1):last_yr) {
-      health_benefits <- add_row(health_benefits, Year = i, Total_health_benefits = sum(cobra_output_file[which(is.na(cobra_output_file$Destination) & cobra_output_file$year == i), which(grepl(pattern = "X..", colnames(cobra_output_file)) & !grepl(pattern = "low", colnames(cobra_output_file)) & !grepl(pattern = "high", colnames(cobra_output_file)))]))
+      health_benefits <- add_row(health_benefits, Year = i, Total_health_benefits_Low = sum(cobra_output_file[which(is.na(cobra_output_file$Destination) & cobra_output_file$year == i), which(grepl(pattern = "X..", colnames(cobra_output_file)) & !grepl(pattern = "high", colnames(cobra_output_file)))]), Total_health_benefits_High = sum(cobra_output_file[which(is.na(cobra_output_file$Destination) & cobra_output_file$year == i), which(grepl(pattern = "X..", colnames(cobra_output_file)) & !grepl(pattern = "low", colnames(cobra_output_file)))]))
       for (j in 1:length(states_correspondence$COBRA_code)) {
         n <- n+1
-        health_benefits_by_state <- add_row(health_benefits_by_state, Year = i, State = states_correspondence$COBRA_code[j], Total_health_benefits = sum(cobra_output_file[which(cobra_output_file$state_id == states_correspondence$COBRA_code[j] & cobra_output_file$year == i), which(grepl(pattern = "X..", colnames(cobra_output_file)) & !grepl(pattern = "low", colnames(cobra_output_file)) & !grepl(pattern = "high", colnames(cobra_output_file)))]))
+        health_benefits_by_state <- add_row(health_benefits_by_state, Year = i, State = states_correspondence$COBRA_code[j], Total_health_benefits_Low = sum(cobra_output_file[which(cobra_output_file$state_id == states_correspondence$COBRA_code[j] & cobra_output_file$year == i), which(grepl(pattern = "X..", colnames(cobra_output_file)) & !grepl(pattern = "high", colnames(cobra_output_file)))]), Total_health_benefits_High = sum(cobra_output_file[which(cobra_output_file$state_id == states_correspondence$COBRA_code[j] & cobra_output_file$year == i), which(grepl(pattern = "X..", colnames(cobra_output_file)) & !grepl(pattern = "low", colnames(cobra_output_file)))]))
       }
     }
     for (i in 1:length(states_correspondence$COBRA_code)) {
-      temp <- c(0, states_correspondence$COBRA_code[i], sum(health_benefits_by_state$Total_health_benefits[which(health_benefits_by_state$State == states_correspondence$COBRA_code[i])]))
+      temp <- c(0, states_correspondence$COBRA_code[i], sum(health_benefits_by_state$Total_health_benefits_Low[which(health_benefits_by_state$State == states_correspondence$COBRA_code[i])]), sum(health_benefits_by_state$Total_health_benefits_High[which(health_benefits_by_state$State == states_correspondence$COBRA_code[i])]))
       health_benefits_by_state <- rbind(health_benefits_by_state, temp)
       health_benefits_by_state$State[which(health_benefits_by_state$State == states_correspondence$COBRA_code[i])] <- states_correspondence$name_state[i]
     }
     # Add the discounted benefits
-    health_benefits <- add_column(health_benefits, "Cumulative_before_discount_benefits" = NA)
-    health_benefits <- add_column(health_benefits, "Cumulative_benefits" = NA)
-    health_benefits <- add_column(health_benefits, "Total_benefits" = NA)
-    health_benefits_by_state <- add_column(health_benefits_by_state, "Cumulative_before_discount_benefits" = NA)
-    health_benefits_by_state <- add_column(health_benefits_by_state, "Cumulative_benefits" = NA)
-    health_benefits_by_state <- add_column(health_benefits_by_state, "Total_benefits" = NA)
-    health_benefits_by_county <- add_column(health_benefits_by_county, "Cumulative_before_discount_benefits" = NA)
-    health_benefits_by_county <- add_column(health_benefits_by_county, "Cumulative_benefits" = NA)
-    health_benefits_by_county <- add_column(health_benefits_by_county, "Total_benefits" = NA)
+    health_benefits <- add_column(health_benefits, "Cumulative_before_discount_benefits_Low" = NA) %>%
+      add_column("Cumulative_before_discount_benefits_High" = NA) %>%
+      add_column("Cumulative_benefits_Low" = NA) %>%
+      add_column("Cumulative_benefits_High" = NA) %>%
+      add_column("Total_benefits_Low" = NA) %>%
+      add_column("Total_benefits_High" = NA)
+    health_benefits_by_state <- add_column(health_benefits_by_state, "Cumulative_before_discount_benefits_Low" = NA) %>%
+      add_column("Cumulative_before_discount_benefits_High" = NA) %>%
+      add_column("Cumulative_benefits_Low" = NA) %>%
+      add_column("Cumulative_benefits_High" = NA) %>%
+      add_column("Total_benefits_Low" = NA) %>%
+      add_column("Total_benefits_High" = NA)
+    health_benefits_by_county <- add_column(health_benefits_by_county, "Cumulative_before_discount_benefits_Low" = NA) %>%
+      add_column("Cumulative_before_discount_benefits_High" = NA) %>%
+      add_column("Cumulative_benefits_Low" = NA) %>%
+      add_column("Cumulative_benefits_High" = NA) %>%
+      add_column("Total_benefits_Low" = NA) %>%
+      add_column("Total_benefits_High" = NA)
     years <- unique(health_benefits$Year)
     states <- unique(health_benefits_by_state$State)
     counties <- unique(health_benefits_by_county$FIPS)
     for (i in 1:length(years)) {
       if (i > 1) {
-        health_benefits$Cumulative_before_discount_benefits[i] <- health_benefits$Cumulative_before_discount_benefits[i-1]+health_benefits$Total_health_benefits[i]
-        health_benefits$Cumulative_benefits[i] <- health_benefits$Cumulative_before_discount_benefits[i]*1/((1+discount_rate/100)^(i))
-        health_benefits$Total_benefits[i] <- health_benefits$Total_benefits[i-1]+health_benefits$Cumulative_benefits[i]
+        health_benefits$Cumulative_before_discount_benefits_Low[i] <- health_benefits$Cumulative_before_discount_benefits_Low[i-1]+health_benefits$Total_health_benefits_Low[i]
+        health_benefits$Cumulative_before_discount_benefits_High[i] <- health_benefits$Cumulative_before_discount_benefits_High[i-1]+health_benefits$Total_health_benefits_High[i]
+        health_benefits$Cumulative_benefits_Low[i] <- health_benefits$Cumulative_before_discount_benefits_Low[i]*1/((1+discount_rate/100)^(i))
+        health_benefits$Cumulative_benefits_High[i] <- health_benefits$Cumulative_before_discount_benefits_High[i]*1/((1+discount_rate/100)^(i))
+        health_benefits$Total_benefits_Low[i] <- health_benefits$Total_benefits_Low[i-1]+health_benefits$Cumulative_benefits_Low[i]
+        health_benefits$Total_benefits_High[i] <- health_benefits$Total_benefits_High[i-1]+health_benefits$Cumulative_benefits_High[i]
       } else {
-        health_benefits$Cumulative_before_discount_benefits[i] <- health_benefits$Total_health_benefits[i]
-        health_benefits$Cumulative_benefits[i] <- health_benefits$Cumulative_before_discount_benefits[i]*1/((1+discount_rate/100)^(i))
-        health_benefits$Total_benefits[i] <- health_benefits$Cumulative_benefits[i]
+        health_benefits$Cumulative_before_discount_benefits_Low[i] <- health_benefits$Total_health_benefits_Low[i]
+        health_benefits$Cumulative_before_discount_benefits_High[i] <- health_benefits$Total_health_benefits_High[i]
+        health_benefits$Cumulative_benefits_Low[i] <- health_benefits$Cumulative_before_discount_benefits_Low[i]*1/((1+discount_rate/100)^(i))
+        health_benefits$Cumulative_benefits_High[i] <- health_benefits$Cumulative_before_discount_benefits_High[i]*1/((1+discount_rate/100)^(i))
+        health_benefits$Total_benefits_Low[i] <- health_benefits$Cumulative_benefits_Low[i]
+        health_benefits$Total_benefits_High[i] <- health_benefits$Cumulative_benefits_High[i]
       }
       for (j in 1:length(states)) {
         index_state <- which(health_benefits_by_state$State == states[j] & health_benefits_by_state$Year == years[i])
         index_state_previous <- which(health_benefits_by_state$State == states[j] & health_benefits_by_state$Year == years[i-1])
         if (i > 1) {
-          health_benefits_by_state$Cumulative_before_discount_benefits[index_state] <- health_benefits_by_state$Cumulative_before_discount_benefits[index_state_previous]+health_benefits_by_state$Total_health_benefits[index_state]
-          health_benefits_by_state$Cumulative_benefits[index_state] <- health_benefits_by_state$Cumulative_before_discount_benefits[index_state]*1/((1+discount_rate/100)^(i))
-          health_benefits_by_state$Total_benefits[index_state] <- health_benefits_by_state$Total_benefits[index_state_previous] + health_benefits_by_state$Cumulative_benefits[index_state]
+          health_benefits_by_state$Cumulative_before_discount_benefits_Low[index_state] <- health_benefits_by_state$Cumulative_before_discount_benefits_Low[index_state_previous]+health_benefits_by_state$Total_health_benefits_Low[index_state]
+          health_benefits_by_state$Cumulative_before_discount_benefits_High[index_state] <- health_benefits_by_state$Cumulative_before_discount_benefits_High[index_state_previous]+health_benefits_by_state$Total_health_benefits_High[index_state]
+          health_benefits_by_state$Cumulative_benefits_Low[index_state] <- health_benefits_by_state$Cumulative_before_discount_benefits_Low[index_state]*1/((1+discount_rate/100)^(i))
+          health_benefits_by_state$Cumulative_benefits_High[index_state] <- health_benefits_by_state$Cumulative_before_discount_benefits_High[index_state]*1/((1+discount_rate/100)^(i))
+          health_benefits_by_state$Total_benefits_Low[index_state] <- health_benefits_by_state$Total_benefits_Low[index_state_previous] + health_benefits_by_state$Cumulative_benefits_Low[index_state]
+          health_benefits_by_state$Total_benefits_High[index_state] <- health_benefits_by_state$Total_benefits_High[index_state_previous] + health_benefits_by_state$Cumulative_benefits_High[index_state]
         } else {
-          health_benefits_by_state$Cumulative_before_discount_benefits[index_state] <- health_benefits_by_state$Total_health_benefits[index_state]
-          health_benefits_by_state$Cumulative_benefits[index_state] <- health_benefits_by_state$Cumulative_before_discount_benefits[index_state]*1/((1+discount_rate/100)^(i))
-          health_benefits_by_state$Total_benefits[index_state] <- health_benefits_by_state$Cumulative_benefits[index_state]
+          health_benefits_by_state$Cumulative_before_discount_benefits_Low[index_state] <- health_benefits_by_state$Total_health_benefits_Low[index_state]
+          health_benefits_by_state$Cumulative_before_discount_benefits_High[index_state] <- health_benefits_by_state$Total_health_benefits_High[index_state]
+          health_benefits_by_state$Cumulative_benefits_Low[index_state] <- health_benefits_by_state$Cumulative_before_discount_benefits_Low[index_state]*1/((1+discount_rate/100)^(i))
+          health_benefits_by_state$Cumulative_benefits_High[index_state] <- health_benefits_by_state$Cumulative_before_discount_benefits_High[index_state]*1/((1+discount_rate/100)^(i))
+          health_benefits_by_state$Total_benefits_Low[index_state] <- health_benefits_by_state$Cumulative_benefits_Low[index_state]
+          health_benefits_by_state$Total_benefits_High[index_state] <- health_benefits_by_state$Cumulative_benefits_High[index_state]
         }
       }
       for (j in 1:length(counties)) {
         index_county <- which(health_benefits_by_county$FIPS == counties[j] & health_benefits_by_county$Year == years[i])
         index_county_previous <- which(health_benefits_by_county$FIPS == counties[j] & health_benefits_by_county$Year == years[i-1])
         if (i > 1) {
-          health_benefits_by_county$Cumulative_before_discount_benefits[index_county] <- health_benefits_by_county$Cumulative_before_discount_benefits[index_county_previous]+health_benefits_by_county$Total_health_benefits[index_county]
-          health_benefits_by_county$Cumulative_benefits[index_county] <- health_benefits_by_county$Cumulative_before_discount_benefits[index_county]*1/((1+discount_rate/100)^(i))
-          health_benefits_by_county$Total_benefits[index_county] <- health_benefits_by_county$Total_benefits[index_county_previous] + health_benefits_by_county$Cumulative_benefits[index_county]
+          health_benefits_by_county$Cumulative_before_discount_benefits_Low[index_county] <- health_benefits_by_county$Cumulative_before_discount_benefits_Low[index_county_previous]+health_benefits_by_county$Total_health_benefits_Low[index_county]
+          health_benefits_by_county$Cumulative_before_discount_benefits_High[index_county] <- health_benefits_by_county$Cumulative_before_discount_benefits_High[index_county_previous]+health_benefits_by_county$Total_health_benefits_High[index_county]
+          health_benefits_by_county$Cumulative_benefits_Low[index_county] <- health_benefits_by_county$Cumulative_before_discount_benefits_Low[index_county]*1/((1+discount_rate/100)^(i))
+          health_benefits_by_county$Cumulative_benefits_High[index_county] <- health_benefits_by_county$Cumulative_before_discount_benefits_High[index_county]*1/((1+discount_rate/100)^(i))
+          health_benefits_by_county$Total_benefits_Low[index_county] <- health_benefits_by_county$Total_benefits_Low[index_county_previous] + health_benefits_by_county$Cumulative_benefits_Low[index_county]
+          health_benefits_by_county$Total_benefits_High[index_county] <- health_benefits_by_county$Total_benefits_High[index_county_previous] + health_benefits_by_county$Cumulative_benefits_High[index_county]
         } else {
-          health_benefits_by_county$Cumulative_before_discount_benefits[index_county] <- health_benefits_by_county$Total_health_benefits[index_county]
-          health_benefits_by_county$Cumulative_benefits[index_county] <- health_benefits_by_county$Cumulative_before_discount_benefits[index_county]*1/((1+discount_rate/100)^(i))
-          health_benefits_by_county$Total_benefits[index_county] <- health_benefits_by_county$Cumulative_benefits[index_county]
+          health_benefits_by_county$Cumulative_before_discount_benefits_Low[index_county] <- health_benefits_by_county$Total_health_benefits_Low[index_county]
+          health_benefits_by_county$Cumulative_before_discount_benefits_High[index_county] <- health_benefits_by_county$Total_health_benefits_High[index_county]
+          health_benefits_by_county$Cumulative_benefits_Low[index_county] <- health_benefits_by_county$Cumulative_before_discount_benefits_Low[index_county]*1/((1+discount_rate/100)^(i))
+          health_benefits_by_county$Cumulative_benefits_High[index_county] <- health_benefits_by_county$Cumulative_before_discount_benefits_High[index_county]*1/((1+discount_rate/100)^(i))
+          health_benefits_by_county$Total_benefits_Low[index_county] <- health_benefits_by_county$Cumulative_benefits_Low[index_county]
+          health_benefits_by_county$Total_benefits_High[index_county] <- health_benefits_by_county$Cumulative_benefits_High[index_county]
         }
       }
     }
-    health_benefits <- add_row(health_benefits, Year = 0, Total_health_benefits = sum(health_benefits$Total_health_benefits), Cumulative_before_discount_benefits = sum(health_benefits$Cumulative_before_discount_benefits), Cumulative_benefits = sum(health_benefits$Cumulative_benefits), Total_benefits = sum(health_benefits$Total_benefits))
+    health_benefits <- add_row(health_benefits, Year = 0, Total_health_benefits_Low = sum(health_benefits$Total_health_benefits_Low), Total_health_benefits_High = sum(health_benefits$Total_health_benefits_High), Cumulative_before_discount_benefits_Low = sum(health_benefits$Cumulative_before_discount_benefits_Low), Cumulative_before_discount_benefits_High = sum(health_benefits$Cumulative_before_discount_benefits_High), Cumulative_benefits_Low = sum(health_benefits$Cumulative_benefits_Low), Cumulative_benefits_High = sum(health_benefits$Cumulative_benefits_High), Total_benefits_Low = sum(health_benefits$Total_benefits_Low), Total_benefits_High = sum(health_benefits$Total_benefits_High))
     # Export the health benefits files
     print("Exporting the health benefits files")
     write.csv(health_benefits, paste0(results_path, "/health_benefits.csv"))
@@ -631,6 +688,7 @@ cobra_health_impact_f <- function(state_resolved_fleet_direct_emissions, fleet_e
     write.csv(health_benefits_by_county, paste0(results_path, "/health_benefits_by_county.csv"))
     write.csv(non_monetized_benefits, paste0(results_path, "/non_monetized_health_benefits.csv"))
     write.csv(benefits_breakdown, paste0(results_path, "/monetized_benefits_breakdown.csv"))
+    write.csv(mortality_by_county, paste0(results_path, "/avoided_deaths_by_county.csv"))
     print("Health impact files generated")
   } 
   if (calculation_mode == "aggregated" | calculation_mode == "all") {
