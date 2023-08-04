@@ -12,8 +12,20 @@ do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_ben
 do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "ZEV_all_NREL_high_decarb"))
 do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "EV100_NREL_Intermediate"))
 
+do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "NoCars"))
 
-# Test high and low brake wear
+#Breakdown and aggregated results in 2030 and 2050
+do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "NoEVs_NREL_intermediate_aggregated_2030"))
+do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "NoEVs_NREL_intermediate_aggregated_2050"))
+do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "NoEVs_NREL_intermediate_breakdown_2030"))
+do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "ZEV_all_NREL_intermediate_breakdown_2030"))
+do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "NoEVs_NREL_intermediate_breakdown_2050"))
+do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "ZEV_all_NREL_intermediate_breakdown_2050"))
+do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "EV100_NREL_Intermediate_breakdown_2030"))
+do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "EV100_NREL_Intermediate_breakdown_2050"))
+
+
+ # Test high and low brake wear
 do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "ZEV_all_NREL_intermediate_BW_high"))
 do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "ZEV_all_NREL_intermediateBW_low"))
 
