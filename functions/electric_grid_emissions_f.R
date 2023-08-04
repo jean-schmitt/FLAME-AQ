@@ -119,9 +119,13 @@ electric_grid_emissions_f <- function(fleet_composition, fleet_elec_use_tot_stat
         EF_NOx <- EF_elec_GREET$NOx[which(EF_elec_GREET$Technology == elec_techno_match$GREET[which(elec_techno_match$Own == missing_sources)] & EF_elec_GREET$`Emission type` == "Direct Combustion")]
         EF_So2 <- EF_elec_GREET$SOx[which(EF_elec_GREET$Technology == elec_techno_match$GREET[which(elec_techno_match$Own == missing_sources)] & EF_elec_GREET$`Emission type` == "Direct Combustion")]
         EF_PM25 <- EF_elec_GREET$PM2.5[which(EF_elec_GREET$Technology == elec_techno_match$GREET[which(elec_techno_match$Own == missing_sources)] & EF_elec_GREET$`Emission type` == "Direct Combustion")]
+        EF_VOC <- EF_elec_GREET$VOC[which(EF_elec_GREET$Technology == elec_techno_match$GREET[which(elec_techno_match$Own == missing_sources)] & EF_elec_GREET$`Emission type` == "Direct Combustion")]
+        EF_NH3 <- 0
         EF_elec_egrid[nrow(EF_elec_egrid)+1,] <- c("Average", tolower(i), "NOx", EF_NOx, "g/kWh")
         EF_elec_egrid[nrow(EF_elec_egrid)+1,] <- c("Average", tolower(i), "SO2", EF_So2, "g/kWh")
         EF_elec_egrid[nrow(EF_elec_egrid)+1,] <- c("Average", tolower(i), "PM25", EF_PM25, "g/kWh")
+        EF_elec_egrid[nrow(EF_elec_egrid)+1,] <- c("Average", tolower(i), "VOC", EF_VOC, "g/kWh")
+        EF_elec_egrid[nrow(EF_elec_egrid)+1,] <- c("Average", tolower(i), "NH3", EF_NH3, "g/kWh")
         elec_techno_match$eGRID[which(elec_techno_match$Own == i)] <- tolower(i)
       }
       EF_elec_egrid$Emission_rate <- as.numeric(EF_elec_egrid$Emission_rate)
