@@ -19,9 +19,9 @@ fuel_wtp_ef_f <- function(fleet_fuel_use_tot, fleet_fuel_use_tot_state, first_pr
       fuel_prod_US[nrow(fuel_prod_US)+1,] <- list(j, i, "Available", value, "L", 2021)
     }
   }
-  if (fleet_id == "No_LDVs") {
-    fleet_fuel_use_tot_state$Value[which(fleet_fuel_use_tot_state$Year > first_proj_yr)] <- 1
-  }
+  #if (fleet_id == "No_LDVs") {
+  #  fleet_fuel_use_tot_state$Value[which(fleet_fuel_use_tot_state$Year > first_proj_yr)] <- 1
+  #}
   fleet_fuel_use_tot_padd <- fleet_fuel_use_tot_state %>%
     add_column("PADD" = NA) %>%
     filter(Fuel != "Hydrogen")
@@ -72,6 +72,10 @@ fuel_wtp_ef_f <- function(fleet_fuel_use_tot, fleet_fuel_use_tot_state, first_pr
       fraction_other <- 1-(fraction_gasoline+fraction_diesel)
       change_gasoline <- fuel_prod_US$Value[which(fuel_prod_US$Year == i & fuel_prod_US$PADD == j & fuel_prod_US$Fuel == "Gasoline" & fuel_prod_US$Origin == "Production")]/fuel_prod_US$Value[which(fuel_prod_US$Year == i-1 & fuel_prod_US$PADD == j & fuel_prod_US$Fuel == "Gasoline" & fuel_prod_US$Origin == "Production")]
       change_diesel <- fuel_prod_US$Value[which(fuel_prod_US$Year == i & fuel_prod_US$PADD == j & fuel_prod_US$Fuel == "Diesel" & fuel_prod_US$Origin == "Production")]/fuel_prod_US$Value[which(fuel_prod_US$Year == i-1 & fuel_prod_US$PADD == j & fuel_prod_US$Fuel == "Diesel" & fuel_prod_US$Origin == "Production")]
+      if (fleet_id == "No_LDVs") {
+        change_gasoline <- 0
+        change_diesel <- 0
+      }
       relative_refining <- (share_gasoline_ldv_cons*change_gasoline+(1-share_gasoline_ldv_cons))*fraction_gasoline+(share_diesel_ldv_cons*change_diesel+(1-share_diesel_ldv_cons))*fraction_diesel+fraction_other
       production_change_matrix[nrow(production_change_matrix)+1,] <- list(j, i, NA, relative_refining, NA, NA, NA)
     }
