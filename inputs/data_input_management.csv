@@ -121,3 +121,7 @@ NREL_elec_intermediate_no_coal,inputs/air_quality/NREL_elec_intermediate_no_coal
 BTW_high_brake,inputs/air_quality/BTW_high_brake.csv,,.csv,
 BTW_low_brake,inputs/air_quality/BTW_low_brake.csv,,.csv,
 NEI_plant_emissions,inputs/air_quality/NEI_plant_emissions.csv,,.csv,
+BTW_high_tire,inputs/air_quality/BTW_high_tire.csv,,.csv,
+BTW_low_tire,inputs/air_quality/BTW_low_tire.csv,,.csv,
+BTW_high_overall,inputs/air_quality/BTW_high_overall.csv,,.csv,
+BTW_low_overall,inputs/air_quality/BTW_low_overall.csv,,.csv,

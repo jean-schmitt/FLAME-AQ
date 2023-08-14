@@ -14,6 +14,23 @@ do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_ben
 
 do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "NoCars"))
 
+# Scenarios with different implementation timelines
+do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "ZEV_all_P1_NREL_intermediate"))
+do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "ZEV_all_P2_NREL_intermediate"))
+do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "ZEV_all_P5_NREL_intermediate"))
+do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "ZEV_all_P10_NREL_intermediate"))
+do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "ZEV_all_P15_NREL_intermediate"))
+do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "ZEV_all_NREL_intermediate"))
+
+# Sensitivity analysis for brake and tire wear emission factors
+do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "ZEV_all_NREL_intermediate"))
+do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "ZEV_all_NREL_intermediate_brake_low"))
+do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "ZEV_all_NREL_intermediate_brake_high"))
+do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "ZEV_all_NREL_intermediate_tire_low"))
+do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "ZEV_all_NREL_intermediate_tire_high"))
+do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "ZEV_all_NREL_intermediate_overall_low"))
+do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "ZEV_all_NREL_intermediate_overall_high"))
+
 #Breakdown and aggregated results in 2030 and 2050
 do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "NoEVs_NREL_intermediate_aggregated_2030"))
 do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "NoEVs_NREL_intermediate_aggregated_2050"))
@@ -47,13 +64,7 @@ do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_ben
 do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "ZEV_all_NREL_low_case_breakdown"))
 do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "ZEV_all_NREL_high_decarb_breakdown"))
 
-# Scenarios with different implementation timelines
-do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "ZEV_all_P1_NREL_intermediate"))
-do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "ZEV_all_P2_NREL_intermediate"))
-do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "ZEV_all_P5_NREL_intermediate"))
-do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "ZEV_all_P10_NREL_intermediate"))
-do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "ZEV_all_P15_NREL_intermediate"))
-do.call(write_scenario_f,list(outputs_path=outputs_path,function_tbc= "total_benefits_calculation_f",scen_tbc = "ZEV_all_NREL_intermediate"))
+
 
 
 

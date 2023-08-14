@@ -167,9 +167,6 @@ Average,ng,NOx,0.735,lb/MWh
 Average,coal,SO2,2.225,lb/MWh
 Average,oil,SO2,5.206,lb/MWh
 Average,ng,SO2,0.19156,lb/MWh
-Average,coal,PM25,0.1573,lb/MWh
-Average,oil,PM25,0.506623,lb/MWh
-Average,ng,PM25,0.050486,lb/MWh
 Average,nuclear,NOx,0,lb/MWh
 Average,nuclear,SO2,0,lb/MWh
 Average,nuclear,PM25,0,lb/MWh
@@ -353,3 +350,7 @@ Average,coal,VOC,0.025374966,lb/MWh
 Average,ng,NH3,0.030568616,lb/MWh
 Average,oil,NH3,0.149398961,lb/MWh
 Average,coal,NH3,0.008103887,lb/MWh
+Average,nuclear,VOC,0,lb/MWh
+Average,nuclear,NH3,0,lb/MWh
+Average,renewable,VOC,0,lb/MWh
+Average,renewable,NH3,0,lb/MWh
