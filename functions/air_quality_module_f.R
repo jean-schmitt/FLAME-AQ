@@ -69,6 +69,9 @@ air_quality_module_f <- function(fleet_composition_state_breakdown, fleet_compos
                                                              which(fleet_dataset$Size == normalized_total_emissions$Source[i]), 
                                                              which(fleet_dataset$Technology == normalized_total_emissions$Fuel[i]), 
                                                              which(fleet_dataset$Model_Year == normalized_total_emissions$ModelYr[i])))]
+    if (length(population) == 0) {
+      population <- 0
+    }
     return (list(temp = temp, population = population))
   })
   fleet_dataset <- arrange(fleet_dataset, Order_key)

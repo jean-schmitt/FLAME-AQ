@@ -1,5 +1,6 @@
-fuel_wtp_ef_f <- function(fleet_fuel_use_tot, fleet_fuel_use_tot_state, first_proj_yr = NA, share_diesel_ldv_cons = NA, share_gasoline_ldv_cons = NA, share_ldv_crude_oil = NA, share_prod_ethanol_fuel = NA, share_ng_cons_elec = NA, fleet_id = NA) {
+fuel_wtp_ef_f <- function(fleet_fuel_use_tot, fleet_fuel_use_tot_state, first_proj_yr = NA, share_diesel_ldv_cons = NA, share_gasoline_ldv_cons = NA, share_ldv_crude_oil = NA, share_prod_ethanol_fuel = NA, share_ng_cons_elec = NA, fleet_id = NA, scenario_id = NA) {
   attribute_f("fuel_wtp_ef_f")
+  results_path <- paste0(getwd(), "/outputs/air_quality/", Sys.Date(), "_", scenario_id, "_results")
   GIS_matching_matrix <- read.csv(paste0(getwd(), "/inputs/air_quality/GIS_matching_matrix.csv"))
   production_change_matrix <- data.frame(matrix(data = NA, nrow = 0, ncol = 7))
   colnames(production_change_matrix) <- c("PADD", "Year", "Rel_Demand", "Rel_Refining", "Rel_Crude_oil", "Rel_Ethanol", "Rel_Natural_Gas")
@@ -10,6 +11,7 @@ fuel_wtp_ef_f <- function(fleet_fuel_use_tot, fleet_fuel_use_tot_state, first_pr
   fuel_prod_US$Value <- as.numeric(fuel_prod_US$Value*159*1000)
   fuels <- c("Gasoline", "Diesel", "Ethanol", "Crude_oil")
   padds <- unique(fuel_prod_US$PADD)
+  # Synthesis of the flows in and out to calculate the available volume of fuels in each PADD in the year 2021
   for (i in fuels) {
     for (j in padds) {
       flows_in <- sum(fuel_prod_US$Value[which(fuel_prod_US$Fuel == i & fuel_prod_US$PADD == j & fuel_prod_US$Origin != "Exports" & fuel_prod_US$Origin != "Production")])
@@ -19,12 +21,10 @@ fuel_wtp_ef_f <- function(fleet_fuel_use_tot, fleet_fuel_use_tot_state, first_pr
       fuel_prod_US[nrow(fuel_prod_US)+1,] <- list(j, i, "Available", value, "L", 2021)
     }
   }
-  #if (fleet_id == "No_LDVs") {
-  #  fleet_fuel_use_tot_state$Value[which(fleet_fuel_use_tot_state$Year > first_proj_yr)] <- 1
-  #}
+  # Aggregation of the fuel data at the PADD level
   fleet_fuel_use_tot_padd <- fleet_fuel_use_tot_state %>%
     add_column("PADD" = NA) %>%
-    filter(Fuel != "Hydrogen")
+    filter(Fuel != "Hydrogen" & Fuel != "CNG & LPG")
   padds <- unique(GIS_matching_matrix$PADD)
   for (i in padds) {
     states <- unique(GIS_matching_matrix$ST_FIPS[which(GIS_matching_matrix$PADD == i)])
@@ -33,16 +33,35 @@ fuel_wtp_ef_f <- function(fleet_fuel_use_tot, fleet_fuel_use_tot_state, first_pr
   fleet_fuel_use_tot_padd <- filter(fleet_fuel_use_tot_padd, !is.na(fleet_fuel_use_tot_padd$PADD))
   fleet_fuel_use_tot_padd <- select(fleet_fuel_use_tot_padd, -c("State"))
   fleet_fuel_use_tot_padd <- aggregate(.~ Fuel + Year + Unit + PADD, data = fleet_fuel_use_tot_padd, FUN = sum) %>%
+    add_column("Non_LDV_demand" = 0) %>%
+    add_column("Total_demand" = 0) %>%
     add_column("Relative_demand_change" = NA)
+  # Calculation of the relative change in fuel demand, taking into account the use of fuel by other sectors (e.g., heavy duty vehicles)
   for (i in 1:dim(fleet_fuel_use_tot_padd)[1]) {
+    if (fleet_fuel_use_tot_padd$Fuel[i] == "Gasoline") {
+      ldv_factor <- share_gasoline_ldv_cons
+    } else if (fleet_fuel_use_tot_padd$Fuel[i] == "Diesel") {
+      ldv_factor <- share_diesel_ldv_cons
+    } else if (fleet_fuel_use_tot_padd$Fuel[i] == "Ethanol") {
+      ldv_factor <- share_prod_ethanol_fuel*share_gasoline_ldv_cons
+    }
     if (fleet_fuel_use_tot_padd$Year[i] == min(unique(fleet_fuel_use_tot_padd$Year))) {
       fleet_fuel_use_tot_padd$Relative_demand_change[i] <- 1
     } else {
-      fleet_fuel_use_tot_padd$Relative_demand_change[i] <- fleet_fuel_use_tot_padd$Value[i]/fleet_fuel_use_tot_padd$Value[which(fleet_fuel_use_tot_padd$Fuel == fleet_fuel_use_tot_padd$Fuel[i] &
+      consumption_non_ldv <- fleet_fuel_use_tot_padd$Value[which(fleet_fuel_use_tot_padd$Fuel == fleet_fuel_use_tot_padd$Fuel[i] &
+                                                                   fleet_fuel_use_tot_padd$Year ==  first_proj_yr &
+                                                                   fleet_fuel_use_tot_padd$PADD == fleet_fuel_use_tot_padd$PADD[i])]*(1/ldv_factor-1)
+      if (fleet_id == "No_LDVs" & fleet_fuel_use_tot_padd$Year[i] > first_proj_yr) {
+        fleet_fuel_use_tot_padd$Value[i] <- 0
+      }
+      fleet_fuel_use_tot_padd$Non_LDV_demand[i] <- consumption_non_ldv
+      fleet_fuel_use_tot_padd$Total_demand[i] <- fleet_fuel_use_tot_padd$Value[i]+consumption_non_ldv
+      fleet_fuel_use_tot_padd$Relative_demand_change[i] <- (fleet_fuel_use_tot_padd$Value[i]+consumption_non_ldv)/(fleet_fuel_use_tot_padd$Value[which(fleet_fuel_use_tot_padd$Fuel == fleet_fuel_use_tot_padd$Fuel[i] &
                                                                                                                                   fleet_fuel_use_tot_padd$Year == fleet_fuel_use_tot_padd$Year[i]-1 &
-                                                                                                                                  fleet_fuel_use_tot_padd$PADD == fleet_fuel_use_tot_padd$PADD[i])]
+                                                                                                                                  fleet_fuel_use_tot_padd$PADD == fleet_fuel_use_tot_padd$PADD[i])]+consumption_non_ldv)
     }
   }
+  # Update of the yearly demand for refined products based on the change in demand for each fuel
   years <- (first_proj_yr+1):max(fleet_fuel_use_tot_padd$Year)
   temp_prod <- fuel_prod_US
   fuels <- c("Gasoline", "Diesel", "Ethanol")
@@ -72,11 +91,7 @@ fuel_wtp_ef_f <- function(fleet_fuel_use_tot, fleet_fuel_use_tot_state, first_pr
       fraction_other <- 1-(fraction_gasoline+fraction_diesel)
       change_gasoline <- fuel_prod_US$Value[which(fuel_prod_US$Year == i & fuel_prod_US$PADD == j & fuel_prod_US$Fuel == "Gasoline" & fuel_prod_US$Origin == "Production")]/fuel_prod_US$Value[which(fuel_prod_US$Year == i-1 & fuel_prod_US$PADD == j & fuel_prod_US$Fuel == "Gasoline" & fuel_prod_US$Origin == "Production")]
       change_diesel <- fuel_prod_US$Value[which(fuel_prod_US$Year == i & fuel_prod_US$PADD == j & fuel_prod_US$Fuel == "Diesel" & fuel_prod_US$Origin == "Production")]/fuel_prod_US$Value[which(fuel_prod_US$Year == i-1 & fuel_prod_US$PADD == j & fuel_prod_US$Fuel == "Diesel" & fuel_prod_US$Origin == "Production")]
-      if (fleet_id == "No_LDVs") {
-        change_gasoline <- 0
-        change_diesel <- 0
-      }
-      relative_refining <- (share_gasoline_ldv_cons*change_gasoline+(1-share_gasoline_ldv_cons))*fraction_gasoline+(share_diesel_ldv_cons*change_diesel+(1-share_diesel_ldv_cons))*fraction_diesel+fraction_other
+      relative_refining <- change_gasoline*fraction_gasoline+change_diesel*fraction_diesel+fraction_other
       production_change_matrix[nrow(production_change_matrix)+1,] <- list(j, i, NA, relative_refining, NA, NA, NA)
     }
   }
@@ -90,20 +105,23 @@ fuel_wtp_ef_f <- function(fleet_fuel_use_tot, fleet_fuel_use_tot_state, first_pr
       fuel_prod_US$Value[which(fuel_prod_US$PADD == k & fuel_prod_US$Fuel == "Crude_oil" & fuel_prod_US$Origin != "Production" & fuel_prod_US$Year == i)] <- fuel_prod_US$Value[which(fuel_prod_US$PADD == k & fuel_prod_US$Fuel == "Crude_oil" & fuel_prod_US$Origin != "Production" & fuel_prod_US$Year == i-1)]*scaling_factor
     }
     for (k in padds) {
+      non_ldv_demand <- sum(fleet_fuel_use_tot_padd$Non_LDV_demand[which(fleet_fuel_use_tot_padd$Year == i &
+                                                                         fleet_fuel_use_tot_padd$PADD == k)])
       available <- fuel_prod_US$Value[which(fuel_prod_US$Year == i & fuel_prod_US$PADD == k & fuel_prod_US$Fuel == "Crude_oil" & fuel_prod_US$Origin == "Available")]
       flows_in <- sum(fuel_prod_US$Value[which(fuel_prod_US$Year == i & fuel_prod_US$Fuel == "Crude_oil" & fuel_prod_US$PADD == k & fuel_prod_US$Origin != "Exports" & fuel_prod_US$Origin != "Available" & fuel_prod_US$Origin != "Production")])
       flows_out <- sum(fuel_prod_US$Value[which(fuel_prod_US$Year == i & fuel_prod_US$Fuel == "Crude_oil" & ((fuel_prod_US$PADD != k & fuel_prod_US$Origin == k) | (fuel_prod_US$PADD == k & fuel_prod_US$Origin == "Exports")))])
       production <- available - flows_in + flows_out
       fuel_prod_US$Value[which(fuel_prod_US$Year == i & fuel_prod_US$PADD == k & fuel_prod_US$Fuel == "Crude_oil" & fuel_prod_US$Origin == "Production")] <- production
-      production_change_matrix$Rel_Demand[which(production_change_matrix$PADD == k & production_change_matrix$Year == i)] <- sum(fleet_fuel_use_tot_padd$Value[which(fleet_fuel_use_tot_padd$Year == i & fleet_fuel_use_tot_padd$PADD == k)])/sum(fleet_fuel_use_tot_padd$Value[which(fleet_fuel_use_tot_padd$Year == i-1 & fleet_fuel_use_tot_padd$PADD == k)])
+      production_change_matrix$Rel_Demand[which(production_change_matrix$PADD == k & production_change_matrix$Year == i)] <- sum(fleet_fuel_use_tot_padd$Total_demand[which(fleet_fuel_use_tot_padd$Year == i & fleet_fuel_use_tot_padd$PADD == k)])/sum(fleet_fuel_use_tot_padd$Total_demand[which(fleet_fuel_use_tot_padd$Year == i-1 & fleet_fuel_use_tot_padd$PADD == k)])
       production_change_matrix$Rel_Crude_oil[which(production_change_matrix$PADD == k & production_change_matrix$Year == i)] <- production/fuel_prod_US$Value[which(fuel_prod_US$Year == i-1 & fuel_prod_US$PADD == k & fuel_prod_US$Fuel == "Crude_oil" & fuel_prod_US$Origin == "Production")]
       fraction_ethanol <- fuel_prod_US$Value[which(fuel_prod_US$PADD == k & fuel_prod_US$Fuel == "Ethanol" & fuel_prod_US$Origin == "Production" & fuel_prod_US$Year == i)]/fuel_prod_US$Value[which(fuel_prod_US$PADD == k & fuel_prod_US$Fuel == "Ethanol" & fuel_prod_US$Origin == "Production" & fuel_prod_US$Year == i-1)]
-      production_change_matrix$Rel_Ethanol[which(production_change_matrix$PADD == k & production_change_matrix$Year == i)] <- share_prod_ethanol_fuel*fraction_ethanol+(1-share_prod_ethanol_fuel)
+      production_change_matrix$Rel_Ethanol[which(production_change_matrix$PADD == k & production_change_matrix$Year == i)] <- fleet_fuel_use_tot_padd$Relative_demand_change[which(fleet_fuel_use_tot_padd$Fuel == "Ethanol" & fleet_fuel_use_tot_padd$Year == i & fleet_fuel_use_tot_padd$PADD == k)]  #share_prod_ethanol_fuel*fraction_ethanol+(1-share_prod_ethanol_fuel)
       rel_demand_ng <- ng_demand_electricity$Relative_demand[which(ng_demand_electricity$Year == i)]
       rel_ng <- share_ng_cons_elec*rel_demand_ng+(1-share_ng_cons_elec)
       production_change_matrix$Rel_Natural_Gas[which(production_change_matrix$PADD == k & production_change_matrix$Year == i)] <- rel_ng
     }
   }
+  write.csv(production_change_matrix, paste0(results_path, "/oil_and_gas_activity_changes.csv"))
   return(list(production_change_matrix = production_change_matrix))
   
   # Refined products (Diesel, Gasoline, Ethanol)

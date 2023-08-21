@@ -67,7 +67,7 @@ fleet_vint_stock_f <- function(first_yr=NA,last_yr=NA,fleet_vint_procedure=NA,fl
   } else if (fleet_composition_source == "custom") {
   }
   print("Base fleet created, custom scenario will be applied")
-  if (fleet_id != "2020_fleet" | fleet_id != "No_LDVs") {
+  if (fleet_id != "2020_fleet" & fleet_id != "No_LDVs") {
     fleet_data <- do.call(fleet_composition_scenario_f, list(fleet = fleet))
     fleet_composition <- list(fleet_vint_stock = fleet_data[["fleet_vint_stock"]], 
                               fleet_vint_scrap = fleet_data[["fleet_vint_scrap"]], 
