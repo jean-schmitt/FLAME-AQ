@@ -29,6 +29,7 @@
 "cambium_el_grid_scenario_f","last_yr",,"External"
 "cambium_el_grid_scenario_f","first_proj_yr",,"External"
 "cambium_el_grid_scenario_f","include_biomass",,"External"
+"cambium_el_grid_scenario_f","grid_shift_year",,"External"
 "climate_change_metric_f","emission_matrix","","Internal"
 "climate_change_metric_f","ghg",,"Internal"
 "climate_change_metric_f","gwp_th",,"External"
@@ -50,6 +51,7 @@
 "cobra_health_impact_f","discount_rate",,"External"
 "cobra_health_impact_f","year_break",,"External"
 "cobra_health_impact_f","fleet_id",,"External"
+"cobra_health_impact_f","COBRA_inflation_correction",,"External"
 "COBRA_population_data_generation_f","ssp_scen",,"External"
 "COBRA_population_data_generation_f","last_yr",,"External"
 "county_level_elec_prod_f",,,
@@ -212,6 +214,7 @@
 "fuel_wtp_ef_f","share_prod_ethanol_fuel",,"External"
 "fuel_wtp_ef_f","share_ng_cons_elec",,"External"
 "fuel_wtp_ef_f","fleet_id",,"External"
+"fuel_wtp_ef_f","scenario_id",,"External"
 "GIS_matching_f",,,
 "graph_template_fleet_f","input_data","","External"
 "graph_template_fleet_f","x_axis","","External"

@@ -1,4 +1,4 @@
-cobra_health_impact_f <- function(state_resolved_fleet_direct_emissions, fleet_emissions_elec_state, fleet_emissions_elec_county, fleet_fuel_usage_US, last_yr = NA, scenario_id = NA, fleet_electricity_consumption_source = NA, relative_transportation_electricity_demand = NA, calculation_mode = NA, discount_rate = NA, year_break = NA, fleet_id = NA) {
+cobra_health_impact_f <- function(state_resolved_fleet_direct_emissions, fleet_emissions_elec_state, fleet_emissions_elec_county, fleet_fuel_usage_US, last_yr = NA, scenario_id = NA, fleet_electricity_consumption_source = NA, relative_transportation_electricity_demand = NA, calculation_mode = NA, discount_rate = NA, year_break = NA, fleet_id = NA, COBRA_inflation_correction = NA) {
   attribute_f("cobra_health_impact_f")
   first_proj_yr <- 2022
   if (fleet_id == "No_LDVs") {
@@ -681,6 +681,10 @@ cobra_health_impact_f <- function(state_resolved_fleet_direct_emissions, fleet_e
       }
     }
     health_benefits <- add_row(health_benefits, Year = 0, Total_health_benefits_Low = sum(health_benefits$Total_health_benefits_Low), Total_health_benefits_High = sum(health_benefits$Total_health_benefits_High), Cumulative_before_discount_benefits_Low = sum(health_benefits$Cumulative_before_discount_benefits_Low), Cumulative_before_discount_benefits_High = sum(health_benefits$Cumulative_before_discount_benefits_High), Cumulative_benefits_Low = sum(health_benefits$Cumulative_benefits_Low), Cumulative_benefits_High = sum(health_benefits$Cumulative_benefits_High), Total_benefits_Low = sum(health_benefits$Total_benefits_Low), Total_benefits_High = sum(health_benefits$Total_benefits_High))
+    # Correct for the inflation - COBRA provides values in 2107 USD, we correct into 2023 USD
+    health_benefits[,2:9] <- health_benefits[,2:9]*COBRA_inflation_correction
+    health_benefits_by_state[,3:10] <- health_benefits_by_state[,3:10]*COBRA_inflation_correction
+    health_benefits_by_county[,5:12] <- health_benefits_by_county[,5:12]*COBRA_inflation_correction
     # Export the health benefits files
     print("Exporting the health benefits files")
     write.csv(health_benefits, paste0(results_path, "/health_benefits.csv"))

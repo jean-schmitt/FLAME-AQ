@@ -1,4 +1,4 @@
-cambium_el_grid_scenario_f <- function(output, elec_mix_mdl=NA, first_yr=NA, last_yr=NA, first_proj_yr = NA, include_biomass = NA) {
+cambium_el_grid_scenario_f <- function(output, elec_mix_mdl=NA, first_yr=NA, last_yr=NA, first_proj_yr = NA, include_biomass = NA, grid_shift_year = NA) {
   attribute_f("cambium_el_grid_scenario_f")
   if (tolower(elec_mix_mdl) == "current_mix") {
     data <- filter(get_input_f(input_name = "NREL_elec_intermediate"), t == "2022")
@@ -13,6 +13,18 @@ cambium_el_grid_scenario_f <- function(output, elec_mix_mdl=NA, first_yr=NA, las
     add_column("Generation" = data$generation)
   colnames(grid_mix_data)[1] <- "Region"
   grid_mix_data <- cbind(grid_mix_data, data[,grep("MWh", colnames(data))])
+  grid_mix_data_original <- grid_mix_data
+  # Shift the grid mix data if required
+  if (grid_shift_year != 0) {
+    initial_year_grid <- grid_mix_data[which(grid_mix_data$Years == min(grid_mix_data$Years)),]
+    final_year_grid <- grid_mix_data[which(grid_mix_data$Years == max(grid_mix_data$Years)),]
+    grid_mix_data$Years <- grid_mix_data$Years+grid_shift_year
+    grid_mix_data <- filter(grid_mix_data, grid_mix_data$Years <= last_yr)
+    if (max(grid_mix_data$Years < last_yr)) {
+      grid_mix_data <- rbind(grid_mix_data, final_year_grid)
+    }
+    grid_mix_data <- rbind(grid_mix_data, initial_year_grid)
+  }
   emission_sources <- c("Coal", "Natural Gas", "Nuclear", "Other", "Renewable", "Biomass")
   years <- first_yr:max(grid_mix_data$Years)
   regions <- unique(grid_mix_data$Region)
@@ -264,16 +276,18 @@ cambium_el_grid_scenario_f <- function(output, elec_mix_mdl=NA, first_yr=NA, las
     total_electricity_production <- data.frame(matrix(data = NA, nrow = 0, ncol = 3))
     colnames(total_electricity_production) <- c("Year", "Electricity_production", "Unit")
     for (i in years) {
-      if (i %in% grid_mix_data$Years) {
-        total_electricity_production[nrow(total_electricity_production)+1,] <- c(i, sum(grid_mix_data[which(grid_mix_data$Years == i), grep("MWh", colnames(grid_mix_data))])*1000, "kWh")
-      } else if (i < min(grid_mix_data$Years)) {
-        total_electricity_production[nrow(total_electricity_production)+1,] <- c(i, sum(grid_mix_data[which(grid_mix_data$Years == min(grid_mix_data$Years)), grep("MWh", colnames(grid_mix_data))])*1000, "kWh")
+      if (i %in% grid_mix_data_original$Years) {
+        total_electricity_production[nrow(total_electricity_production)+1,] <- c(i, sum(grid_mix_data_original[which(grid_mix_data_original$Years == i), grep("MWh", colnames(grid_mix_data_original))])*1000, "kWh")
+      } else if (i < min(grid_mix_data_original$Years)) {
+        total_electricity_production[nrow(total_electricity_production)+1,] <- c(i, sum(grid_mix_data_original[which(grid_mix_data_original$Years == min(grid_mix_data_original$Years)), grep("MWh", colnames(grid_mix_data_original))])*1000, "kWh")
       } else {
-        year_before <- grid_mix_data$Years[which((unique(grid_mix_data$Years)-i) == -min(abs(unique(grid_mix_data$Years) - i)))]
-        year_after <- grid_mix_data$Years[which((unique(grid_mix_data$Years)-i) == min(abs(unique(grid_mix_data$Years) - i)))]
+        #year_before <- sort(unique(grid_mix_data_original$Years))[which((sort(unique(grid_mix_data_original$Years))-i) == -min(abs(sort(unique(grid_mix_data_original$Years)) - i)))]
+        #year_after <- grid_mix_data_original$Years[which((unique(grid_mix_data_original$Years)-i) == min(abs((unique(grid_mix_data_original$Years) - i)[which((unique(grid_mix_data_original$Years) - i)>0)])))]
+        year_before <- max(sort(unique(grid_mix_data_original$Years))[which(sort(unique(grid_mix_data_original$Years)) < i)]) 
+        year_after <- min(sort(unique(grid_mix_data_original$Years))[which(sort(unique(grid_mix_data_original$Years)) > i)])
         nbr_years <- year_after-year_before
-        a <- (sum(grid_mix_data[which(grid_mix_data$Years == year_after), grep("MWh", colnames(grid_mix_data))])*1000-sum(grid_mix_data[which(grid_mix_data$Years == year_before), grep("MWh", colnames(grid_mix_data))])*1000)/(year_after-year_before)
-        production <- sum(grid_mix_data[which(grid_mix_data$Years == year_before), grep("MWh", colnames(grid_mix_data))])*1000+a*(i-year_before)
+        a <- (sum(grid_mix_data_original[which(grid_mix_data_original$Years == year_after), grep("MWh", colnames(grid_mix_data_original))])*1000-sum(grid_mix_data_original[which(grid_mix_data_original$Years == year_before), grep("MWh", colnames(grid_mix_data_original))])*1000)/(year_after-year_before)
+        production <- sum(grid_mix_data_original[which(grid_mix_data_original$Years == year_before), grep("MWh", colnames(grid_mix_data_original))])*1000+a*(i-year_before)
         total_electricity_production[nrow(total_electricity_production)+1,] <- c(i, production, "kWh")
       }
     }

@@ -540,12 +540,16 @@ fleet_composition_scenario_f <- function(fleet, fleet_initial_year = NA, fleet_f
         fleet_vint_stock_scenario <- rbind(fleet_vint_stock_scenario, fleet_vint_stock_scenario_state)
         fleet_vint_scrap_scenario <- rbind(fleet_vint_scrap_scenario, fleet_vint_scrap_scenario_state)
       }
-      fleet_vint_stock_scenario$Value <- fleet_vint_stock_scenario$Value*fleet_vint_stock_scenario$State_factor
-      fleet_vint_scrap_scenario$Value <- fleet_vint_scrap_scenario$Value*fleet_vint_scrap_scenario$State_factor
-      fleet_vint_stock_scenario <- select(fleet_vint_stock_scenario, -c("State_factor"))
-      fleet_vint_scrap_scenario <- select(fleet_vint_scrap_scenario, -c("State_factor"))
+      #fleet_vint_stock_scenario$Value <- fleet_vint_stock_scenario$Value*fleet_vint_stock_scenario$State_factor
+      #fleet_vint_scrap_scenario$Value <- fleet_vint_scrap_scenario$Value*fleet_vint_scrap_scenario$State_factor
+      #fleet_vint_stock_scenario <- select(fleet_vint_stock_scenario, -c("State_factor"))
+      #fleet_vint_scrap_scenario <- select(fleet_vint_scrap_scenario, -c("State_factor"))
     }
   }
+  fleet_vint_stock_scenario$Value <- fleet_vint_stock_scenario$Value*fleet_vint_stock_scenario$State_factor
+  fleet_vint_scrap_scenario$Value <- fleet_vint_scrap_scenario$Value*fleet_vint_scrap_scenario$State_factor
+  fleet_vint_stock_scenario <- select(fleet_vint_stock_scenario, -c("State_factor"))
+  fleet_vint_scrap_scenario <- select(fleet_vint_scrap_scenario, -c("State_factor"))
   # Distribution into the final fleet composition according to the relative weight of each state
   if (fleet_id == "Evs100") {
     #Update the stock dataset
