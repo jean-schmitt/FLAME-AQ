@@ -58,6 +58,7 @@
 "fuel_wtp_ef_f","Internal",
 "GIS_matching_f","Result",
 "graph_template_fleet_f","Result",
+"health_damages_batteries_f","Internal",
 "lca_ef_efuel_elec_f","Internal","Returns the annual life cycle GHG emission factors of electricity production associated with e-fuel production"
 "lca_ef_elec_f","Internal","Returns the annual life cycle GHG emission factors of electricity production for BEV and PHEV in the U.S."
 "lca_ef_greet_f","Internal","Returns GHG emission factors taken from the GREET model"

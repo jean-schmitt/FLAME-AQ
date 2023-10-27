@@ -7,9 +7,15 @@
 "bat_mat_comp_mdl","cha","def","def","low;high","Battery material composition","Model of battery material composition. The ""low"" case refers to the low case of material composition for the considered critical materials and the ""high"" refers to the high case."
 "bat_ms_scen","cha","constant","constant",NA,NA,NA
 "bat_resz_ratio","num","0.5","0.5","0;1","Battery resizing ratio","When weight changes occur, this ratio determines if the weight changes reduce the battery weight to get the same driving range (ratio of 1) or if the battery weight is unchanged to gain driving ranges (ratio of 0)."
+"battery_calculation_method","cha","GREET_full","GREET_full","GREET_full;GREET_assembly;Tessum2014","Method used to calculate the emissions from battery manufacturing","Method used to calculate the emissions from battery manufacturing"
+"battery_capacity_car","num","50","50","50","Capacity of a car battery in kWh","Capacity of a car battery in kWh"
+"battery_capacity_truck","num","100","100","100","Capacity of a truck battery in kWh","Capacity of a truck battery in kWh"
+"battery_energy_density","num","0.25","0.25","0.25","Average energy density of batteries in kWh/kg","Average energy density of batteries in kWh/kg"
 "BEV_bat_t","cha","Li_ion LMO","Li_ion LMO","Li_ion LMO;Ni_MH","Battery chemistry for BEV","Battery chemistry for BEV"
-"brake_tire_emissions_modification","cha","default","default","default;low_brake;high_brake","Scenario modifying the brake and tire emissions","Scenario modifying the brake and tire emissions"
+"brake_tire_emissions_modification","cha","default","default","","Scenario modifying the brake and tire emissions","Scenario modifying the brake and tire emissions"
+"calculation_method",NA,NA,NA,NA,NA,NA
 "calculation_mode","cha","default","default","default;aggregated;pollutants_breakdown;all","Defines in which form the final benefits are calculated: default calculates the benefits in each year; aggregated calculated only the difference between 2020 and 2050; pollutants_breakdown provides the single output for each sector and pollutant.",""
+"COBRA_inflation_correction","num","1.26","1.26","1.26","Correction factor for inflation","COBRA gives valuation in 2017 USD, the correction factor gives 2023 USD"
 "col",NA,NA,NA,NA,NA,NA
 "color_palette",NA,NA,NA,NA,NA,NA
 "colorCount",NA,NA,NA,NA,NA,NA
@@ -18,6 +24,7 @@
 "crude_oil_use_LDV",NA,NA,NA,NA,NA,NA
 "crude_to_diesel","num","0.286","0.286","0.286","Volumetric conversion rate between Crude oil and Diesel (1 gallon crude oil is necessary to make 0.286 gallon of diesel)","Source: EPA https://www.eia.gov/tools/faqs/faq.php?id=327&t=9)"
 "crude_to_gasoline","num","0.476","0.476","0.476","Volumetric conversion rate between Crude oil and Gasoline (1 gallon crude oil is necessary to make 0.476 gallon of gasoline)","Source: EPA https://www.eia.gov/tools/faqs/faq.php?id=327&t=9)"
+"damage_per_kwh","num","8.68","8.68","8.68","Health damages per kWh of battery produced according to Tessum2014 in USD","Health damages per kWh of battery produced according to Tessum2014 in USD"
 "discount_rate","num","3","3","2.5;3;5","Economic discount rate","Economic discount rate for the Dynamic Global Warming Impact values"
 "ef_bat_mdl","cha","def","def","low;high","Emission factor EV battery","Emission factor for EV battery production"
 "ef_efuel_elec_adj_coef","num","0","0","0",NA,NA
@@ -73,7 +80,7 @@
 "fleet_fuel_usage_US",NA,NA,NA,NA,NA,NA
 "fleet_fuel_use_tot",NA,NA,NA,NA,NA,NA
 "fleet_fuel_use_tot_state",NA,NA,NA,NA,NA,NA
-"fleet_id","cha","ZEV-CA_all","ZEV-CA_all","","ID of the fleet scenario file","ID of the fleet scenario file"
+"fleet_id","cha","no_EVs","no_EVs","","ID of the fleet scenario file","ID of the fleet scenario file"
 "fleet_initial_year","num","2021","2021","2022","First year in wich the custom fleet is calculated","First year in wich the custom fleet is calculated"
 "fleet_stock_adj","cha","y","y","aeo;y;n","Fleet stock adjustement","Adjust the vintaged stocks to match total prospective stocks when the vintaged stock procedure is based on sales. If ""y"", the total stock is adjusted to match prospective total stocks. If ""aeo"", technology-specific stocks are adjusted to match prospective technology-specific stocks of AEO. If ""n"", no adjustments to match total prospective stocks."
 "fleet_tot_stock","cha","aeo","aeo","aeo;gcam","Prospective total LDV fleet stock","Indicates the prospective total stock of LDVs to be used when the vintaged stocks are calculated only from total stocks. ""aeo"" refers to total stock based on the AEO. ""constant"" refers to a constant total stock. ""gcam"" refers to total stocks derived from the GCAM model."
@@ -85,9 +92,11 @@
 "gcam_stock_adj","cha","abs","abs","abs;rel","GCAM stock adjustment","Model of adjustment of GCAM stock. ""abs"" refer to an absolute adjustment and ""rel"" to a relative."
 "ghg_budget_mdl","cha","iam","iam","gcam;lit_rev","Source for GHG emission budget","Source for GHG emission budget"
 "ghg_concentration_scen","cha","constant","constant",NA,"Background concentration of CO2","Prospective background concentration of CO2 in the atmosphere. ""constant"" means a constant concentration, values with ""ssp_"" extracts the propsective concentration from SSPs."
+"grid_shift_year","num","0","0","5;1;2;5;10;15","Years the electric grid is shifted ahead","Years the electric grid is shifted ahead"
 "gwp_cc_fb","cha","n","n","n;y","Carbon-cycle feedback","Specify if the GWP values with carbon-cycle feedback should be used"
 "gwp_th","num","100","100","100;20","GWP Time horizon","Time horizon for the GWP values"
 "HEV_bat_t","cha","Ni_MH","Ni_MH","Li_ion LMO;Ni_MH","Battery chemistry for HEV","Battery chemistry for HEV"
+"include_battery_manufacturing","cha","N","N","Y;N","Include battery manufacturing emissions in the calculation","Include battery manufacturing emissions in the calculation"
 "include_biomass","cha","no","no","yes;no","If yes, the biomass is included in the calculation of the pollutants emissions; otherwise it will be counted as renewables","If yes, the biomass is included in the calculation of the pollutants emissions; otherwise it will be counted as renewables"
 "initial_scenario_year","num","2022","2022","2022","First year in wich the custom fleet is calculated","First year in wich the custom fleet is calculated"
 "input_data",NA,NA,NA,NA,NA,NA
@@ -152,8 +161,10 @@
 "title_graph",NA,NA,NA,NA,NA,NA
 "title_x",NA,NA,NA,NA,NA,NA
 "title_y",NA,NA,NA,NA,NA,NA
-"total_yearly_emissions_state_breakdown",NA,NA,NA,NA,NA,NA
-"value",NA,NA,NA,NA,NA,NA
+"vehicle_EF_factor_NOx","num","1","1","1",NA,NA
+"vehicle_EF_factor_PM25","num","1","1","1",NA,NA
+"vehicle_EF_factor_SO2","num","1","1","1",NA,NA
+"vehicle_year_shift",NA,NA,NA,NA,NA,NA
 "vehicles_sizes_source","cha","FLAME","FLAME","FLAME;MOVES","Sizes of vehicles to be considered, either FLAME or MOVES","Sizes of vehicles to be considered, either FLAME or MOVES"
 "vh_lca_yrs","cha","2022","2022","2022","Years to generate LCA results","Years to generate LCA results"
 "vkt_growth_mdl","cha","Constant","Constant","linear_low;linear_high","VKT growth model","VKT growth rate"
@@ -165,3 +176,4 @@
 "x_axis",NA,NA,NA,NA,NA,NA
 "y_axis",NA,NA,NA,NA,NA,NA
 "year_break","num","2050","2050","2050","Selects the year for the calculation of the breakdown of the benefits by pollutants","Selects the year for the calculation of the breakdown of the benefits by pollutants"
+"years_simulation","num","2022","2022","2022",NA,NA
