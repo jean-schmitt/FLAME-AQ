@@ -1,7 +1,20 @@
-fleet_composition_scenario_f <- function(fleet, fleet_initial_year = NA, fleet_final_year = NA, first_proj_yr = NA, fleet_id = NA) {
+fleet_composition_scenario_f <- function(fleet, fleet_initial_year = NA, fleet_final_year = NA, first_proj_yr = NA, fleet_id = NA, fuel_matching_option = NA) {
   attribute_f("fleet_composition_scenario_f")
   fleet_vint_stock <- fleet$get_list_dataframe()[["fleet_vint_stock"]]
   fleet_vint_scrap <- fleet$get_list_dataframe()[["fleet_vint_scrap"]]
+  if (fuel_matching_option == "hybrid") {
+    correspondence_file <- read.delim(paste0(getwd(), "/inputs/data/FLAME_to_MOVES_correspondance_files/technologies_", fuel_matching_option, ".txt"), header = TRUE, sep = ";", dec = ".")
+  } else if (fuel_matching_option == "FLAME") {
+    # Placeholder for future developments, e.g. addition of hybrid vehicles
+  } else if (fuel_matching_option == "MOVES") {
+    # Placeholder for future developments, e.g. addition of hybrid vehicles
+  }
+  for (i in 1:length(correspondence_file$ID)) {
+    fleet_vint_stock$Technology[which(fleet_vint_stock$Technology == correspondence_file$Technology[i])] <- correspondence_file$Technology_Alt[i]
+    fleet_vint_scrap$Technology[which(fleet_vint_scrap$Technology == correspondence_file$Technology[i])] <- correspondence_file$Technology_Alt[i]
+  }
+  fleet_vint_stock <- aggregate(Value ~ Age+Year+Size+Technology, data = fleet_vint_stock, FUN = sum)
+  fleet_vint_scrap <- aggregate(Value ~ Age+Year+Size+Technology, data = fleet_vint_scrap, FUN = sum)
   if (fleet_id == "no_EVs") {
     #Update the stock dataset
     bevs_stock <- fleet_vint_stock[which(grepl("BEV", fleet_vint_stock$Technology)),]
@@ -81,85 +94,6 @@ fleet_composition_scenario_f <- function(fleet, fleet_initial_year = NA, fleet_f
     } else {
       total_fleet_size_scenario <- total_fleet_size
     }
-    # Calculation of the scrap rate
-    #fleet_vint_survival_rate <- fleet_vint_scrap
-    #fleet_vint_survival_rate$Value <- 0
-    #years <- unique(fleet_vint_stock$Year)
-    #years <- years[which(years >= (fleet_initial_year-1))]
-    #ages <- unique(fleet_vint_stock$Age)
-    #sizes <- unique(fleet_vint_stock$Size)
-    #technologies <- unique(fleet_vint_stock$Technology)
-    #for (i in 1:length(sizes)) {
-    #  for (j in 1:length(technologies)) {
-    #    for (k in 2:length(years)) {
-    #      for (l in 2:length(ages)) {
-    #        temp_old <- which(fleet_vint_stock$Size == sizes[i] & fleet_vint_stock$Technology == technologies[j] & fleet_vint_stock$Year == years[k-1] & fleet_vint_stock$Age == ages[l-1])
-    #        temp_new <- which(fleet_vint_stock$Size == sizes[i] & fleet_vint_stock$Technology == technologies[j] & fleet_vint_stock$Year == years[k] & fleet_vint_stock$Age == ages[l])
-    #        temp_scrap <- which(fleet_vint_survival_rate$Size == sizes[i] & fleet_vint_survival_rate$Technology == technologies[j] & fleet_vint_survival_rate$Year == years[k] & fleet_vint_survival_rate$Age == ages[l])
-    #        if (fleet_vint_stock$Value[temp_old] == 0) {
-    #          fleet_vint_survival_rate$Value[temp_scrap] <- 0
-    #        } else {
-    #          fleet_vint_survival_rate$Value[temp_scrap] <- fleet_vint_stock$Value[temp_new]/fleet_vint_stock$Value[temp_old]
-    #        }
-    #      }
-    #    }
-    #  }
-    #}
-    # Replacement with a lapply function
-    #fleet_vint_survival_rate <- fleet_vint_stock
-    #fleet_vint_survival_rate$Value <- 0
-    #index <- which(fleet_vint_survival_rate$Age != 0 & fleet_vint_survival_rate$Year >= (fleet_initial_year)-1)
-    #scrap <- future_lapply(index, function(i) {
-    #  value_old <- fleet_vint_stock$Value[which(fleet_vint_stock$Size == fleet_vint_survival_rate$Size[i] & fleet_vint_stock$Technology == fleet_vint_survival_rate$Technology[i] & fleet_vint_stock$Year == (fleet_vint_survival_rate$Year[i]-1) & (fleet_vint_stock$Age == fleet_vint_survival_rate$Age[i]-1))]
-    #  value_new <- fleet_vint_stock$Value[i]
-    #  if (length(value_old) == 0) {
-    #    value_old <- 0
-    #  }
-    #  return(list(value_new = value_new, value_old = value_old))
-    #})
-    #for (i in 1:length(index)) {
-    #  if (scrap[[i]]$value_old != 0) {
-    #    fleet_vint_survival_rate$Value[index[i]] <- scrap[[i]]$value_new/scrap[[i]]$value_old
-    #  } else {
-    #    fleet_vint_survival_rate$Value[index[i]] <- 0
-    #  }
-    #}
-    #fleet_vint_survival_rate <- filter(fleet_vint_survival_rate, fleet_vint_survival_rate$Age != 0)
-    # Modifications of the scrap rate according to the scenario
-    #scenario_scrap <- arrange(scenario[which(scenario$Event == "road_ban"),], Year)
-    #if (dim(scenario_scrap)[1] != 0) {
-    #  for (i in 1:dim(scenario_scrap)[1]) {
-    #    scenario[nrow(scenario)+1,] <- list(scenario_scrap$Year[i], "sales_ban", scenario$Size[i], scenario$Technology[i], scenario_scrap$Value[i], scenario_scrap$Interpolation_type[i])
-    #  }
-    #}
-    #scenario <- scenario[!duplicated(scenario),]
-    #if (dim(scenario_scrap)[1]!=0) {
-    #  fleet_vint_survival_rate_scenario <- fleet_vint_survival_rate
-    #  for (i in 1:dim(scenario_scrap)[1]) {
-    #    if (scenario_scrap$Technology[i] == "all") {
-    #      technologies <- c("all")
-    #    } else if (scenario_scrap$Technology[i] == "electric") {
-    #      technologies <- c("BEV100", "BEV300")
-    #    } else if (scenario_scrap$Technology[i] == "icev") {
-    #      technologies <- c("CNG", "FFV", "ICEV-D", "ICEV-G")
-    #    } else if (scenario_scrap$Technology[i] == "hybrid") {
-    #      technologies <- c("HEV", "PHEV20", "PHEV40")
-    #    } else if (scenario_scrap$Technology[i] == "hydrogen") {
-    #      technologies <- "FCV" 
-    #    } else {
-    #      technologies <- scenario_scrap$Technology[i]
-    #    }
-    #    if (scenario_scrap$Size[i] == "all") {
-    #      sizes <- c("Car", "Light truck")
-    #    } else {
-    #      sizes <- scenario_scrap$Size[i]
-    #    }
-    #    fleet_vint_survival_rate_scenario$Value[which(fleet_vint_survival_rate_scenario$Year >= scenario_scrap$Year[i] & fleet_vint_survival_rate_scenario$Size%in%sizes & fleet_vint_survival_rate_scenario$Technology%in%technologies)] <- 0
-    #  }
-    #} else {
-    #  fleet_vint_survival_rate_scenario <- fleet_vint_survival_rate
-    #}
-    
     # Calculation of the market share
     market_share_rel <- market_share_matrix_f(fleet_vint_stock)[["market_share_rel"]]
     #vehicles_sizes <- strsplit(rownames(market_share_rel), split = "_")
@@ -390,50 +324,8 @@ fleet_composition_scenario_f <- function(fleet, fleet_initial_year = NA, fleet_f
         }
       }
 
-        # Fifth step - Add the missing values
-        
-        
-        #for (k in 1:length(vehicles_sizes)) {
-        #  
-        #  sum_market_share <- sum(market_share_rel_temp[modified_values[grep(vehicles_sizes[k], rownames(market_share_rel_temp)[modified_values])],which(colnames(market_share_rel_temp) == i)])
-        #  sum_market_share_previous <- sum(market_share_rel_temp[modified_values[grep(vehicles_sizes[k], rownames(market_share_rel_temp)[modified_values])],which(colnames(market_share_rel_temp) == i-1)])
-        #  for (j in grep(vehicles_sizes[k], rownames(market_share_rel_temp)[modified_values])) {
-        #    if (dim(tech_market_shares)[1] != 0) {
-        #      if (is.na(market_share_rel_temp[modified_values[j],which(colnames(market_share_rel_temp) == i)])) {
-        #       market_share_rel_temp[modified_values[j],which(colnames(market_share_rel_temp) == i)] <- (market_share_rel_temp[modified_values[j],which(colnames(market_share_rel_temp) == i-1)]/tech_market_shares$Value[which(tech_market_shares$Year == (i-1) & tech_market_shares$Size_Tech == rownames(market_share_rel_temp)[modified_values[j]])])*tech_market_shares$Value[which(tech_market_shares$Year == i & tech_market_shares$Size_Tech == rownames(market_share_rel_temp)[modified_values[j]])]
-        #      } else {
-        #      market_share_rel_temp[modified_values[j],which(colnames(market_share_rel_temp) == i)] <- market_share_rel_temp[modified_values[j],which(colnames(market_share_rel_temp) == i)]*tech_market_shares$Value[which(tech_market_shares$Year == i & tech_market_shares$Size_Tech == rownames(market_share_rel_temp)[modified_values[j]])]
-        #      }
-        #   } else {
-        #      #vehicle_size <- strsplit(rownames(market_share_rel_temp)[modified_values[j]], "_")[[1]][1]
-        #      if (is.na(market_share_rel_temp[modified_values[j],which(colnames(market_share_rel_temp) == i)])) {
-        #        #market_share_rel_temp[modified_values[j],which(colnames(market_share_rel_temp) == i)] <- market_share_rel_temp[modified_values[j],which(colnames(market_share_rel_temp) == i-1)]/(market_share_rel[modified_values[j],which(colnames(market_share_rel_temp) == i-1)]/sum(market_share_rel[grep(vehicle_size, rownames(market_share_rel_temp)[modified_values]),which(colnames(market_share_rel_temp) == i-1)]))*market_share_rel[modified_values[j],which(colnames(market_share_rel_temp) == i)]/sum(market_share_rel[grep(vehicle_size, rownames(market_share_rel_temp)[modified_values]),which(colnames(market_share_rel_temp) == i)])
-        #        #market_share_rel_temp[modified_values[j],which(colnames(market_share_rel_temp) == i)] <- sum(market_share_rel_temp[modified_values,which(colnames(market_share_rel_temp) == i-1)])*market_share_rel[modified_values[j],which(colnames(market_share_rel_temp) == i)]/sum(market_share_rel[grep(vehicle_size, rownames(market_share_rel_temp)[modified_values]),which(colnames(market_share_rel_temp) == i-1)])/market_share_rel[modified_values[j],which(colnames(market_share_rel_temp) == i)]/sum(market_share_rel[grep(vehicle_size, rownames(market_share_rel_temp)[modified_values]),which(colnames(market_share_rel_temp) == i)])*sum(market_share_rel_temp[modified_values,which(colnames(market_share_rel_temp) == i)])
-        #        if (sum_market_share_previous != 0) {
-        #          #market_share_rel_temp[modified_values[j],which(colnames(market_share_rel_temp) == i)] <- market_share_rel_temp[modified_values[j],which(colnames(market_share_rel_temp) == i)]*market_share_rel[modified_values[j],which(colnames(market_share_rel_temp) == i)]/sum(market_share_rel[grep(vehicle_size, rownames(market_share_rel_temp)[modified_values]),which(colnames(market_share_rel_temp) == i)])
-        #          market_share_rel_temp[modified_values[j],which(colnames(market_share_rel_temp) == i)] <- sum_market_share_previous*market_share_rel[modified_values[j],which(colnames(market_share_rel_temp) == i)]/sum(market_share_rel[modified_values[grep(vehicles_sizes[k], rownames(market_share_rel)[modified_values])],which(colnames(market_share_rel) == i)])
-        #        } else {
-        #          market_share_rel_temp[modified_values[j],which(colnames(market_share_rel_temp) == i)] <- 0
-        #        }
-        #      } else {
-        #        if (sum_market_share != 0) {
-        #          #market_share_rel_temp[modified_values[j],which(colnames(market_share_rel_temp) == i)] <- market_share_rel_temp[modified_values[j],which(colnames(market_share_rel_temp) == i)]*market_share_rel[modified_values[j],which(colnames(market_share_rel_temp) == i)]/sum(market_share_rel[grep(vehicle_size, rownames(market_share_rel_temp)[modified_values]),which(colnames(market_share_rel_temp) == i)])
-        #          market_share_rel_temp[modified_values[j],which(colnames(market_share_rel_temp) == i)] <- sum_market_share*market_share_rel[modified_values[j],which(colnames(market_share_rel) == i)]/sum(market_share_rel[modified_values[grep(vehicles_sizes[k], rownames(market_share_rel)[modified_values])],which(colnames(market_share_rel) == i)])
-        #        } else {
-        #          market_share_rel_temp[modified_values[j],which(colnames(market_share_rel_temp) == i)] <- 0
-        #        }
-        #      }
-        #    }
-        #  }
-        #}
-            
-        # Fifth step: fill-in the missing values
-        #for (j in 1:length(vehicles_sizes)) {
-        #  old_sum_na <- sum(market_share_rel[which(is.na(market_share_rel_temp[,which(colnames(market_share_rel_temp) == i)]) & grepl(vehicles_sizes[j], rownames(market_share_rel_temp))),which(colnames(market_share_rel_temp) == i)], na.rm=TRUE)
-        #  new_sum_na <- 1-sum(market_share_rel_temp[which(!is.na(market_share_rel_temp[,which(colnames(market_share_rel_temp) == i)]) & grepl(vehicles_sizes[j], rownames(market_share_rel_temp))),which(colnames(market_share_rel_temp) == i)], na.rm=TRUE)
-        #  market_share_rel_temp[which(is.na(market_share_rel_temp[,which(colnames(market_share_rel_temp) == i)]) & grepl(vehicles_sizes[j], rownames(market_share_rel_temp))), which(colnames(market_share_rel_temp) == i)] <-  market_share_rel[which(is.na(market_share_rel_temp[,which(colnames(market_share_rel_temp) == i)]) & grepl(vehicles_sizes[j], rownames(market_share_rel))),which(colnames(market_share_rel_temp) == i)]*new_sum_na/old_sum_na
-        #}
-      # Sixth step: expand the share by size to have market shares for the complete fleet
+
+      # Fifth step: expand the share by size to have market shares for the complete fleet
       market_share_rel_scenario <- market_share_rel_temp
       for (i in 1:length(vehicles_sizes)) {
         for (j in which(colnames(market_share_rel_temp) == first_proj_yr):length(colnames(market_share_rel_temp))) {

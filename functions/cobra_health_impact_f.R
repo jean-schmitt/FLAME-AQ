@@ -1,13 +1,19 @@
-cobra_health_impact_f <- function(state_resolved_fleet_direct_emissions, fleet_emissions_elec_state, fleet_emissions_elec_county, fleet_fuel_usage_US, last_yr = NA, scenario_id = NA, fleet_electricity_consumption_source = NA, relative_transportation_electricity_demand = NA, calculation_mode = NA, discount_rate = NA, year_break = NA, fleet_id = NA, COBRA_inflation_correction = NA) {
+cobra_health_impact_f <- function(state_resolved_fleet_direct_emissions, fleet_emissions_elec_state, fleet_emissions_elec_county, fleet_fuel_usage_US, emissions_battery_production, last_yr = NA, scenario_id = NA, fleet_electricity_consumption_source = NA, relative_transportation_electricity_demand = NA, calculation_mode = NA, discount_rate = NA, year_break = NA, fleet_id = NA, COBRA_inflation_correction = NA, include_battery_manufacturing = NA, battery_calculation_method = NA, vehicle_EF_factor_NOx = NA, vehicle_EF_factor_SO2 = NA, vehicle_EF_factor_PM25 = NA) {
   attribute_f("cobra_health_impact_f")
   first_proj_yr <- 2022
   if (fleet_id == "No_LDVs") {
     fleet_emissions_elec_state[which(fleet_emissions_elec_state$Year>first_proj_yr),5:9] <- 0
     fleet_emissions_elec_county[which(fleet_emissions_elec_county$Year>first_proj_yr),6:10] <- 0
     state_resolved_fleet_direct_emissions[which(state_resolved_fleet_direct_emissions$Year>first_proj_yr),3:12] <- 0
+  } else if (fleet_id == "no_EVs") {
+    fleet_emissions_elec_state[which(fleet_emissions_elec_state$Year>first_proj_yr),5:9] <- 0
+    fleet_emissions_elec_county[which(fleet_emissions_elec_county$Year>first_proj_yr),6:10] <- 0
   }
   results_path <- paste0(getwd(), "/outputs/air_quality/", Sys.Date(), "_", scenario_id, "_results")
   fleet_direct_emissions_state_breakdown <- state_resolved_fleet_direct_emissions
+  fleet_direct_emissions_state_breakdown$NOx <- fleet_direct_emissions_state_breakdown$NOx*vehicle_EF_factor_NOx
+  fleet_direct_emissions_state_breakdown$SO2 <- fleet_direct_emissions_state_breakdown$SO2*vehicle_EF_factor_SO2
+  fleet_direct_emissions_state_breakdown$Total_PM25 <- fleet_direct_emissions_state_breakdown$Total_PM25*vehicle_EF_factor_PM25
   GIS_matching_matrix <- read.csv(paste0(getwd(), "/inputs/air_quality/GIS_matching_matrix.csv"))
   # Generate proper baseline and scenario inputs for COBRA
   template_baseline <- get_input_f(input_name = 'COBRA_emissions_baseline_template')
@@ -53,11 +59,89 @@ cobra_health_impact_f <- function(state_resolved_fleet_direct_emissions, fleet_e
   index_electricity <- which(scenario$TIER1 == 1)
   #   Index related to the LDV fleet
   index_fleet <- which(scenario$TIER1 == 11 & scenario$TIER3 == 2)
+  # Index relative to battery manufacturing
+  if (grepl("GREET", battery_calculation_method)) {
+    automotive_manufacturing_data <- read.csv(paste0(getwd(), "/inputs/air_quality/US_NEI_Vehicle_Manufacturing.csv"))
+    battery_manufacturing_allocation <- data.frame("ID" = 2,
+                                                   "typeindx" = 2,
+                                                   "FIPS" = unique(automotive_manufacturing_data$FIPS),
+                                                   "sourceindx" = NA,
+                                                   "stid" = NA,
+                                                   "cyid" = NA,
+                                                   "TIER1" = 7,
+                                                   "TIER2" = 8,
+                                                   "TIER3" = 99,
+                                                   "Year" = NA,
+                                                   "NO2" = NA,
+                                                   "SO2" = NA,
+                                                   "NH3" = NA,
+                                                   "SOA" = 0,
+                                                   "PM25" = NA,
+                                                   "VOC" = NA)
+    for (i in 1:dim(battery_manufacturing_allocation)[1]) {
+      battery_manufacturing_allocation$sourceindx[i] <- GIS_matching_matrix$COBRA_SOURCEINDX[which(GIS_matching_matrix$FIPS == battery_manufacturing_allocation$FIPS[i])]
+      battery_manufacturing_allocation$stid[i] <- GIS_matching_matrix$ST_FIPS[which(GIS_matching_matrix$FIPS == battery_manufacturing_allocation$FIPS[i])]
+      battery_manufacturing_allocation$cyid[i] <- GIS_matching_matrix$CY_FIPS[which(GIS_matching_matrix$FIPS == battery_manufacturing_allocation$FIPS[i])]
+      battery_manufacturing_allocation$NO2[i] <- sum(automotive_manufacturing_data$Emissions..Tons.[which(automotive_manufacturing_data$FIPS == battery_manufacturing_allocation$FIPS[i] & automotive_manufacturing_data$Pollutant == "Nitrogen Oxides")])/sum(automotive_manufacturing_data$Emissions..Tons.[which(automotive_manufacturing_data$Pollutant == "Nitrogen Oxides")])
+      battery_manufacturing_allocation$SO2[i] <- sum(automotive_manufacturing_data$Emissions..Tons.[which(automotive_manufacturing_data$FIPS == battery_manufacturing_allocation$FIPS[i] & automotive_manufacturing_data$Pollutant == "Sulfur Dioxide")])/sum(automotive_manufacturing_data$Emissions..Tons.[which(automotive_manufacturing_data$Pollutant == "Sulfur Dioxide")])
+      battery_manufacturing_allocation$NH3[i] <- 1/length(unique(automotive_manufacturing_data$FIPS))
+      battery_manufacturing_allocation$PM25[i] <- sum(automotive_manufacturing_data$Emissions..Tons.[which(automotive_manufacturing_data$FIPS == battery_manufacturing_allocation$FIPS[i] & automotive_manufacturing_data$Pollutant == "PM2.5 Primary (Filt + Cond)")])/sum(automotive_manufacturing_data$Emissions..Tons.[which(automotive_manufacturing_data$Pollutant == "PM2.5 Primary (Filt + Cond)")])
+      battery_manufacturing_allocation$VOC[i] <- sum(automotive_manufacturing_data$Emissions..Tons.[which(automotive_manufacturing_data$FIPS == battery_manufacturing_allocation$FIPS[i] & automotive_manufacturing_data$Pollutant == "Volatile Organic Compounds")])/sum(automotive_manufacturing_data$Emissions..Tons.[which(automotive_manufacturing_data$Pollutant == "Volatile Organic Compounds")])
+    }
+    battery_manufacturing_allocation <- select(battery_manufacturing_allocation, -c("FIPS"))
+    for (i in unique(emissions_battery_production$Year)) {
+      battery_manufacturing_allocation_temp <- battery_manufacturing_allocation
+      battery_manufacturing_allocation_temp$Year <- i
+      battery_manufacturing_allocation_temp$NO2 <- battery_manufacturing_allocation_temp$NO2*emissions_battery_production$NOx[which(emissions_battery_production$Year == i)]
+      battery_manufacturing_allocation_temp$SO2 <- battery_manufacturing_allocation_temp$SO2*emissions_battery_production$SO2[which(emissions_battery_production$Year == i)]
+      battery_manufacturing_allocation_temp$PM25 <- battery_manufacturing_allocation_temp$PM25*emissions_battery_production$PM25[which(emissions_battery_production$Year == i)]
+      battery_manufacturing_allocation_temp$VOC <- battery_manufacturing_allocation_temp$VOC*emissions_battery_production$VOC[which(emissions_battery_production$Year == i)]
+      battery_manufacturing_allocation_temp$NH3 <- battery_manufacturing_allocation_temp$NH3*emissions_battery_production$NH3[which(emissions_battery_production$Year == i)]
+      if (i == min(unique(emissions_battery_production$Year))) {
+        battery_manufacturing_allocation_dataset <- battery_manufacturing_allocation_temp
+      } else {
+        battery_manufacturing_allocation_dataset <- rbind(battery_manufacturing_allocation_dataset, battery_manufacturing_allocation_temp)
+      }
+    }
+  } else if (battery_calculation_method == "Tessum2014") {
+    damages_battery_production <- emissions_battery_production[["batteries_damages_monetized_yearly"]]
+    damages_battery_production_state <- emissions_battery_production[["batteries_damages_per_state"]]
+    damages_battery_production_county <- emissions_battery_production[["batteries_damages_per_county"]]
+  }
+  # Create the index state dataset [NEW]
+  for (i in 1:length(states_correspondence$COBRA_code)) {
+    if (i == 1) {
+      index_states <- list(which(scenario$stid == states_correspondence$COBRA_code[i]))
+    } else {
+      index_states <- append(index_states, list(which(scenario$stid == states_correspondence$COBRA_code[i])), after = i-1)
+    }
+  }
+  # Create the index county dataset [NEW]
+  for (i in 1:length(states_correspondence$COBRA_code)) {
+    counties <- GIS_matching_matrix$COBRA_SOURCEINDX[which(GIS_matching_matrix$ST_FIPS == states_correspondence$COBRA_code[i])]
+    for (j in 1:length(counties)) {
+      index_county <- which(scenario$sourceindx == counties[j])
+      county_FIPS <- GIS_matching_matrix$FIPS[which(GIS_matching_matrix$COBRA_SOURCEINDX == counties[j])]
+      county_pop_factor <- county_allocation_factor$county_allocation_factor[which(county_allocation_factor$FIPS == county_FIPS)]
+      county_data <- data.frame(index_county = index_county, county_FIPS = county_FIPS, county_pop_factor = county_pop_factor)
+      if (j == 1) {
+        state_data <- list(county_data)
+      } else {
+        state_data <- append(state_data, list(county_data), after = j-1)
+      }
+    }
+    if (i == 1) {
+      index_counties <- list(state_data)
+    } else {
+      index_counties <- append(index_counties, list(state_data), after = i-1)
+    }
+  }
   if (calculation_mode == "default" | calculation_mode == "all") {
     for (i in (first_proj_yr+1):last_yr) {
       m <- m+1
       for (j in 1:length(states_correspondence$COBRA_code)) {
-        index_state <- which(scenario$stid == states_correspondence$COBRA_code[j])
+        index_state <- index_states[[j]]
+        #index_state <- which(scenario$stid == states_correspondence$COBRA_code[j])
         padd <- unique(GIS_matching_matrix$PADD[which(GIS_matching_matrix$ST_FIPS == states_correspondence$COBRA_code[j])])
         rel_demand <- fleet_fuel_usage_US$Rel_Demand[which(fleet_fuel_usage_US$PADD == padd & fleet_fuel_usage_US$Year == i)]
         rel_refining <- fleet_fuel_usage_US$Rel_Refining[which(fleet_fuel_usage_US$PADD == padd & fleet_fuel_usage_US$Year == i)]
@@ -101,13 +185,17 @@ cobra_health_impact_f <- function(state_resolved_fleet_direct_emissions, fleet_e
         }
         emissions_oil_related_activities[nrow(emissions_oil_related_activities)+1,] <- c(states_correspondence$COBRA_code[j], i, "tons", sum(scenario$NO2[intersect(index_total_oil, index_state)]), sum(scenario$SO2[intersect(index_total_oil, index_state)]), sum(scenario$PM25[intersect(index_total_oil, index_state)]), sum(scenario$NH3[intersect(index_total_oil, index_state)]), sum(scenario$VOC[intersect(index_total_oil, index_state)])) 
         # Generation of the county-resolved emissions
-        counties <- data.frame(GIS_matching_matrix$COBRA_SOURCEINDX[which(GIS_matching_matrix$ST_FIPS == states_correspondence$COBRA_code[j])], GIS_matching_matrix$FIPS[which(GIS_matching_matrix$ST_FIPS == states_correspondence$COBRA_code[j])])
-        colnames(counties) <- c("sourceindx", "FIPS")
+        #counties <- data.frame(GIS_matching_matrix$COBRA_SOURCEINDX[which(GIS_matching_matrix$ST_FIPS == states_correspondence$COBRA_code[j])], GIS_matching_matrix$FIPS[which(GIS_matching_matrix$ST_FIPS == states_correspondence$COBRA_code[j])])
+        #colnames(counties) <- c("sourceindx", "FIPS")
         fleet_emissions_state <- fleet_direct_emissions_state_breakdown[which(fleet_direct_emissions_state_breakdown$State == states_correspondence$COBRA_code[j]),]
-        for (k in 1:dim(counties)[1]) {
-          index_county <- which(scenario$sourceindx == counties$sourceindx[k])
-          county_FIPS <- GIS_matching_matrix$FIPS[which(GIS_matching_matrix$COBRA_SOURCEINDX == counties$sourceindx[k])]
-          county_pop_factor <- county_allocation_factor$county_allocation_factor[which(county_allocation_factor$FIPS == county_FIPS)]
+        #for (k in 1:dim(counties)[1]) {
+        for (k in 1:length(index_counties[[j]])) {
+          #index_county <- which(scenario$sourceindx == counties$sourceindx[k])
+          index_county <- index_counties[[j]][k][[1]]$index_county
+          county_FIPS <- index_counties[[j]][k][[1]]$county_FIPS[1]
+          county_pop_factor <- index_counties[[j]][k][[1]]$county_pop_factor[1]
+          #county_FIPS <- GIS_matching_matrix$FIPS[which(GIS_matching_matrix$COBRA_SOURCEINDX == counties$sourceindx[k])]
+          #county_pop_factor <- county_allocation_factor$county_allocation_factor[which(county_allocation_factor$FIPS == county_FIPS)]
           if (i == (first_proj_yr+1)) { #In the first year, overwrite the data in the baseline file
             baseline$NO2[intersect(index_fleet, index_county)] <- fleet_emissions_state$NOx[which(fleet_emissions_state$Year == i-1 & fleet_emissions_state$State == states_correspondence$COBRA_code[j])]*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
             baseline$SO2[intersect(index_fleet, index_county)] <- fleet_emissions_state$SO2[which(fleet_emissions_state$Year == i-1 & fleet_emissions_state$State == states_correspondence$COBRA_code[j])]*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
@@ -122,13 +210,36 @@ cobra_health_impact_f <- function(state_resolved_fleet_direct_emissions, fleet_e
           scenario$NH3[intersect(index_fleet, index_county)] <- fleet_emissions_state$NH3[which(fleet_emissions_state$Year == i & fleet_emissions_state$State == states_correspondence$COBRA_code[j])]*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
           scenario$VOC[intersect(index_fleet, index_county)] <- fleet_emissions_state$VOC[which(fleet_emissions_state$Year == i & fleet_emissions_state$State == states_correspondence$COBRA_code[j])]*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
           # Calculation of the emissions from electricity
-          index_fips <- which(fleet_emissions_elec_county$FIPS == counties$FIPS[k] & fleet_emissions_elec_county$Year == i)
-          scenario$NO2[intersect(index_electricity, index_county)] <- baseline$NO2[intersect(index_electricity, index_county)] + (fleet_emissions_elec_county$NOx[index_fips]-fleet_emissions_elec_county$NOx[which(fleet_emissions_elec_county$FIPS == counties$FIPS[k] & fleet_emissions_elec_county$Year == i-1)])/length(scenario$NO2[intersect(index_electricity, index_county)])
-          scenario$SO2[intersect(index_electricity, index_county)] <- baseline$SO2[intersect(index_electricity, index_county)] + (fleet_emissions_elec_county$SO2[index_fips]-fleet_emissions_elec_county$SO2[which(fleet_emissions_elec_county$FIPS == counties$FIPS[k] & fleet_emissions_elec_county$Year == i-1)])/length(scenario$SO2[intersect(index_electricity, index_county)])
-          scenario$NH3[intersect(index_electricity, index_county)] <- baseline$NH3[intersect(index_electricity, index_county)] + (fleet_emissions_elec_county$NH3[index_fips]-fleet_emissions_elec_county$NH3[which(fleet_emissions_elec_county$FIPS == counties$FIPS[k] & fleet_emissions_elec_county$Year == i-1)])/length(scenario$NH3[intersect(index_electricity, index_county)])
-          scenario$PM25[intersect(index_electricity, index_county)] <- baseline$PM25[intersect(index_electricity, index_county)] + (fleet_emissions_elec_county$PM25[index_fips]-fleet_emissions_elec_county$PM25[which(fleet_emissions_elec_county$FIPS == counties$FIPS[k] & fleet_emissions_elec_county$Year == i-1)])/length(scenario$PM25[intersect(index_electricity, index_county)])
-          scenario$VOC[intersect(index_electricity, index_county)] <- baseline$VOC[intersect(index_electricity, index_county)] + (fleet_emissions_elec_county$VOC[index_fips]-fleet_emissions_elec_county$VOC[which(fleet_emissions_elec_county$FIPS == counties$FIPS[k] & fleet_emissions_elec_county$Year == i-1)])/length(scenario$VOC[intersect(index_electricity, index_county)])
+          #index_fips <- which(fleet_emissions_elec_county$FIPS == counties$FIPS[k] & fleet_emissions_elec_county$Year == i)
+          index_fips <- which(fleet_emissions_elec_county$FIPS == county_FIPS & fleet_emissions_elec_county$Year == i)
+          scenario$NO2[intersect(index_electricity, index_county)] <- baseline$NO2[intersect(index_electricity, index_county)] + (fleet_emissions_elec_county$NOx[index_fips]-fleet_emissions_elec_county$NOx[which(fleet_emissions_elec_county$FIPS == county_FIPS & fleet_emissions_elec_county$Year == i-1)])/length(scenario$NO2[intersect(index_electricity, index_county)])
+          scenario$SO2[intersect(index_electricity, index_county)] <- baseline$SO2[intersect(index_electricity, index_county)] + (fleet_emissions_elec_county$SO2[index_fips]-fleet_emissions_elec_county$SO2[which(fleet_emissions_elec_county$FIPS == county_FIPS & fleet_emissions_elec_county$Year == i-1)])/length(scenario$SO2[intersect(index_electricity, index_county)])
+          scenario$NH3[intersect(index_electricity, index_county)] <- baseline$NH3[intersect(index_electricity, index_county)] + (fleet_emissions_elec_county$NH3[index_fips]-fleet_emissions_elec_county$NH3[which(fleet_emissions_elec_county$FIPS == county_FIPS & fleet_emissions_elec_county$Year == i-1)])/length(scenario$NH3[intersect(index_electricity, index_county)])
+          scenario$PM25[intersect(index_electricity, index_county)] <- baseline$PM25[intersect(index_electricity, index_county)] + (fleet_emissions_elec_county$PM25[index_fips]-fleet_emissions_elec_county$PM25[which(fleet_emissions_elec_county$FIPS == county_FIPS & fleet_emissions_elec_county$Year == i-1)])/length(scenario$PM25[intersect(index_electricity, index_county)])
+          scenario$VOC[intersect(index_electricity, index_county)] <- baseline$VOC[intersect(index_electricity, index_county)] + (fleet_emissions_elec_county$VOC[index_fips]-fleet_emissions_elec_county$VOC[which(fleet_emissions_elec_county$FIPS == county_FIPS & fleet_emissions_elec_county$Year == i-1)])/length(scenario$VOC[intersect(index_electricity, index_county)])
         }
+      }
+      if (include_battery_manufacturing == "Y" & grepl("GREET", battery_calculation_method)) {
+        data <- filter(battery_manufacturing_allocation_dataset, battery_manufacturing_allocation_dataset$Year == i)
+        data <- select(data, -c("Year"))
+        data_previous <- filter(battery_manufacturing_allocation_dataset, battery_manufacturing_allocation_dataset$Year == i-1)
+        data_previous <- select(data_previous, -c("Year"))
+        if (i == (first_proj_yr+1)) {
+          start_index <- dim(scenario)[1]+1
+          scenario <- rbind(scenario, data)
+          baseline <- rbind(baseline, data_previous)
+          end_index <- dim(scenario)[1]
+          index_batteries <- start_index:end_index
+        } else {
+          #index_batteries <- which(scenario$TIER1 == 7 & scenario$TIER2 == 8 & scenario$TIER3 == 1)
+          scenario$NO2[index_batteries] <- baseline$NO2[index_batteries]+(data$NO2-data_previous$NO2)
+          scenario$SO2[index_batteries] <- baseline$SO2[index_batteries]+(data$SO2-data_previous$SO2)
+          scenario$NH3[index_batteries] <- baseline$NH3[index_batteries]+(data$NH3-data_previous$NH3)
+          scenario$SOA[index_batteries] <- baseline$SOA[index_batteries]+(data$SOA-data_previous$SOA)
+          scenario$PM25[index_batteries] <- baseline$PM25[index_batteries]+(data$PM25-data_previous$PM25)
+          scenario$VOC[index_batteries] <- baseline$VOC[index_batteries]+(data$VOC-data_previous$VOC)
+        }
+        #scenario <- aggregate(.~ID+typeindx+sourceindx+stid+cyid+TIER1+TIER2+TIER3, data = scenario, FUN = sum)
       }
       write.csv(baseline, paste0(getwd(), "/inputs/air_quality/cobra_inputs/COBRA_emissions_baseline_", i, ".csv"), row.names = FALSE)
       write.csv(scenario, paste0(getwd(), "/inputs/air_quality/cobra_inputs/COBRA_emissions_scenario_", i, ".csv"), row.names = FALSE)
@@ -204,11 +315,11 @@ cobra_health_impact_f <- function(state_resolved_fleet_direct_emissions, fleet_e
         scenario$VOC[intersect(index_fleet, index_county)] <- fleet_emissions_state$VOC[which(fleet_emissions_state$Year == year_break & fleet_emissions_state$State == states_correspondence$COBRA_code[j])]*county_pop_factor/length(scenario$NO2[intersect(index_fleet, index_county)])
         # Calculation of the emissions from electricity
         index_fips <- which(fleet_emissions_elec_county$FIPS == counties$FIPS[k] & fleet_emissions_elec_county$Year == year_break)
-        scenario$NO2[intersect(index_electricity, index_county)] <- baseline$NO2[intersect(index_electricity, index_county)] + (fleet_emissions_elec_county$NOx[index_fips]-fleet_emissions_elec_county$NOx[which(fleet_emissions_elec_county$FIPS == counties$FIPS[k] & fleet_emissions_elec_county$Year == first_proj_yr+1)])/length(scenario$NO2[intersect(index_electricity, index_county)])
-        scenario$SO2[intersect(index_electricity, index_county)] <- baseline$SO2[intersect(index_electricity, index_county)] + (fleet_emissions_elec_county$SO2[index_fips]-fleet_emissions_elec_county$SO2[which(fleet_emissions_elec_county$FIPS == counties$FIPS[k] & fleet_emissions_elec_county$Year == first_proj_yr+1)])/length(scenario$SO2[intersect(index_electricity, index_county)])
-        scenario$NH3[intersect(index_electricity, index_county)] <- baseline$NH3[intersect(index_electricity, index_county)] + (fleet_emissions_elec_county$NH3[index_fips]-fleet_emissions_elec_county$NH3[which(fleet_emissions_elec_county$FIPS == counties$FIPS[k] & fleet_emissions_elec_county$Year == first_proj_yr+1)])/length(scenario$NH3[intersect(index_electricity, index_county)])
-        scenario$PM25[intersect(index_electricity, index_county)] <- baseline$PM25[intersect(index_electricity, index_county)] + (fleet_emissions_elec_county$PM25[index_fips]-fleet_emissions_elec_county$PM25[which(fleet_emissions_elec_county$FIPS == counties$FIPS[k] & fleet_emissions_elec_county$Year == first_proj_yr+1)])/length(scenario$PM25[intersect(index_electricity, index_county)])
-        scenario$VOC[intersect(index_electricity, index_county)] <- baseline$VOC[intersect(index_electricity, index_county)] + (fleet_emissions_elec_county$VOC[index_fips]-fleet_emissions_elec_county$VOC[which(fleet_emissions_elec_county$FIPS == counties$FIPS[k] & fleet_emissions_elec_county$Year == first_proj_yr+1)])/length(scenario$VOC[intersect(index_electricity, index_county)])
+        scenario$NO2[intersect(index_electricity, index_county)] <- baseline$NO2[intersect(index_electricity, index_county)] + (fleet_emissions_elec_county$NOx[index_fips]-fleet_emissions_elec_county$NOx[which(fleet_emissions_elec_county$FIPS == counties$FIPS[k] & fleet_emissions_elec_county$Year == first_proj_yr)])/length(scenario$NO2[intersect(index_electricity, index_county)])
+        scenario$SO2[intersect(index_electricity, index_county)] <- baseline$SO2[intersect(index_electricity, index_county)] + (fleet_emissions_elec_county$SO2[index_fips]-fleet_emissions_elec_county$SO2[which(fleet_emissions_elec_county$FIPS == counties$FIPS[k] & fleet_emissions_elec_county$Year == first_proj_yr)])/length(scenario$SO2[intersect(index_electricity, index_county)])
+        scenario$NH3[intersect(index_electricity, index_county)] <- baseline$NH3[intersect(index_electricity, index_county)] + (fleet_emissions_elec_county$NH3[index_fips]-fleet_emissions_elec_county$NH3[which(fleet_emissions_elec_county$FIPS == counties$FIPS[k] & fleet_emissions_elec_county$Year == first_proj_yr)])/length(scenario$NH3[intersect(index_electricity, index_county)])
+        scenario$PM25[intersect(index_electricity, index_county)] <- baseline$PM25[intersect(index_electricity, index_county)] + (fleet_emissions_elec_county$PM25[index_fips]-fleet_emissions_elec_county$PM25[which(fleet_emissions_elec_county$FIPS == counties$FIPS[k] & fleet_emissions_elec_county$Year == first_proj_yr)])/length(scenario$PM25[intersect(index_electricity, index_county)])
+        scenario$VOC[intersect(index_electricity, index_county)] <- baseline$VOC[intersect(index_electricity, index_county)] + (fleet_emissions_elec_county$VOC[index_fips]-fleet_emissions_elec_county$VOC[which(fleet_emissions_elec_county$FIPS == counties$FIPS[k] & fleet_emissions_elec_county$Year == first_proj_yr)])/length(scenario$VOC[intersect(index_electricity, index_county)])
       }
     }
     # Write the files in the input folder to be used by COBRA
@@ -625,25 +736,42 @@ cobra_health_impact_f <- function(state_resolved_fleet_direct_emissions, fleet_e
     years <- unique(health_benefits$Year)
     states <- unique(health_benefits_by_state$State)
     counties <- unique(health_benefits_by_county$FIPS)
+    health_benefits_by_county <- filter(health_benefits_by_county, health_benefits_by_county$Year != 0)
+    health_benefits_by_state <- filter(health_benefits_by_state, health_benefits_by_state$Year != 0)
     for (i in 1:length(years)) {
+      if (include_battery_manufacturing == "Y" & battery_calculation_method == "Tessum2014") {
+        damages_batteries <- damages_battery_production$Monetized_damages[which(damages_battery_production$Year == health_benefits$Year[i])]
+        damages_batteries_discounted <- damages_battery_production$Discounted_damages[which(damages_battery_production$Year == health_benefits$Year[i])]
+      } else {
+        damages_batteries <- 0
+        damages_batteries_discounted <- 0
+      }
       if (i > 1) {
         health_benefits$Cumulative_before_discount_benefits_Low[i] <- health_benefits$Cumulative_before_discount_benefits_Low[i-1]+health_benefits$Total_health_benefits_Low[i]
         health_benefits$Cumulative_before_discount_benefits_High[i] <- health_benefits$Cumulative_before_discount_benefits_High[i-1]+health_benefits$Total_health_benefits_High[i]
         health_benefits$Cumulative_benefits_Low[i] <- health_benefits$Cumulative_before_discount_benefits_Low[i]*1/((1+discount_rate/100)^(i))
         health_benefits$Cumulative_benefits_High[i] <- health_benefits$Cumulative_before_discount_benefits_High[i]*1/((1+discount_rate/100)^(i))
-        health_benefits$Total_benefits_Low[i] <- health_benefits$Total_benefits_Low[i-1]+health_benefits$Cumulative_benefits_Low[i]
-        health_benefits$Total_benefits_High[i] <- health_benefits$Total_benefits_High[i-1]+health_benefits$Cumulative_benefits_High[i]
+        health_benefits$Total_benefits_Low[i] <- health_benefits$Total_benefits_Low[i-1]+health_benefits$Cumulative_benefits_Low[i] - damages_batteries_discounted
+        health_benefits$Total_benefits_High[i] <- health_benefits$Total_benefits_High[i-1]+health_benefits$Cumulative_benefits_High[i] - damages_batteries_discounted
       } else {
         health_benefits$Cumulative_before_discount_benefits_Low[i] <- health_benefits$Total_health_benefits_Low[i]
         health_benefits$Cumulative_before_discount_benefits_High[i] <- health_benefits$Total_health_benefits_High[i]
         health_benefits$Cumulative_benefits_Low[i] <- health_benefits$Cumulative_before_discount_benefits_Low[i]*1/((1+discount_rate/100)^(i))
         health_benefits$Cumulative_benefits_High[i] <- health_benefits$Cumulative_before_discount_benefits_High[i]*1/((1+discount_rate/100)^(i))
-        health_benefits$Total_benefits_Low[i] <- health_benefits$Cumulative_benefits_Low[i]
-        health_benefits$Total_benefits_High[i] <- health_benefits$Cumulative_benefits_High[i]
+        health_benefits$Total_benefits_Low[i] <- health_benefits$Cumulative_benefits_Low[i]# - damages_batteries_discounted
+        health_benefits$Total_benefits_High[i] <- health_benefits$Cumulative_benefits_High[i]# - damages_batteries_discounted
       }
       for (j in 1:length(states)) {
         index_state <- which(health_benefits_by_state$State == states[j] & health_benefits_by_state$Year == years[i])
         index_state_previous <- which(health_benefits_by_state$State == states[j] & health_benefits_by_state$Year == years[i-1])
+        state_id <- states_correspondence$COBRA_code[which(states_correspondence$name_state == health_benefits_by_state$State[i])]
+        if (include_battery_manufacturing == "Y" & battery_calculation_method == "Tessum2014") {
+          damages_batteries <- damages_battery_production$Monetized_damages[which(damages_battery_production$Year == health_benefits$Year[i])]
+          damages_batteries_discounted <- damages_battery_production$Discounted_damages[which(damages_battery_production$Year == health_benefits$Year[i])]
+        } else {
+          damages_batteries <- 0
+          damages_batteries_discounted <- 0
+        }
         if (i > 1) {
           health_benefits_by_state$Cumulative_before_discount_benefits_Low[index_state] <- health_benefits_by_state$Cumulative_before_discount_benefits_Low[index_state_previous]+health_benefits_by_state$Total_health_benefits_Low[index_state]
           health_benefits_by_state$Cumulative_before_discount_benefits_High[index_state] <- health_benefits_by_state$Cumulative_before_discount_benefits_High[index_state_previous]+health_benefits_by_state$Total_health_benefits_High[index_state]
@@ -679,8 +807,29 @@ cobra_health_impact_f <- function(state_resolved_fleet_direct_emissions, fleet_e
           health_benefits_by_county$Total_benefits_High[index_county] <- health_benefits_by_county$Cumulative_benefits_High[index_county]
         }
       }
+      #for (i in 1:dim(health_benefits_by_state)[1]) {
+      #  state_id <- states_correspondence$COBRA_code[which(states_correspondence$name_state == health_benefits_by_state$State[i])]
+      #  damages_batteries <- damages_battery_production_state$Damages[which(damages_battery_production_state$State_ID == state_id & damages_battery_production_state$Year == health_benefits_by_state$Year[i])]
+      #  damages_batteries_discounted <- damages_battery_production_state$Discounted_damages[which(damages_battery_production_state$State_ID == state_id & damages_battery_production_state$Year == health_benefits_by_state$Year[i])]
+      #  health_benefits_by_state$Cumulative_before_discount_benefits_Low[i] <- health_benefits_by_state$Cumulative_before_discount_benefits_Low[i] - damages_batteries
+      #  health_benefits_by_state$Cumulative_before_discount_benefits_High[i] <- health_benefits_by_state$Cumulative_before_discount_benefits_High[i] - damages_batteries
+      #  health_benefits_by_state$Cumulative_benefits_Low[i] <- health_benefits_by_state$Cumulative_benefits_Low[i] - damages_batteries_discounted
+      #  health_benefits_by_state$Cumulative_benefits_High[i] <- health_benefits_by_state$Cumulative_benefits_High[i] - damages_batteries_discounted
+      #  health_benefits_by_state$Total_benefits_Low[i] <- health_benefits_by_state$Total_benefits_Low[i] - damages_batteries_discounted
+      #  health_benefits_by_state$Total_benefits_High[i] <- health_benefits_by_state$Total_benefits_High[i] - damages_batteries_discounted
+      #}
+      #for (i in 1:dim(health_benefits_by_county)[1]) {
+      #  damages_batteries <- damages_battery_production_county$Damages[which(damages_battery_production_county$FIPS == health_benefits_by_county$FIPS[i] & damages_battery_production_county$Year == health_benefits_by_county$Year[i])]
+      #  damages_batteries_discounted <- damages_battery_production_county$Discounted_damages[which(damages_battery_production_county$FIPS == health_benefits_by_county$FIPS[i] & damages_battery_production_county$Year == health_benefits_by_county$Year[i])]
+      #  health_benefits_by_county$Cumulative_before_discount_benefits_Low[i] <- health_benefits_by_county$Cumulative_before_discount_benefits_Low[i] - damages_batteries
+      #  health_benefits_by_county$Cumulative_before_discount_benefits_High[i] <- health_benefits_by_county$Cumulative_before_discount_benefits_High[i] - damages_batteries
+      #  health_benefits_by_county$Cumulative_benefits_Low[i] <- health_benefits_by_county$Cumulative_benefits_Low[i] - damages_batteries_discounted
+      #  health_benefits_by_county$Cumulative_benefits_High[i] <- health_benefits_by_county$Cumulative_benefits_High[i] - damages_batteries_discounted
+      #  health_benefits_by_county$Total_benefits_Low[i] <- health_benefits_by_county$Total_benefits_Low[i] - damages_batteries_discounted
+      #  health_benefits_by_county$Total_benefits_High[i] <- health_benefits_by_county$Total_benefits_High[i] - damages_batteries_discounted
+      #}
     }
-    health_benefits <- add_row(health_benefits, Year = 0, Total_health_benefits_Low = sum(health_benefits$Total_health_benefits_Low), Total_health_benefits_High = sum(health_benefits$Total_health_benefits_High), Cumulative_before_discount_benefits_Low = sum(health_benefits$Cumulative_before_discount_benefits_Low), Cumulative_before_discount_benefits_High = sum(health_benefits$Cumulative_before_discount_benefits_High), Cumulative_benefits_Low = sum(health_benefits$Cumulative_benefits_Low), Cumulative_benefits_High = sum(health_benefits$Cumulative_benefits_High), Total_benefits_Low = sum(health_benefits$Total_benefits_Low), Total_benefits_High = sum(health_benefits$Total_benefits_High))
+    #health_benefits <- add_row(health_benefits, Year = 0, Total_health_benefits_Low = sum(health_benefits$Total_health_benefits_Low), Total_health_benefits_High = sum(health_benefits$Total_health_benefits_High), Cumulative_before_discount_benefits_Low = sum(health_benefits$Cumulative_before_discount_benefits_Low), Cumulative_before_discount_benefits_High = sum(health_benefits$Cumulative_before_discount_benefits_High), Cumulative_benefits_Low = sum(health_benefits$Cumulative_benefits_Low), Cumulative_benefits_High = sum(health_benefits$Cumulative_benefits_High), Total_benefits_Low = sum(health_benefits$Total_benefits_Low), Total_benefits_High = sum(health_benefits$Total_benefits_High))
     # Correct for the inflation - COBRA provides values in 2107 USD, we correct into 2023 USD
     health_benefits[,2:9] <- health_benefits[,2:9]*COBRA_inflation_correction
     health_benefits_by_state[,3:10] <- health_benefits_by_state[,3:10]*COBRA_inflation_correction
@@ -688,6 +837,9 @@ cobra_health_impact_f <- function(state_resolved_fleet_direct_emissions, fleet_e
     # Export the health benefits files
     print("Exporting the health benefits files")
     write.csv(health_benefits, paste0(results_path, "/health_benefits.csv"))
+    if (include_battery_manufacturing == "Y" & battery_calculation_method == "Tessum2014") {
+      write.csv(health_benefits_batt, paste0(results_path, "/health_benefits.csv"))
+    }
     write.csv(health_benefits_by_state, paste0(results_path, "/health_benefits_by_state.csv"))
     write.csv(health_benefits_by_county, paste0(results_path, "/health_benefits_by_county.csv"))
     write.csv(non_monetized_benefits, paste0(results_path, "/non_monetized_health_benefits.csv"))

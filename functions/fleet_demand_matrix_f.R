@@ -3,7 +3,7 @@
 #' @import tidyr
 #' @importFrom reshape2 acast
 #' @export
-fleet_demand_matrix_f<-function(results_path, first_yr=NA,last_yr=NA){
+fleet_demand_matrix_f<-function(results_path, first_yr=NA,last_yr=NA, fuel_matching_option = NA){
   attribute_f("fleet_demand_matrix_f")
   #Input files
   lca_process  <- get_input_f(input_name = 'lca_process')
@@ -17,7 +17,15 @@ fleet_demand_matrix_f<-function(results_path, first_yr=NA,last_yr=NA){
     aggregate(reformulate(c("Year"),response="Value"),data=.,FUN=sum)
   #
   vehicle_module_f_res <- do.call(fun_res_f,list(fun_name="vehicle_module_f"))
+  if (fuel_matching_option == "hybrid") {
+    correspondence_file <- read.delim(paste0(getwd(), "/inputs/data/FLAME_to_MOVES_correspondance_files/technologies_", fuel_matching_option, ".txt"), header = TRUE, sep = ";", dec = ".")
+  } else if (fuel_matching_option == "FLAME") {
+    # Placeholder for future developments, e.g. addition of hybrid vehicles
+  } else if (fuel_matching_option == "MOVES") {
+    # Placeholder for future developments, e.g. addition of hybrid vehicles
+  }
   bat_wgt_dt <- vehicle_module_f_res[["fleet_mc_cpt_dt"]] %>% 
+    filter(Technology%in%unique(correspondence_file$Technology_Alt)) %>%
     aggregate(Weight~Component+Model_year+Technology+Size,data=.,FUN=sum) %>%
     subset(Component=="EV Battery")
   #
@@ -61,10 +69,13 @@ fleet_demand_matrix_f<-function(results_path, first_yr=NA,last_yr=NA){
   fleet_demand_matrix[lca_process$Process=="Battery Assembly",colnames(bat_wgt_matrix)] <- tot_bat_wgt_matrix
   #Fill demand matrix with fuel use
   #first start with all fuels except gasoline fuels
-  fuel_use_matrix <- fleet_fuel_use_tot %>%
+  if (unique(fleet_fuel_use_tot$Fuel) != "Gasoline") {
+    fuel_use_matrix <- fleet_fuel_use_tot %>%
     subset(Year%in%first_yr:last_yr & Fuel!="Gasoline") %>%
     acast(Fuel ~ Year , value.var='Value',fun.aggregate=sum, margins=FALSE)
-  fleet_demand_matrix[lca_process$Phase=="Fuel Production" & lca_process$Process%in%rownames(fuel_use_matrix),] <- fuel_use_matrix[subset(lca_process, Phase=="Fuel Production" & lca_process$Process%in%rownames(fuel_use_matrix))$Process,colnames(fleet_demand_matrix)]
+    fleet_demand_matrix[lca_process$Phase=="Fuel Production" & lca_process$Process%in%rownames(fuel_use_matrix),] <- fuel_use_matrix[subset(lca_process, Phase=="Fuel Production" & lca_process$Process%in%rownames(fuel_use_matrix))$Process,colnames(fleet_demand_matrix)]
+  }
+  
   #Second, gasoline and efuels
   fleet_demand_matrix[lca_process$Phase=="Fuel Production" & lca_process$Process=="Gasoline",] <- acast(data=subset(fleet_efuel_dt,Fuel=="Gasoline" & Year%in%first_yr:last_yr),Fuel ~ Year , value.var='Value',fun.aggregate=sum, margins=FALSE)[,colnames(fleet_demand_matrix)]
   fleet_demand_matrix[lca_process$Phase=="Fuel Production" & lca_process$Process=="E-fuel-Fuel synthesis",] <- acast(data=subset(fleet_efuel_dt,Fuel=="Efuel" & Year%in%first_yr:last_yr),Fuel ~ Year , value.var='Value',fun.aggregate=sum, margins=FALSE)[,colnames(fleet_demand_matrix)]
@@ -73,7 +84,9 @@ fleet_demand_matrix_f<-function(results_path, first_yr=NA,last_yr=NA){
     fleet_demand_matrix[i,] <- acast(data=subset(fleet_efuel_feedstock_dt,Feedstock==lca_process[i,"GREET"] & Year%in%first_yr:last_yr),Feedstock ~ Year , value.var='Value',fun.aggregate=sum, margins=FALSE)[,colnames(fleet_demand_matrix)]
   }
   #Fuel use
-  fleet_demand_matrix[lca_process$Phase=="Fuel Use" & lca_process$Process%in%rownames(fuel_use_matrix),] <-  fuel_use_matrix[subset(lca_process, Phase=="Fuel Production" & lca_process$Process%in%rownames(fuel_use_matrix))$Process,colnames(fleet_demand_matrix)]
+  if (unique(fleet_fuel_use_tot$Fuel) != "Gasoline") {
+    fleet_demand_matrix[lca_process$Phase=="Fuel Use" & lca_process$Process%in%rownames(fuel_use_matrix),] <-  fuel_use_matrix[subset(lca_process, Phase=="Fuel Production" & lca_process$Process%in%rownames(fuel_use_matrix))$Process,colnames(fleet_demand_matrix)]
+  }
   fleet_demand_matrix[lca_process$Phase=="Fuel Use" & lca_process$Process=="Gasoline",] <- acast(data=subset(fleet_efuel_dt,Fuel=="Gasoline" & Year%in%first_yr:last_yr),Fuel ~ Year , value.var='Value',fun.aggregate=sum, margins=FALSE)[,colnames(fleet_demand_matrix)]
   #Fill demand matrix with vehicle disposal
   fleet_demand_matrix[lca_process$Process=="Vehicle Disposal",] <- fleet_tot_scrap$Value[order(fleet_tot_scrap$Year)]

@@ -5,6 +5,9 @@ total_fleet_size_f <- function(fleet_vint_stock) {
   for (i in 1:length(years)) {
     for (j in 1:length(vehicles_sizes)) {
       total_fleet_size[i,j] <- sum(fleet_vint_stock$Value[which(fleet_vint_stock$Year == years[i] & fleet_vint_stock$Size == vehicles_sizes[j])])
+      if (length(vehicles_sizes) == 1) {
+        total_fleet_size[i,j+1] <- 0
+      }
     }
   }
   total_fleet_size <- add_column(total_fleet_size, "Total" = total_fleet_size$V1+total_fleet_size$V2)

@@ -2,7 +2,7 @@
 #' Function: Calculates the vintaged stock of the U.S. LDVs by vehicle technology, size and model year.
 #' @importFrom reshape2 acast
 #' @export
-fleet_vint_stock_f <- function(first_yr=NA,last_yr=NA,fleet_vint_procedure=NA,fleet_tot_stock=NA,aeo_scen=NA, fleet_composition_source=NA, scenario_id = NA, first_proj_yr = NA, fleet_id = NA){
+fleet_vint_stock_f <- function(first_yr=NA,last_yr=NA,fleet_vint_procedure=NA,fleet_tot_stock=NA,aeo_scen=NA, fleet_composition_source=NA, scenario_id = NA, first_proj_yr = NA, fleet_id = NA, years_simulation = NA){
   attribute_f("fleet_vint_stock_f")
   results_path <- paste0(getwd(), "/outputs/air_quality/", Sys.Date(), "_", scenario_id, "_results")
   if (fleet_composition_source == "FLAME") {
@@ -67,7 +67,8 @@ fleet_vint_stock_f <- function(first_yr=NA,last_yr=NA,fleet_vint_procedure=NA,fl
   } else if (fleet_composition_source == "custom") {
   }
   print("Base fleet created, custom scenario will be applied")
-  if (fleet_id != "2020_fleet" & fleet_id != "No_LDVs") {
+  special_scenarios <- c("2020_fleet", "Elec0_Truck100", "Elec0_Car100", "Elec100_Truck100", "Elec100_Car100")
+  if (!(fleet_id%in%special_scenarios)) {
     fleet_data <- do.call(fleet_composition_scenario_f, list(fleet = fleet))
     fleet_composition <- list(fleet_vint_stock = fleet_data[["fleet_vint_stock"]], 
                               fleet_vint_scrap = fleet_data[["fleet_vint_scrap"]], 
@@ -85,30 +86,86 @@ fleet_vint_stock_f <- function(first_yr=NA,last_yr=NA,fleet_vint_procedure=NA,fl
     fleet_composition_scrap <- filter(fleet_composition_scrap, fleet_composition_scrap$Year <= first_proj_yr)
     fleet_composition_scrap <- add_column(fleet_composition_scrap, "Model_Year" = NA)
     fleet_composition_scrap$Model_Year <- fleet_composition_scrap$Year-fleet_composition_scrap$Age
-    for (i in (first_proj_yr+1):last_yr) {
+    fleet_vint_stock_initial <- filter(fleet_composition_stock, fleet_composition_stock$Year == 2021)
+    fleet_vint_scrap_initial <- filter(fleet_composition_scrap, fleet_composition_scrap$Year == 2021)
+    fleet_vint_stock_initial$Year <- 2022
+    fleet_vint_scrap_initial$Year <- 2022
+    fleet_composition_stock <- rbind(fleet_composition_stock, fleet_vint_stock_initial)
+    fleet_composition_scrap <- rbind(fleet_composition_scrap, fleet_vint_scrap_initial)
+    fleet_vint_stock_initial$Value <- 0
+    fleet_vint_scrap_initial$Value <- 0
+    for (i in (2023:last_yr)) {
       temp_stock <- fleet_composition_stock[which(fleet_composition_stock$Year == first_proj_yr),]
       temp_scrap <- fleet_composition_scrap[which(fleet_composition_scrap$Year == first_proj_yr),]
       temp_stock$Year <- i
       temp_scrap$Year <- i
-      #temp_stock$Age <- temp_stock$Age+(i-(first_proj_yr+1))
-      #temp_scrap$Age <- temp_scrap$Age+(i-(first_proj_yr+1))
-      fleet_composition_stock <- rbind(fleet_composition_stock, temp_stock)
-      fleet_composition_scrap <- rbind(fleet_composition_scrap, temp_scrap)
+      fleet_vint_stock_initial$Year <- i
+      fleet_vint_scrap_initial$Year <- i
+      if (fleet_id == "Elec0_Truck100") {
+        temp_stock$Size <- "Light truck"
+        temp_scrap$Size <- "Light truck"
+        temp_stock$Technology <- "ICEV-G"
+        temp_scrap$Technology <- "ICEV-G"
+      } else if (fleet_id == "Elec0_Car100") {
+        temp_stock$Size <- "Car"
+        temp_scrap$Size <- "Car"
+        temp_stock$Technology <- "ICEV-G"
+        temp_scrap$Technology <- "ICEV-G"
+      } else if (fleet_id == "Elec100_Truck100") {
+        temp_stock$Size <- "Light truck"
+        temp_scrap$Size <- "Light truck"
+        temp_stock$Technology <- "BEV300"
+        temp_scrap$Technology <- "BEV300"
+      } else if (fleet_id == "Elec100_Car100") {
+        temp_stock$Size <- "Car"
+        temp_scrap$Size <- "Car"
+        temp_stock$Technology <- "BEV300"
+        temp_scrap$Technology <- "BEV300"
+      }
+      temp_stock <- aggregate(Value ~ Age+Year+Size+Technology+Model_Year, data = rbind(temp_stock,fleet_vint_stock_initial), FUN = sum)
+      temp_scrap <- aggregate(Value ~ Age+Year+Size+Technology+Model_Year, data = rbind(temp_scrap,fleet_vint_stock_initial), FUN = sum)
+      if (fleet_id == "Elec0_Truck100") {
+        #temp_stock <- rbind(temp_stock, data.frame(Age = 0, Value = 1, Year = i, Size = "Car", Technology = "ICEV-G", Model_Year = i))
+        #temp_scrap <- rbind(temp_scrap, data.frame(Age = 0, Value = 1, Year = i, Size = "Car", Technology = "ICEV-G", Model_Year = i))
+      } else if (fleet_id == "Elec0_Car100" | fleet_id == "Elec100_Car100") {
+        #temp_stock <- rbind(temp_stock, data.frame(Age = 0, Value = 1, Year = i, Size = "Light truck", Technology = "ICEV-G", Model_Year = i))
+        #temp_scrap <- rbind(temp_stock, data.frame(Age = 0, Value = 1, Year = i, Size = "Light truck", Technology = "ICEV-G", Model_Year = i))
+      }
+      if (i == 2023) {
+        fleet_composition_stock_out <- temp_stock
+        fleet_composition_scrap_out <- temp_scrap
+      } else {
+        fleet_composition_stock_out <- rbind(fleet_composition_stock_out, temp_stock)
+        fleet_composition_scrap_out <- rbind(fleet_composition_scrap_out, temp_scrap)
+      }
     }
+    fleet_composition_stock <- rbind(fleet_composition_stock_out, fleet_composition_stock)
+    fleet_composition_scrap <- rbind(fleet_composition_scrap_out, fleet_composition_scrap)
+    fleet_composition_stock$Model_Year <- fleet_composition_stock$Model_Year-(max(fleet_composition_stock$Model_Year)-years_simulation)
+    fleet_composition_scrap$Model_Year <- fleet_composition_scrap$Model_Year-(max(fleet_composition_scrap$Model_Year)-years_simulation)
     rownames(fleet_composition_stock) <- NULL
     rownames(fleet_composition_scrap) <- NULL
     for (i in states) {
       fleet_composition_stock_state_temp <- fleet_composition_stock %>%
-        add_column("State" = NA)
+        add_column("State" = NA) %>%
+        relocate("State", .before = "Model_Year")
       fleet_composition_scrap_state_temp <- fleet_composition_scrap %>%
-        add_column("State" = NA)
+        add_column("State" = NA) %>%
+        relocate("State", .before = "Model_Year")
       fleet_composition_stock_state_temp$State <- i
       fleet_composition_scrap_state_temp$State <- i
-      for (j in ((first_proj_yr+1):last_yr)) {
-        fleet_composition_stock_state_temp$Value[which(fleet_composition_stock_state_temp$Year == j)] <- fleet_composition_stock_state_temp$Value[which(fleet_composition_stock_state_temp$Year == j)]*population_distribution_states$Activity[which(population_distribution_states$State == i & 
-                                                                                                                                                                                                population_distribution_states$Year == j)]
-        fleet_composition_scrap_state_temp$Value[which(fleet_composition_scrap_state_temp$Year == j)] <- fleet_composition_scrap_state_temp$Value[which(fleet_composition_scrap_state_temp$Year == j)]*population_distribution_states$Activity[which(population_distribution_states$State == i &
-                                                                                                                                                                                                population_distribution_states$Year == j)]
+      for (j in (first_proj_yr:last_yr)) {
+        if (length(which(population_distribution_states$State == i & population_distribution_states$Year == j)) != 0) {
+          fleet_composition_stock_state_temp$Value[which(fleet_composition_stock_state_temp$Year == j)] <- fleet_composition_stock_state_temp$Value[which(fleet_composition_stock_state_temp$Year == j)]*population_distribution_states$Activity[which(population_distribution_states$State == i & 
+                                                                                                                                                                                                  population_distribution_states$Year == j)]
+          fleet_composition_scrap_state_temp$Value[which(fleet_composition_scrap_state_temp$Year == j)] <- fleet_composition_scrap_state_temp$Value[which(fleet_composition_scrap_state_temp$Year == j)]*population_distribution_states$Activity[which(population_distribution_states$State == i &
+                                                                                                                                                                                                  population_distribution_states$Year == j)]
+        } else {
+          fleet_composition_stock_state_temp$Value[which(fleet_composition_stock_state_temp$Year == j)] <- fleet_composition_stock_state_temp$Value[which(fleet_composition_stock_state_temp$Year == j)]*population_distribution_states$Activity[which(population_distribution_states$State == i & 
+                                                                                                                                                                                                                                                         population_distribution_states$Year == min(unique(population_distribution_states$Year)))]
+          fleet_composition_scrap_state_temp$Value[which(fleet_composition_scrap_state_temp$Year == j)] <- fleet_composition_scrap_state_temp$Value[which(fleet_composition_scrap_state_temp$Year == j)]*population_distribution_states$Activity[which(population_distribution_states$State == i &
+                                                                                                                                                                                                                                                         population_distribution_states$Year == min(unique(population_distribution_states$Year)))]
+        }
       }
       if (i == states[1]) {
         fleet_composition_stock_state <- fleet_composition_stock_state_temp
@@ -121,7 +178,10 @@ fleet_vint_stock_f <- function(first_yr=NA,last_yr=NA,fleet_vint_procedure=NA,fl
     fleet_composition_stock_state$Value <- round(fleet_composition_stock_state$Value)
     fleet_composition_scrap_state$Value <- round(fleet_composition_scrap_state$Value)
     fleet_composition_state_breakdown <- list(fleet_vint_stock_scenario_state_breakdown = fleet_composition_stock_state, fleet_vint_stock_scenario_scrap_breakdown = fleet_composition_scrap_state)
-    fleet_composition <- list(fleet_vint_stock = fleet_composition_stock, fleet_vint_scrap = fleet_composition_scrap, fleet_vint_stock_scenario_state_breakdown = fleet_composition_stock_state, fleet_vint_scrap_scenario_state_breakdown = fleet_composition_scrap_state)
+    fleet_composition <- list(fleet_vint_stock = fleet_composition_stock, 
+                              fleet_vint_scrap = fleet_composition_scrap, 
+                              fleet_vint_stock_scenario_state_breakdown = fleet_composition_stock_state, 
+                              fleet_vint_scrap_scenario_state_breakdown = fleet_composition_scrap_state)
   }
   print("Fleet composition dataset created")
   write.csv(fleet_composition[["fleet_vint_stock"]], paste0(results_path, "/fleet_composition.csv"))

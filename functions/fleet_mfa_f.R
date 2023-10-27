@@ -45,6 +45,11 @@ fleet_mfa_f <- function(rec_scen=NA,first_yr = NA,last_yr = NA) {
       matrix_mt_comp <- acast(tmp_fleet_mc_dt, Material ~ Model_year , value.var='Value',fun.aggregate=sum, margins=FALSE)
       #Extract the technology-specific vitanging stock
       new_sales <- subset(fleet_vint_stock, Size==size & Technology == techno & Year%in%c(first_yr:last_yr) & Age==0)
+      if (dim(new_sales)[1] == 0) {
+        for (years in first_yr:last_yr) {
+          new_sales[nrow(new_sales)+1,] <- list(0, 0, years, size, techno, years)
+        }
+      }
       matrix_new <- diag(x=new_sales$Value,nrow=length(new_sales$Year),ncol=length(new_sales$Year))
       dimnames(matrix_new) <- list(new_sales$Year,new_sales$Year)
       #Calculate matrix of embodied material
@@ -52,6 +57,13 @@ fleet_mfa_f <- function(rec_scen=NA,first_yr = NA,last_yr = NA) {
       mat_emb <- mat_emb + tmp_matrix_emb[rownames(mat_emb),colnames(mat_emb)]
       #Extract the stock of scrapped vehicles
       scrap <- subset(fleet_vint_scrap, Size==size & Technology == techno & Year%in%c(first_yr:last_yr))
+      if (dim(scrap)[1] == 0) {
+        for (years in first_yr:last_yr) {
+          for (model_years in first_yr:years) {
+            scrap[nrow(scrap)+1,] <- list(0, 0, years, size, techno, model_years)
+          }
+        }
+      }
       #Create model_year. Assumption: Because no material composition later than historical, we assume all older vehicles to have this limit age.
       scrap[,"Model_year"] <- sapply(scrap[,"Year"] - scrap[,"Age"],function(x) ifelse(x < min(fleet_mc_dt_year_list),min(fleet_mc_dt_year_list),x))
       #Aggregate value. Add values for last_yr (no scrap)

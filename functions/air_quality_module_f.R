@@ -1,4 +1,4 @@
-air_quality_module_f <- function(fleet_composition_state_breakdown, fleet_composition, fleet_elec_use_tot_state, fleet_elec_use_tot_county, fleet_fuel_use_tot, fleet_fuel_use_tot_state, scenario_id = NA, brake_tire_emissions_modification = NA, fuel_matching_option = NA, fleet_electricity_consumption_source = NA, first_proj_yr = NA, fleet_id = NA, last_yr = NA) {
+air_quality_module_f <- function(fleet_composition_state_breakdown, fleet_composition, fleet_elec_use_tot_state, fleet_elec_use_tot_county, fleet_fuel_use_tot, fleet_fuel_use_tot_state, scenario_id = NA, brake_tire_emissions_modification = NA, fuel_matching_option = NA, fleet_electricity_consumption_source = NA, first_proj_yr = NA, fleet_id = NA, last_yr = NA, years_simulation= NA, battery_calculation_method = NA) {
   attribute_f("air_quality_module_f")
   results_path <- paste0(getwd(), "/outputs/air_quality/", Sys.Date(), "_", scenario_id, "_results")
   normalized_total_emissions <- get_input_f(input_name = 'normalized_total_emissions')
@@ -25,12 +25,13 @@ air_quality_module_f <- function(fleet_composition_state_breakdown, fleet_compos
     fleet_dataset$Size[which(fleet_dataset$Size == vehicles_sizes_file$Sizes[i])] <- vehicles_sizes_file$ID[i]
     colnames(fleet_size)[which(colnames(fleet_size) == vehicles_sizes_file$Sizes[i])] <- vehicles_sizes_file$ID[i]
   }
-  if (fleet_id == "2020_fleet") {
+  special_scenarios <- c("2020_fleet", "Elec0_Truck100", "Elec0_Car100", "Elec100_Truck100", "Elec100_Car100")
+  if (fleet_id%in%special_scenarios) {
     normalized_total_emissions <- filter(normalized_total_emissions, normalized_total_emissions$Year <= min(normalized_total_emissions$Year))
     normalized_emissions_by_state <- filter(normalized_emissions_by_state, normalized_emissions_by_state$Year <= min(normalized_emissions_by_state$Year))
-    years <- 2020:last_yr
     normalized_total_emissions_temp <- filter(normalized_total_emissions, normalized_total_emissions$Year == min(normalized_total_emissions$Year))
     normalized_emissions_by_state_temp <- filter(normalized_emissions_by_state, normalized_emissions_by_state$Year == min(normalized_emissions_by_state$Year))
+    years <- (min(normalized_total_emissions$Year)+1):last_yr
     for (i in years) {
       normalized_total_emissions_temp$Year <- i
       normalized_emissions_by_state_temp$Year <- i
@@ -61,9 +62,9 @@ air_quality_module_f <- function(fleet_composition_state_breakdown, fleet_compos
   plan(multisession)
   data <- future_lapply(evaluation, function(i) {
     temp <- which(normalized_emissions_by_state$Year == normalized_total_emissions$Year[i] &
-                    normalized_emissions_by_state$Source == normalized_total_emissions$Source[i] &
-                    normalized_emissions_by_state$Fuel == normalized_total_emissions$Fuel[i] &
-                    normalized_emissions_by_state$ModelYr == normalized_total_emissions$ModelYr[i])
+                  normalized_emissions_by_state$Source == normalized_total_emissions$Source[i] &
+                  normalized_emissions_by_state$Fuel == normalized_total_emissions$Fuel[i] &
+                  normalized_emissions_by_state$ModelYr == normalized_total_emissions$ModelYr[i])
     
     population <- fleet_dataset$Value[Reduce(intersect, list(which(fleet_dataset$Year == normalized_total_emissions$Year[i]),
                                                              which(fleet_dataset$Size == normalized_total_emissions$Source[i]), 
@@ -102,12 +103,24 @@ air_quality_module_f <- function(fleet_composition_state_breakdown, fleet_compos
     fleet_emissions_elec_state <- do.call(electric_grid_emissions_f, list(fleet_composition = fleet_composition, fleet_elec_use_tot_state=fleet_elec_use_tot_state, fleet_elec_use_tot_county = fleet_elec_use_tot_county))[["fleet_emissions_elec_state"]]
     fleet_emissions_elec_county <- do.call(electric_grid_emissions_f, list(fleet_composition = fleet_composition, fleet_elec_use_tot_state=fleet_elec_use_tot_state, fleet_elec_use_tot_county = fleet_elec_use_tot_county))[["fleet_emissions_elec_county"]]
   }
+  
   print("Calculation of the well-to-pump emissions from liquid and gaseous fuel production")
   fleet_fuel_usage_US <- do.call(fuel_wtp_ef_f, list(fleet_fuel_use_tot = fleet_fuel_use_tot, fleet_fuel_use_tot_state = fleet_fuel_use_tot_state))[["production_change_matrix"]]
+  print("Calculation of the environmental damages from battery production")
+  if (grepl("GREET", battery_calculation_method)) {
+    emissions_battery_production <- do.call(health_damages_batteries_f, list(fleet_composition = fleet_composition, fleet_composition_state_breakdown))[["battery_manufacturing_emissions"]]
+    write.csv(emissions_battery_production, paste0(results_path, "/damages_battery_production.csv"))
+  } else if (battery_calculation_method == "Tessum2014") {
+    emissions_battery_production <- do.call(health_damages_batteries_f, list(fleet_composition = fleet_composition, fleet_composition_state_breakdown))
+    write.csv(emissions_battery_production[["batteries_damages_monetized_yearly"]], paste0(results_path, "/damages_battery_production.csv"))
+    write.csv(emissions_battery_production[["batteries_damages_per_state"]], paste0(results_path, "/damages_battery_production_state.csv"))
+    write.csv(emissions_battery_production[["batteries_damages_per_county"]], paste0(results_path, "/damages_battery_production_county.csv"))
+  }
   print("Starting the calculation of health impacts")
   health_impacts <- do.call(cobra_health_impact_f, list(state_resolved_fleet_direct_emissions = state_resolved_fleet_direct_emissions, 
                                                         fleet_emissions_elec_state = fleet_emissions_elec_state,
                                                         fleet_emissions_elec_county = fleet_emissions_elec_county,
-                                                        fleet_fuel_usage_US = fleet_fuel_usage_US))
+                                                        fleet_fuel_usage_US = fleet_fuel_usage_US,
+                                                        emissions_battery_production = emissions_battery_production))
   return(health_impacts)
 }

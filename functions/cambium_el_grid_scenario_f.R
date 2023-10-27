@@ -15,13 +15,15 @@ cambium_el_grid_scenario_f <- function(output, elec_mix_mdl=NA, first_yr=NA, las
   grid_mix_data <- cbind(grid_mix_data, data[,grep("MWh", colnames(data))])
   grid_mix_data_original <- grid_mix_data
   # Shift the grid mix data if required
+  last_year <- last_yr
   if (grid_shift_year != 0) {
+    last_yr <- last_yr+1
     initial_year_grid <- grid_mix_data[which(grid_mix_data$Years == min(grid_mix_data$Years)),]
-    final_year_grid <- grid_mix_data[which(grid_mix_data$Years == max(grid_mix_data$Years)),]
+    #final_year_grid <- grid_mix_data[which(grid_mix_data$Years == max(grid_mix_data$Years)),]
     grid_mix_data$Years <- grid_mix_data$Years+grid_shift_year
     grid_mix_data <- filter(grid_mix_data, grid_mix_data$Years <= last_yr)
     if (max(grid_mix_data$Years < last_yr)) {
-      grid_mix_data <- rbind(grid_mix_data, final_year_grid)
+      #grid_mix_data <- rbind(grid_mix_data, final_year_grid)
     }
     grid_mix_data <- rbind(grid_mix_data, initial_year_grid)
   }
@@ -271,6 +273,8 @@ cambium_el_grid_scenario_f <- function(output, elec_mix_mdl=NA, first_yr=NA, las
       rownames(reg_matrix_mix_out) <- NULL
       reg_matrix_mix <- reg_matrix_mix_out
     }
+    matrix_mix <- filter(matrix_mix, matrix_mix$Year <= last_year)
+    reg_matrix_mix <- filter(reg_matrix_mix, reg_matrix_mix$Year <= last_year)
     return(list(matrix_mix = matrix_mix, reg_matrix_mix = reg_matrix_mix)) 
   } else if (output == "total_emissions_electricity") {
     total_electricity_production <- data.frame(matrix(data = NA, nrow = 0, ncol = 3))

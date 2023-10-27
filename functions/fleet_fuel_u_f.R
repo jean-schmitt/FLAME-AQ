@@ -1,11 +1,24 @@
 #' fleet_fuel_u_f
 #' Function: Calculates on-road fuel use by LDVs
 #' @export
-fleet_fuel_u_f<-function (first_yr = NA,last_yr = NA, fc_deg=NA, fc_deg_mdl = NA, vkt_turnover_adj_mdl = NA, survival_rate_adj_age = NA, scenario_id = NA, fleet_id = NA){
+fleet_fuel_u_f<-function (first_yr = NA,last_yr = NA, fc_deg=NA, fc_deg_mdl = NA, vkt_turnover_adj_mdl = NA, survival_rate_adj_age = NA, scenario_id = NA, fleet_id = NA, fuel_matching_option = NA){
   attribute_f("fleet_fuel_u_f")
   results_path <- paste0(getwd(), "/outputs/air_quality/", Sys.Date(), "_", scenario_id, "_results")
   #Inputs files
   vh_techno <- get_input_f(input_name = "model_matching_technology")
+  if (fuel_matching_option == "hybrid") {
+    correspondence_file <- read.delim(paste0(getwd(), "/inputs/data/FLAME_to_MOVES_correspondance_files/technologies_", fuel_matching_option, ".txt"), header = TRUE, sep = ";", dec = ".")
+  } else if (fuel_matching_option == "FLAME") {
+    
+  } else if (fuel_matching_option == "MOVES") {
+    
+  }
+  vh_techno <- vh_techno[which(vh_techno$Own%in%unique(correspondence_file$Technology_Alt)),]
+  #if (fleet_id == "Elec100_Car100" | fleet_id == "Elec100_Truck100") {
+  #  vh_techno <- filter(vh_techno, vh_techno$Own == "BEV300")
+  #} else if (fleet_id == "Elec0_Car100" | fleet_id == "Elec0_Truck100") {
+  #  vh_techno <- filter(vh_techno, vh_techno$Own == "ICEV-G")
+  #}
   fc_degradation <- get_input_f(input_name = "fuel_consumption_degradation")
   #Functions' Outputs
   vehicle_module_f_res <- do.call(fun_res_f,list(fun_name="vehicle_module_f"))
@@ -38,9 +51,11 @@ fleet_fuel_u_f<-function (first_yr = NA,last_yr = NA, fc_deg=NA, fc_deg_mdl = NA
   dt_col <- c("Year","Age","Size","Technology","Fuel","Unit","Value")
   fleet_vint_fuel_use <- setNames(data.frame(matrix(0,ncol = length(dt_col), nrow = 0),stringsAsFactors = FALSE,check.names = FALSE),dt_col)
   #Loop for size
-  for (size in c("Car", "Light truck")) {
+  #for (size in c("Car", "Light truck")) {
+  for (size in unique(fleet_vint_vkt$Size)) {
     #Loop for technology
-    for (techno in unique(vh_techno$Own)) {
+    #for (techno in unique(vh_techno$Own)) {
+    for (techno in unique(fleet_vint_vkt$Technology)) {
       #Loop for fuel_type
       #model_year_list is the list of Model Years we should consider in the matrices
       model_year_list <- unique(subset(fleet_fc_dt, Size==size & Technology==techno)$Model_year)[order(unique(subset(fleet_fc_dt, Size==size & Technology==techno)$Model_year))]
@@ -116,6 +131,9 @@ fleet_fuel_u_f<-function (first_yr = NA,last_yr = NA, fc_deg=NA, fc_deg_mdl = NA
   fleet_vint_elec_use <- filter(fleet_vint_fuel_use, fleet_vint_fuel_use$Fuel == "Electricity")
   fleet_vint_elec_use <- filter(fleet_vint_elec_use, fleet_vint_elec_use$Value != 0)
   fleet_norm_elec_use <- fleet_vint_elec_use
+  if (dim(fleet_norm_elec_use)[1] == 0) {
+    fleet_norm_elec_use[nrow(fleet_norm_elec_use)+1,] <- numeric(length(colnames(fleet_norm_elec_use)))
+  }
   fleet_norm_elec_use$Value <- 0
   fleet_total <- fleet_vkt_f_res[["fleet_composition"]][["fleet_vint_stock"]]
   fleet_state <- fleet_vkt_f_res[["fleet_composition"]][["fleet_vint_stock_scenario_state_breakdown"]] %>%
@@ -130,6 +148,9 @@ fleet_fuel_u_f<-function (first_yr = NA,last_yr = NA, fc_deg=NA, fc_deg_mdl = NA
     filter(Year >= first_yr) %>%
     filter(Value != 0)
   fleet_elec_use_state <- fleet_state
+  if (dim(fleet_elec_use_state)[1] == 0) {
+    fleet_elec_use_state[nrow(fleet_elec_use_state)+1,] <- numeric(length(colnames(fleet_elec_use_state)))
+  }
   fleet_elec_use_state$Fuel <- "Electricity"
   fleet_elec_use_state$Unit <- "kWh"
   fleet_elec_use_state$Value <- 0
@@ -161,6 +182,9 @@ fleet_fuel_u_f<-function (first_yr = NA,last_yr = NA, fc_deg=NA, fc_deg_mdl = NA
     filter(Technology %in% unique(fleet_fuel_use$Technology)) %>%
     filter(Year >= first_yr) %>%
     filter(Value != 0)
+  if (dim(fleet_state)[1] == 0) {
+    fleet_state[nrow(fleet_state)+1,] <- numeric(length(colnames(fleet_state)))
+  }
   fleet_fuel_use_state <- fleet_state
   fleet_fuel_use_state$Value <- 0
   for (i in 1:dim(fleet_fuel_use)[1]) {

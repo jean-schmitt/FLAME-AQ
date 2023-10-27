@@ -1,10 +1,23 @@
 #' fleet_vkt_f
 #' Function: Calculates distance traveled by the U.S. LDV fleet by technology, size, age and year in kilometers.
 #' @export
-fleet_vkt_f <- function(first_yr = NA, last_yr = NA, vkt_mdl=NA, vkt_hybrid_factor=NA, vkt_growth_mdl=NA, vkt_growth_rate=NA, use_res_env="y"){
+fleet_vkt_f <- function(first_yr = NA, last_yr = NA, vkt_mdl=NA, vkt_hybrid_factor=NA, vkt_growth_mdl=NA, vkt_growth_rate=NA, fuel_matching_option = NA, fleet_id = NA, use_res_env="y"){
   attribute_f("fleet_vkt_f")
   #Input
   vh_techno <- get_input_f("model_matching_technology")
+  if (fuel_matching_option == "hybrid") {
+    correspondence_file <- read.delim(paste0(getwd(), "/inputs/data/FLAME_to_MOVES_correspondance_files/technologies_", fuel_matching_option, ".txt"), header = TRUE, sep = ";", dec = ".")
+  } else if (fuel_matching_option == "FLAME") {
+    
+  } else if (fuel_matching_option == "MOVES") {
+    
+  }
+  vh_techno <- vh_techno[which(vh_techno$Own%in%unique(correspondence_file$Technology_Alt)),]
+  if (fleet_id == "Elec100_Car100" | fleet_id == "Elec100_Truck100") {
+    vh_techno <- filter(vh_techno, vh_techno$Ow == "BEV300")
+  } else if (fleet_id == "Elec0_Car100" | fleet_id == "Elec0_Truck100") {
+    vh_techno <- filter(vh_techno, vh_techno$Own == "ICEV-G")
+  }
   conv  <- get_input_f(input_name = 'conversion_units')
   annual_mileage  <- get_input_f(input_name = 'annual_mileage_TEDB')
   #Function outputs
@@ -66,7 +79,8 @@ fleet_vkt_f <- function(first_yr = NA, last_yr = NA, vkt_mdl=NA, vkt_hybrid_fact
   #Output files: fleet_vint_vkt contains the distance traveled by technology, size, age and year in kilometers
   dt_col <- c("Size","Technology","Age","Year","Value")
   fleet_vint_vkt <- setNames(data.frame(matrix(0,ncol = length(dt_col), nrow = 0),stringsAsFactors = FALSE,check.names = FALSE),dt_col)
-  for (size in c("Car", "Light truck")) {
+  #for (size in c("Car", "Light truck")) {
+  for (size in unique(fleet_vint_stock$Size)) {  
     for (techno in unique(vh_techno$Own)) {
       #Create matrix of vintaged stock. Rows: Year. Cols: Age
       stock <- subset(fleet_vint_stock,Size==size & Technology == techno & Year%in%(first_yr:last_yr))
