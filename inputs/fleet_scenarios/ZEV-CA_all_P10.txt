@@ -1,0 +1,4 @@
+Year;Event;Size;Technology;Value;Interpolation_type;State
+2036;sales_share;all;electric;0.35;linear;all
+2040;sales_share;all;electric;0.68;linear;all
+2045;sales_share;all;electric;1;linear;all

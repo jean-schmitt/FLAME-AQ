@@ -1,0 +1,26 @@
+Pollutant,Fuel,CAGR
+NOx,Coal,-3.88
+NOx,Natural Gas,-2.58
+NOx,Oil,6.76
+NOx,Nuclear,0
+NOx,Renewables,0
+SO2,Coal,-6.96
+SO2,Natural Gas,-2.76
+SO2,Oil,6.34
+SO2,Nuclear,0
+SO2,Renewables,0
+PM25,Coal,0.69
+PM25,Natural Gas,-0.1
+PM25,Oil,1.61
+PM25,Nuclear,0
+PM25,Renewables,0
+NH3,Coal,-11.54
+NH3,Natural Gas,-0.85
+NH3,Oil,-0.56
+NH3,Nuclear,0
+NH3,Renewables,0
+VOC,Coal,0.53
+VOC,Natural Gas,-0.92
+VOC,Oil,1.2
+VOC,Nuclear,0
+VOC,Renewables,0

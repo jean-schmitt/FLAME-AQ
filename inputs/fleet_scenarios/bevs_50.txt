@@ -1,0 +1,2 @@
+Year;Event;Size;Technology;Value;Interpolation_type;State
+2022;sales_share;all;electric;0.5;linear;all

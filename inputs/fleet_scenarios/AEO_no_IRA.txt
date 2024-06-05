@@ -1,0 +1,11 @@
+Year;Event;Size;Technology;Value;Interpolation_type;State
+2022;sales_share;car;electric;0.112;linear;all
+2024;sales_share;car;electric;0.115;linear;all
+2030;sales_share;car;electric;0.185;linear;all
+2035;sales_share;car;electric;0.222;linear;all
+2050;sales_share;car;electric;0.267;linear;all
+2022;sales_share;light truck;electric;0.010;linear;all
+2024;sales_share;light truck;electric;0.016;linear;all
+2030;sales_share;light truck;electric;0.05;linear;all
+2035;sales_share;light truck;electric;0.063;linear;all
+2050;sales_share;light truck;electric;0.081;linear;all

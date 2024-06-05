@@ -1,0 +1,251 @@
+ISO,Country,IEA,R5_region,AIM/CGE.REGION,AIM/CGE.NAME,GCAM4.REGION,GCAM4.NAME,IMAGE.REGION,IMAGE.NAME,MESSAGE-GLOBIOM.REGION,MESSAGE-GLOBIOM.NAME,REMIND-MAGPIE.REGION,REMIND-MAGPIE.NAME,LeQuere
+ATG,Antigua and Barbuda,Antigua and Barbuda,R5LAM,XLM,Rest of Brazil,Central America and Caribbean,Central America and Caribbean,RCAM,Rest C. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Antigua and Barbuda
+DZA,Algeria,Algeria,R5MAF,XNF,North Africa,Africa_Northern,Africa_Northern,NAF,N. Africa,MEA,Middle East and North Africa,MEA,Middle East and North Africa,Algeria
+AZE,Azerbaijan,Azerbaijan,R5REF,CIS,Former USSR,Central Asia,Central Asia,RUS,Russia,FSU,Former Soviet Union,MEA,Middle East and North Africa,Azerbaijan
+ALB,Albania,Albania,R5OECD,XER,Rest of Europe,Europe_Non_EU,Europe_Non_EU,CEU,C. Europe,EEU,Eastern Europe,ROW,rest of the World,Albania
+ARM,Armenia,Armenia,R5REF,CIS,Former USSR,Central Asia,Central Asia,RUS,Russia,FSU,Former Soviet Union,MEA,Middle East and North Africa,Armenia
+AGO,Angola,Angola,R5MAF,XAF,Other Africa,Africa_Southern,Africa_Southern,RSAF,Rest S. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Angola
+ASM,American Samoa,American Samoa,R5ASIA,XSA,Rest of Asia,Southeast Asia,Southeast Asia,OCE,Oceania,PAS,Other Pacific Asia,OAS,other Asia,American Samoa
+ARG,Argentina,Argentina,R5LAM,XLM,Rest of Brazil,Argentina,Argentina,RSAM,Rest S. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Argentina
+AUS,Australia,Australia,R5OECD,XOC,New Zealand and Australia,Australia_NZ,Australia_NZ,OCE,Oceania,PAO,Pacific OECD,ROW,rest of the World,Australia
+BHR,Bahrain,Bahrain,R5MAF,XME,Middle East,Middle East,Middle East,ME,Middle East,MEA,Middle East and North Africa,MEA,Middle East and North Africa,Bahrain
+BRB,Barbados,Barbados,R5LAM,XLM,Rest of Brazil,Central America and Caribbean,Central America and Caribbean,RCAM,Rest C. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Barbados
+BMU,Bermuda,Bermuda,R5LAM,XLM,Rest of Brazil,Central America and Caribbean,Central America and Caribbean,RCAM,Rest C. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Bermuda
+BHS,Bahamas,Bahamas,R5LAM,XLM,Rest of Brazil,Central America and Caribbean,Central America and Caribbean,RCAM,Rest C. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Bahamas
+BGD,Bangladesh,Bangladesh,R5ASIA,XSA,Rest of Asia,South Asia,South Asia,RSAS,Rest S. Asia,SAS,South Asia,OAS,other Asia,Bangladesh
+BLZ,Belize,Belize,R5LAM,XLM,Rest of Brazil,Central America and Caribbean,Central America and Caribbean,RCAM,Rest C. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Belize
+BIH,Bosnia and Herzegovina,Bosnia and Herzegovina,R5OECD,XER,Rest of Europe,Europe_Non_EU,Europe_Non_EU,CEU,C. Europe,EEU,Eastern Europe,ROW,rest of the World,Bosnia and Herzegovina
+BOL,Bolivia,Bolivia,R5LAM,XLM,Rest of Brazil,South America_Southern,South America_Southern,RSAM,Rest S. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Bolivia
+BRN,Brunei Darussalam,Brunei Darussalam,R5ASIA,XSA,Rest of Asia,Southeast Asia,Southeast Asia,SEAS,SE. Asia,PAS,Other Pacific Asia,OAS,other Asia,Brunei Darussalam
+BEN,Benin,Benin,R5MAF,XAF,Other Africa,Africa_Western,Africa_Western,WAF,W. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Benin
+SLB,Solomon Islands,Solomon Islands,R5ASIA,XSA,Rest of Asia,Southeast Asia,Southeast Asia,OCE,Oceania,PAS,Other Pacific Asia,OAS,other Asia,Solomon Islands
+BRA,Brazil,Brazil,R5LAM,BRA,Brazil,Brazil,Brazil,BRA,Brazil,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Brazil
+BGR,Bulgaria,Bulgaria,R5OECD,XER,Rest of Europe,EU-12,EU-12,CEU,C. Europe,EEU,Eastern Europe,EUR,EU 27,Bulgaria
+KHM,Cambodia,Cambodia,R5ASIA,XSE,Rest of East and South East Asia,Southeast Asia,Southeast Asia,SEAS,SE. Asia,CPA,Centrally Planned Asia and China,OAS,other Asia,Cambodia
+CAN,Canada,Canada,R5OECD,CAN,Canada,Canada,Canada,CAN,Canada,NAM,North America,ROW,rest of the World,Canada
+LAO,Lao Peoples Democratic Republic,Laos,R5ASIA,XSE,Rest of East and South East Asia,Southeast Asia,Southeast Asia,SEAS,SE. Asia,CPA,Centrally Planned Asia and China,OAS,other Asia,Laos
+LKA,Sri Lanka,Sri Lanka,R5ASIA,XSA,Rest of Asia,South Asia,South Asia,RSAS,Rest S. Asia,SAS,South Asia,OAS,other Asia,Sri Lanka
+COG,Congo,Congo,R5MAF,XAF,Other Africa,Africa_Western,Africa_Western,WAF,W. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Congo
+COD,Democratic Republic of the Congo,Democratic Republic of the Congo,R5MAF,XAF,Other Africa,Africa_Western,Africa_Western,WAF,W. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Democratic Republic of the Congo
+BDI,Burundi,Burundi,R5MAF,XAF,Other Africa,Africa_Eastern,Africa_Eastern,EAF,E. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Burundi
+CHN,China,People's Rep. of China,R5ASIA,CHN,China,China,China,CHN,China,CPA,Centrally Planned Asia and China,CHN,China,China
+AFG,Afghanistan,Afghanistan,R5ASIA,XSA,Rest of Asia,South Asia,South Asia,RSAS,Rest S. Asia,SAS,South Asia,OAS,other Asia,Afghanistan
+BTN,Bhutan,Bhutan,R5ASIA,XSA,Rest of Asia,South Asia,South Asia,RSAS,Rest S. Asia,SAS,South Asia,OAS,other Asia,Bhutan
+CHL,Chile,Chile,R5LAM,XLM,Rest of Brazil,South America_Southern,South America_Southern,RSAM,Rest S. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Chile
+CYM,Cayman Islands,Cayman Islands,R5LAM,XLM,Rest of Brazil,Central America and Caribbean,Central America and Caribbean,RCAM,Rest C. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Cayman Islands
+CMR,Cameroon,Cameroon,R5MAF,XAF,Other Africa,Africa_Western,Africa_Western,WAF,W. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Cameroon
+TCD,Chad,Chad,R5MAF,XAF,Other Africa,Africa_Western,Africa_Western,WAF,W. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Chad
+COM,Comoros,Comoros,R5MAF,XAF,Other Africa,Africa_Eastern,Africa_Eastern,EAF,E. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Comoros
+COL,Colombia,Colombia,R5LAM,XLM,Rest of Brazil,Colombia,Colombia,RSAM,Rest S. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Colombia
+CRI,Costa Rica,Costa Rica,R5LAM,XLM,Rest of Brazil,Central America and Caribbean,Central America and Caribbean,RCAM,Rest C. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Costa Rica
+CAF,Central African Republic,Central African Republic,R5MAF,XAF,Other Africa,Africa_Western,Africa_Western,WAF,W. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Central African Republic
+CUB,Cuba,Cuba,R5LAM,XLM,Rest of Brazil,Central America and Caribbean,Central America and Caribbean,RCAM,Rest C. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Cuba
+CPV,Cape Verde,Cape Verde,R5MAF,XAF,Other Africa,Africa_Western,Africa_Western,WAF,W. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Cape Verde
+COK,Cook Islands,Cook Islands,R5ASIA,XSA,Rest of Asia,Southeast Asia,Southeast Asia,OCE,Oceania,PAS,Other Pacific Asia,OAS,other Asia,Cook Islands
+CYP,Cyprus,Cyprus,R5OECD,XE25,EU,EU-12,EU-12,CEU,C. Europe,WEU,Western Europe,EUR,EU 27,Cyprus
+DNK,Denmark,Denmark,R5OECD,XE25,EU,EU-15,EU-15,WEU,W. Europe,WEU,Western Europe,EUR,EU 27,Denmark
+DJI,Djibouti,Djibouti,R5MAF,XAF,Other Africa,Africa_Eastern,Africa_Eastern,EAF,E. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Djibouti
+DMA,Dominica,Dominica,R5LAM,XLM,Rest of Brazil,Central America and Caribbean,Central America and Caribbean,RCAM,Rest C. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Dominica
+DOM,Dominican Republic,Dominican Republic,R5LAM,XLM,Rest of Brazil,Central America and Caribbean,Central America and Caribbean,RCAM,Rest C. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Dominican Republic
+ECU,Ecuador,Ecuador,R5LAM,XLM,Rest of Brazil,South America_Southern,South America_Southern,RSAM,Rest S. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Ecuador
+EGY,Egypt,Egypt,R5MAF,XNF,North Africa,Africa_Northern,Africa_Northern,NAF,N. Africa,MEA,Middle East and North Africa,MEA,Middle East and North Africa,Egypt
+IRL,Ireland,Ireland,R5OECD,XE25,EU,EU-15,EU-15,WEU,W. Europe,WEU,Western Europe,EUR,EU 27,Ireland
+GNQ,Equatorial Guinea,Equatorial Guinea,R5MAF,XAF,Other Africa,Africa_Western,Africa_Western,WAF,W. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Equatorial Guinea
+EST,Estonia,Estonia,R5OECD,XE25,EU,EU-12,EU-12,CEU,C. Europe,EEU,Eastern Europe,EUR,EU 27,Estonia
+ERI,Eritrea,Eritrea,R5MAF,XAF,Other Africa,Africa_Eastern,Africa_Eastern,EAF,E. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Eritrea
+SLV,El Salvador,El Salvador,R5LAM,XLM,Rest of Brazil,Central America and Caribbean,Central America and Caribbean,RCAM,Rest C. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,El Salvador
+ETH,Ethiopia,Ethiopia,R5MAF,XAF,Other Africa,Africa_Eastern,Africa_Eastern,EAF,E. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Ethiopia
+AUT,Austria,Austria,R5OECD,XE25,EU,EU-15,EU-15,WEU,W. Europe,WEU,Western Europe,EUR,EU 27,Austria
+CZE,Czech Republic,Czech Republic,R5OECD,XE25,EU,EU-12,EU-12,CEU,C. Europe,EEU,Eastern Europe,EUR,EU 27,Czech Republic
+GUF,French Guiana,French Guiana,R5LAM,XLM,Rest of Brazil,South America_Northern,South America_Northern,RSAM,Rest S. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,French Guiana
+FIN,Finland,Finland,R5OECD,XE25,EU,EU-15,EU-15,WEU,W. Europe,WEU,Western Europe,EUR,EU 27,Finland
+FJI,Fiji,Fiji,R5ASIA,XSA,Rest of Asia,Southeast Asia,Southeast Asia,OCE,Oceania,PAS,Other Pacific Asia,OAS,other Asia,Fiji
+FLK,Falkland Islands (Malvinas),Falkland Islands (Malvinas),R5LAM,XLM,Rest of Brazil,EU-15,EU-15,RSAM,Rest S. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Falkland Islands (Malvinas)
+FSM,"Micronesia,  Federated States of","Micronesia,  Federated States of",R5ASIA,XSA,Rest of Asia,Southeast Asia,Southeast Asia,OCE,Oceania,PAS,Other Pacific Asia,OAS,other Asia,"Micronesia,  Federated States of"
+PYF,French Polynesia,French Polynesia,R5ASIA,XSA,Rest of Asia,Southeast Asia,Southeast Asia,OCE,Oceania,PAS,Other Pacific Asia,OAS,other Asia,French Polynesia
+FRA,France,France,R5OECD,XE25,EU,EU-15,EU-15,WEU,W. Europe,WEU,Western Europe,EUR,EU 27,France
+GMB,Gambia,Gambia,R5MAF,XAF,Other Africa,Africa_Western,Africa_Western,WAF,W. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Gambia
+GAB,Gabon,Gabon,R5MAF,XAF,Other Africa,Africa_Western,Africa_Western,WAF,W. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Gabon
+GEO,Georgia,Georgia,R5REF,CIS,Former USSR,Central Asia,Central Asia,RUS,Russia,FSU,Former Soviet Union,MEA,Middle East and North Africa,Georgia
+GHA,Ghana,Ghana,R5MAF,XAF,Other Africa,Africa_Western,Africa_Western,WAF,W. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Ghana
+GRD,Grenada,Grenada,R5LAM,XLM,Rest of Brazil,Central America and Caribbean,Central America and Caribbean,RCAM,Rest C. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Grenada
+GRL,Greenland,Greenland,R5OECD,XLM,Rest of Brazil,EU-15,EU-15,RSAF,Rest S. Africa,WEU,Western Europe,EUR,EU 27,Greenland
+DEU,Germany,Germany,R5OECD,XE25,EU,EU-15,EU-15,WEU,W. Europe,WEU,Western Europe,EUR,EU 27,Germany
+GUM,Guam,Guam,R5OECD,XSA,Rest of Asia,Southeast Asia,Southeast Asia,USA,USA,NAM,North America,OAS,other Asia,Guam
+GRC,Greece,Greece,R5OECD,XE25,EU,EU-15,EU-15,WEU,W. Europe,WEU,Western Europe,EUR,EU 27,Greece
+GTM,Guatemala,Guatemala,R5LAM,XLM,Rest of Brazil,Central America and Caribbean,Central America and Caribbean,RCAM,Rest C. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Guatemala
+GIN,Guinea,Guinea,R5MAF,XAF,Other Africa,Africa_Western,Africa_Western,WAF,W. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Guinea
+GUY,Guyana,Guyana,R5LAM,XLM,Rest of Brazil,South America_Northern,South America_Northern,RSAM,Rest S. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Guyana
+HTI,Haiti,Haiti,R5LAM,XLM,Rest of Brazil,Central America and Caribbean,Central America and Caribbean,RCAM,Rest C. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Haiti
+HND,Honduras,Honduras,R5LAM,XLM,Rest of Brazil,Central America and Caribbean,Central America and Caribbean,RCAM,Rest C. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Honduras
+HRV,Croatia,Croatia,R5OECD,XER,Rest of Europe,Europe_Non_EU,Europe_Non_EU,CEU,C. Europe,EEU,Eastern Europe,ROW,rest of the World,Croatia
+HUN,Hungary,Hungary,R5OECD,XE25,EU,EU-12,EU-12,CEU,C. Europe,EEU,Eastern Europe,EUR,EU 27,Hungary
+ISL,Iceland,Iceland,R5OECD,XER,Rest of Europe,European Free Trade Association,European Free Trade Association,WEU,W. Europe,WEU,Western Europe,ROW,rest of the World,Iceland
+IND,India,India,R5ASIA,IND,India,India,India,INDIA,India,SAS,South Asia,IND,India,India
+IRN,Iran (Islamic Republic of),Iran (Islamic Republic of),R5MAF,XME,Middle East,Middle East,Middle East,ME,Middle East,MEA,Middle East and North Africa,MEA,Middle East and North Africa,Iran (Islamic Republic of)
+ISR,Israel,Israel,R5MAF,XME,Middle East,Middle East,Middle East,ME,Middle East,MEA,Middle East and North Africa,MEA,Middle East and North Africa,Israel
+ITA,Italy,Italy,R5OECD,XE25,EU,EU-15,EU-15,WEU,W. Europe,WEU,Western Europe,EUR,EU 27,Italy
+CIV,Cote dIvoire,Cote dIvoire,R5MAF,XAF,Other Africa,Africa_Western,Africa_Western,WAF,W. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Cote dIvoire
+IRQ,Iraq,Iraq,R5MAF,XME,Middle East,Middle East,Middle East,ME,Middle East,MEA,Middle East and North Africa,MEA,Middle East and North Africa,Iraq
+JPN,Japan,Japan,R5OECD,JPN,Japan,Japan,Japan,JAP,Japan,PAO,Pacific OECD,JPN,Japan,Japan
+JAM,Jamaica,Jamaica,R5LAM,XLM,Rest of Brazil,Central America and Caribbean,Central America and Caribbean,RCAM,Rest C. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Jamaica
+JOR,Jordan,Jordan,R5MAF,XME,Middle East,Middle East,Middle East,ME,Middle East,MEA,Middle East and North Africa,MEA,Middle East and North Africa,Jordan
+KEN,Kenya,Kenya,R5MAF,XAF,Other Africa,Africa_Eastern,Africa_Eastern,EAF,E. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Kenya
+KGZ,Kyrgyzstan,Kyrgyzstan,R5REF,CIS,Former USSR,Central Asia,Central Asia,STAN,Kazakhstan region,FSU,Former Soviet Union,MEA,Middle East and North Africa,Kyrgyzstan
+PRK,"Korea, Democratic Peoples Republic of","Korea, Democratic Peoples Republic of",R5ASIA,XSE,Rest of East and South East Asia,Southeast Asia,Southeast Asia,KOR,Korea,CPA,Centrally Planned Asia and China,OAS,other Asia,"Korea, Democratic Peoples Republic of"
+KIR,Kiribati,Kiribati,R5ASIA,XSA,Rest of Asia,Southeast Asia,Southeast Asia,OCE,Oceania,PAS,Other Pacific Asia,OAS,other Asia,Kiribati
+KOR,"Korea,  Republic of",Korea,R5ASIA,XSE,Rest of East and South East Asia,South Korea,South Korea,KOR,Korea,PAS,Other Pacific Asia,OAS,other Asia,"Korea,  Republic of"
+KWT,Kuwait,Kuwait,R5MAF,XME,Middle East,Middle East,Middle East,ME,Middle East,MEA,Middle East and North Africa,MEA,Middle East and North Africa,Kuwait
+KAZ,Kazakhstan,Kazakhstan,R5REF,CIS,Former USSR,Central Asia,Central Asia,STAN,Kazakhstan region,FSU,Former Soviet Union,MEA,Middle East and North Africa,Kazakhstan
+MMR,Burma,Myanmar,R5ASIA,XSE,Rest of East and South East Asia,Southeast Asia,Southeast Asia,SEAS,SE. Asia,PAS,Other Pacific Asia,OAS,other Asia,Myanmar
+LBN,Lebanon,Lebanon,R5MAF,XME,Middle East,Middle East,Middle East,ME,Middle East,MEA,Middle East and North Africa,MEA,Middle East and North Africa,Lebanon
+LVA,Latvia,Latvia,R5OECD,XE25,EU,EU-12,EU-12,CEU,C. Europe,EEU,Eastern Europe,EUR,EU 27,Latvia
+BLR,Belarus,Belarus,R5REF,CIS,Former USSR,Central Asia,Central Asia,UKR,Ukraine region,FSU,Former Soviet Union,ROW,rest of the World,Belarus
+LTU,Lithuania,Lithuania,R5OECD,XE25,EU,EU-12,EU-12,CEU,C. Europe,EEU,Eastern Europe,EUR,EU 27,Lithuania
+LBR,Liberia,Liberia,R5MAF,XAF,Other Africa,Africa_Western,Africa_Western,WAF,W. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Liberia
+SVK,Slovakia,Slovakia,R5OECD,XE25,EU,EU-12,EU-12,CEU,C. Europe,EEU,Eastern Europe,EUR,EU 27,Slovakia
+LIE,Liechtenstein,Liechtenstein,R5OECD,XER,Rest of Europe,European Free Trade Association,European Free Trade Association,WEU,W. Europe,WEU,Western Europe,ROW,rest of the World,Liechtenstein
+LBY,Libyan Arab Jamahiriya,Libyan Arab Jamahiriya,R5MAF,XNF,North Africa,Africa_Northern,Africa_Northern,NAF,N. Africa,MEA,Middle East and North Africa,MEA,Middle East and North Africa,Libyan Arab Jamahiriya
+MDG,Madagascar,Madagascar,R5MAF,XAF,Other Africa,Africa_Eastern,Africa_Eastern,EAF,E. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Madagascar
+MTQ,Martinique,Martinique,R5LAM,XLM,Rest of Brazil,Central America and Caribbean,Central America and Caribbean,RCAM,Rest C. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Martinique
+MNG,Mongolia,Mongolia,R5ASIA,XSE,Rest of East and South East Asia,Central Asia,Central Asia,CHN,China,CPA,Centrally Planned Asia and China,OAS,other Asia,Mongolia
+MSR,Montserrat,Montserrat,R5LAM,XLM,Rest of Brazil,Central America and Caribbean,Central America and Caribbean,RCAM,Rest C. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Montserrat
+MKD,The former Yugoslav Republic of Macedonia,The former Yugoslav Republic of Macedonia,R5OECD,XER,Rest of Europe,Europe_Non_EU,Europe_Non_EU,CEU,C. Europe,EEU,Eastern Europe,ROW,rest of the World,The former Yugoslav Republic of Macedonia
+MLI,Mali,Mali,R5MAF,XAF,Other Africa,Africa_Western,Africa_Western,WAF,W. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Mali
+MAR,Morocco,Morocco,R5MAF,XNF,North Africa,Africa_Northern,Africa_Northern,NAF,N. Africa,MEA,Middle East and North Africa,MEA,Middle East and North Africa,Morocco
+MUS,Mauritius,Mauritius,R5MAF,XAF,Other Africa,Africa_Eastern,Africa_Eastern,EAF,E. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Mauritius
+MRT,Mauritania,Mauritania,R5MAF,XAF,Other Africa,Africa_Western,Africa_Western,WAF,W. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Mauritania
+MLT,Malta,Malta,R5OECD,XE25,EU,EU-12,EU-12,WEU,W. Europe,WEU,Western Europe,EUR,EU 27,Malta
+OMN,Oman,Oman,R5MAF,XME,Middle East,Middle East,Middle East,ME,Middle East,MEA,Middle East and North Africa,MEA,Middle East and North Africa,Oman
+MDV,Maldives,Maldives,R5ASIA,XSA,Rest of Asia,South Asia,South Asia,RSAS,Rest S. Asia,SAS,South Asia,OAS,other Asia,Maldives
+MEX,Mexico,Mexico,R5LAM,XLM,Rest of Brazil,Mexico,Mexico,MEX,Mexico,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Mexico
+MYS,Malaysia,Malaysia,R5ASIA,XSE,Rest of East and South East Asia,Southeast Asia,Southeast Asia,SEAS,SE. Asia,PAS,Other Pacific Asia,OAS,other Asia,Malaysia
+MOZ,Mozambique,Mozambique,R5MAF,XAF,Other Africa,Africa_Southern,Africa_Southern,RSAF,Rest S. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Mozambique
+MWI,Malawi,Malawi,R5MAF,XAF,Other Africa,Africa_Southern,Africa_Southern,RSAF,Rest S. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Malawi
+NCL,New Caledonia,New Caledonia,R5ASIA,XSA,Rest of Asia,Southeast Asia,Southeast Asia,OCE,Oceania,PAS,Other Pacific Asia,OAS,other Asia,New Caledonia
+NIU,Niue,Niue,R5ASIA,XSA,Rest of Asia,Southeast Asia,Southeast Asia,OCE,Oceania,PAS,Other Pacific Asia,OAS,other Asia,Niue
+NER,Niger,Niger,R5MAF,XAF,Other Africa,Africa_Western,Africa_Western,WAF,W. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Niger
+ABW,Aruba,Aruba,R5LAM,XLM,Rest of Brazil,Central America and Caribbean,Central America and Caribbean,RCAM,Rest C. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Aruba
+AIA,Anguilla,Anguilla,R5LAM,XLM,Rest of Brazil,Central America and Caribbean,Central America and Caribbean,RCAM,Rest C. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Anguilla
+BEL,Belgium,Belgium,R5OECD,XE25,EU,EU-15,EU-15,WEU,W. Europe,WEU,Western Europe,EUR,EU 27,Belgium
+HKG,Hong Kong,"Hong Kong, China",R5ASIA,CHN,China,China,China,CHN,China,CPA,Centrally Planned Asia and China,CHN,China,Hong Kong
+MNP,Northern Mariana Islands,Northern Mariana Islands,R5ASIA,XSA,Rest of Asia,Southeast Asia,Southeast Asia,,,PAS,Other Pacific Asia,OAS,other Asia,Northern Mariana Islands
+FRO,Faroe Islands,Faroe Islands,R5OECD,XER,Rest of Europe,EU-15,EU-15,WEU,W. Europe,WEU,Western Europe,EUR,EU 27,Faroe Islands
+AND,Andorra,Andorra,R5OECD,XER,Rest of Europe,EU-15,EU-15,WEU,W. Europe,WEU,Western Europe,ROW,rest of the World,Andorra
+GIB,Gibraltar,Gibraltar,R5OECD,XER,Rest of Europe,EU-15,EU-15,WEU,W. Europe,WEU,Western Europe,EUR,EU 27,Gibraltar
+IMN,Isle of Man,Isle of Man,R5OECD,XER,Rest of Europe,EU-15,EU-15,,,WEU,Western Europe,EUR,EU 27,Isle of Man
+LUX,Luxembourg,Luxembourg,R5OECD,XE25,EU,EU-15,EU-15,WEU,W. Europe,WEU,Western Europe,EUR,EU 27,Luxembourg
+MAC,Macau,Macau,R5ASIA,XSE,Rest of East and South East Asia,China,China,CHN,China,CPA,Centrally Planned Asia and China,CHN,China,Macau
+MCO,Monaco,Monaco,R5OECD,XER,Rest of Europe,EU-15,EU-15,WEU,W. Europe,WEU,Western Europe,ROW,rest of the World,Monaco
+PSE,Palestine,Palestine,R5MAF,XME,Middle East,Middle East,Middle East,ME,Middle East,MEA,Middle East and North Africa,MEA,Middle East and North Africa,Palestine
+MNE,Montenegro,Montenegro,R5OECD,XER,Rest of Europe,Europe_Non_EU,Europe_Non_EU,CEU,C. Europe,EEU,Eastern Europe,ROW,rest of the World,Montenegro
+MYT,Mayotte,Mayotte,R5OECD,XAF,Other Africa,Southeast Asia,Southeast Asia,,,WEU,Western Europe,AFR,Sub-saharan Africa,Mayotte
+ALA,�land Islands,�land Islands,R5OECD,XER,Rest of Europe,,,,,WEU,Western Europe,EUR,EU 27,�land Islands
+NFK,Norfolk Island,Norfolk Island,R5OECD,XSA,Rest of Asia,Southeast Asia,Southeast Asia,OCE,Oceania,WEU,Western Europe,OAS,other Asia,Norfolk Island
+CCK,Cocos (Keeling) Islands,Cocos (Keeling) Islands,R5ASIA,XSA,Rest of Asia,Southeast Asia,Southeast Asia,,,PAS,Other Pacific Asia,OAS,other Asia,Cocos (Keeling) Islands
+ATA,Antarctica,Antarctica,,,,,,,,,,ROW,rest of the World,Antarctica
+BVT,Bouvet Island,Bouvet Island,,,,,,,,,,ROW,rest of the World,Bouvet Island
+ATF,French Southern and Antarctic Lands,French Southern and Antarctic Lands,,,,,,,,,,OAS,other Asia,French Southern and Antarctic Lands
+HMD,Heard Island and McDonald Islands,Heard Island and McDonald Islands,R5OECD,XSA,Rest of Asia,,,,,PAO,Pacific OECD,ROW,rest of the World,Heard Island and McDonald Islands
+IOT,British Indian Ocean Territory,British Indian Ocean Territory,R5OECD,XSA,Rest of Asia,,,,,WEU,Western Europe,OAS,other Asia,British Indian Ocean Territory
+CXR,Christmas Island,Christmas Island,R5OECD,XSA,Rest of Asia,Southeast Asia,Southeast Asia,,,PAO,Pacific OECD,OAS,other Asia,Christmas Island
+CUW,Curacao,Curacao,R5LAM,,,Central America and Caribbean,Central America and Caribbean,RCAM,Rest C. America,,,LAM,Latin America and the Caribbean,Curacao
+UMI,United States Minor Outlying Islands,United States Minor Outlying Islands,R5OECD,XSA,Rest of Asia,,,,,NAM,North America,OAS,other Asia,United States Minor Outlying Islands
+VUT,Vanuatu,Vanuatu,R5ASIA,XSA,Rest of Asia,Southeast Asia,Southeast Asia,OCE,Oceania,PAS,Other Pacific Asia,OAS,other Asia,Vanuatu
+NGA,Nigeria,Nigeria,R5MAF,XAF,Other Africa,Africa_Western,Africa_Western,WAF,W. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Nigeria
+NLD,Netherlands,Netherlands,R5OECD,XE25,EU,EU-15,EU-15,WEU,W. Europe,WEU,Western Europe,EUR,EU 27,Netherlands
+NOR,Norway,Norway,R5OECD,XER,Rest of Europe,European Free Trade Association,European Free Trade Association,WEU,W. Europe,WEU,Western Europe,ROW,rest of the World,Norway
+NPL,Nepal,Nepal,R5ASIA,XSA,Rest of Asia,South Asia,South Asia,RSAS,Rest S. Asia,SAS,South Asia,OAS,other Asia,Nepal
+NRU,Nauru,Nauru,R5ASIA,XSA,Rest of Asia,Southeast Asia,Southeast Asia,OCE,Oceania,PAS,Other Pacific Asia,ROW,rest of the World,Nauru
+SUR,Suriname,Suriname,R5LAM,XLM,Rest of Brazil,South America_Northern,South America_Northern,RSAM,Rest S. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Suriname
+NIC,Nicaragua,Nicaragua,R5LAM,XLM,Rest of Brazil,Central America and Caribbean,Central America and Caribbean,RCAM,Rest C. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Nicaragua
+NZL,New Zealand,New Zealand,R5OECD,XOC,New Zealand and Australia,Australia_NZ,Australia_NZ,OCE,Oceania,PAO,Pacific OECD,ROW,rest of the World,New Zealand
+PRY,Paraguay,Paraguay,R5LAM,XLM,Rest of Brazil,South America_Southern,South America_Southern,RSAM,Rest S. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Paraguay
+PER,Peru,Peru,R5LAM,XLM,Rest of Brazil,South America_Southern,South America_Southern,RSAM,Rest S. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Peru
+PAK,Pakistan,Pakistan,R5ASIA,XSA,Rest of Asia,Pakistan,Pakistan,RSAS,Rest S. Asia,SAS,South Asia,OAS,other Asia,Pakistan
+POL,Poland,Poland,R5OECD,XE25,EU,EU-12,EU-12,CEU,C. Europe,EEU,Eastern Europe,EUR,EU 27,Poland
+PAN,Panama,Panama,R5LAM,XLM,Rest of Brazil,Central America and Caribbean,Central America and Caribbean,RCAM,Rest C. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Panama
+PRT,Portugal,Portugal,R5OECD,XE25,EU,EU-15,EU-15,WEU,W. Europe,WEU,Western Europe,EUR,EU 27,Portugal
+PNG,Papua New Guinea,Papua New Guinea,R5ASIA,XSA,Rest of Asia,Southeast Asia,Southeast Asia,INDO,Indonesia,PAS,Other Pacific Asia,OAS,other Asia,Papua New Guinea
+GNB,Guinea-Bissau,Guinea-Bissau,R5MAF,XAF,Other Africa,Africa_Western,Africa_Western,WAF,W. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Guinea-Bissau
+QAT,Qatar,Qatar,R5MAF,XME,Middle East,Middle East,Middle East,ME,Middle East,MEA,Middle East and North Africa,MEA,Middle East and North Africa,Qatar
+REU,Reunion,Reunion,R5OECD,XAF,Other Africa,Africa_Eastern,Africa_Eastern,EAF,E. Africa,WEU,Western Europe,AFR,Sub-saharan Africa,Reunion
+ROU,Romania,Romania,R5OECD,XER,Rest of Europe,EU-12,EU-12,CEU,C. Europe,EEU,Eastern Europe,EUR,EU 27,Romania
+MDA,Republic of Moldova,Republic of Moldova,R5REF,CIS,Former USSR,Central Asia,Central Asia,UKR,Ukraine region,FSU,Former Soviet Union,ROW,rest of the World,Republic of Moldova
+PHL,Philippines,Philippines,R5ASIA,XSE,Rest of East and South East Asia,Southeast Asia,Southeast Asia,SEAS,SE. Asia,PAS,Other Pacific Asia,OAS,other Asia,Philippines
+PRI,Puerto Rico,Puerto Rico,R5OECD,XLM,Rest of Brazil,USA,USA,RCAM,Rest C. America,NAM,North America,USA,United States of America,Puerto Rico
+RUS,Russia,Russia,R5REF,CIS,Former USSR,Russia,Russia,RUS,Russia,FSU,Former Soviet Union,RUS,Russia,Russia
+RWA,Rwanda,Rwanda,R5MAF,XAF,Other Africa,Africa_Eastern,Africa_Eastern,EAF,E. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Rwanda
+SAU,Saudi Arabia,Saudi Arabia,R5MAF,XME,Middle East,Middle East,Middle East,ME,Middle East,MEA,Middle East and North Africa,MEA,Middle East and North Africa,Saudi Arabia
+KNA,Saint Kitts and Nevis,Saint Kitts and Nevis,R5LAM,XLM,Rest of Brazil,Central America and Caribbean,Central America and Caribbean,RCAM,Rest C. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Saint Kitts and Nevis
+SYC,Seychelles,Seychelles,R5MAF,XAF,Other Africa,Southeast Asia,Southeast Asia,EAF,E. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Seychelles
+ZAF,South Africa,South Africa,R5MAF,XAF,Other Africa,South Africa,South Africa,SAF,South Africa,AFR,Sub-saharan Africa,ROW,rest of the World,South Africa
+LSO,Lesotho,Lesotho,R5MAF,XAF,Other Africa,Africa_Southern,Africa_Southern,RSAF,Rest S. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Lesotho
+BWA,Botswana,Botswana,R5MAF,XAF,Other Africa,Africa_Southern,Africa_Southern,RSAF,Rest S. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Botswana
+SEN,Senegal,Senegal,R5MAF,XAF,Other Africa,Africa_Western,Africa_Western,WAF,W. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Senegal
+SVN,Slovenia,Slovenia,R5OECD,XE25,EU,EU-12,EU-12,CEU,C. Europe,EEU,Eastern Europe,EUR,EU 27,Slovenia
+SLE,Sierra Leone,Sierra Leone,R5MAF,XAF,Other Africa,Africa_Western,Africa_Western,WAF,W. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Sierra Leone
+SGP,Singapore,Singapore,R5ASIA,XSE,Rest of East and South East Asia,Southeast Asia,Southeast Asia,SEAS,SE. Asia,PAS,Other Pacific Asia,OAS,other Asia,Singapore
+SOM,Somalia,Somalia,R5MAF,XAF,Other Africa,Africa_Eastern,Africa_Eastern,EAF,E. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Somalia
+ESP,Spain,Spain,R5OECD,XE25,EU,EU-15,EU-15,WEU,W. Europe,WEU,Western Europe,EUR,EU 27,Spain
+LCA,Saint Lucia,Saint Lucia,R5LAM,XLM,Rest of Brazil,Central America and Caribbean,Central America and Caribbean,RCAM,Rest C. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Saint Lucia
+SDN,Sudan,Sudan,R5MAF,XAF,Other Africa,Africa_Eastern,Africa_Eastern,EAF,E. Africa,MEA,Middle East and North Africa,AFR,Sub-saharan Africa,Sudan
+SSD,South Sudan,South Sudan,R5MAF,XAF,Other Africa,Africa_Eastern,Africa_Eastern,EAF,E. Africa,MEA,Middle East and North Africa,AFR,Sub-saharan Africa,South Sudan
+SXM,Sint Marteen,Sint Marteen,R5LAM,,,Central America and Caribbean,Central America and Caribbean,RCAM,Rest C. America,,,LAM,Latin America and the Caribbean,Sint Marteen
+SWE,Sweden,Sweden,R5OECD,XE25,EU,EU-15,EU-15,WEU,W. Europe,WEU,Western Europe,EUR,EU 27,Sweden
+SYR,Syrian Arab Republic,Syrian Arab Republic,R5MAF,XME,Middle East,Middle East,Middle East,ME,Middle East,MEA,Middle East and North Africa,MEA,Middle East and North Africa,Syrian Arab Republic
+CHE,Switzerland,Switzerland,R5OECD,XER,Rest of Europe,European Free Trade Association,European Free Trade Association,WEU,W. Europe,WEU,Western Europe,ROW,rest of the World,Switzerland
+TTO,Trinidad and Tobago,Trinidad and Tobago,R5LAM,XLM,Rest of Brazil,Central America and Caribbean,Central America and Caribbean,RCAM,Rest C. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Trinidad and Tobago
+THA,Thailand,Thailand,R5ASIA,XSE,Rest of East and South East Asia,Southeast Asia,Southeast Asia,SEAS,SE. Asia,PAS,Other Pacific Asia,OAS,other Asia,Thailand
+TJK,Tajikistan,Tajikistan,R5REF,CIS,Former USSR,Central Asia,Central Asia,STAN,Kazakhstan region,FSU,Former Soviet Union,MEA,Middle East and North Africa,Tajikistan
+TKL,Tokelau,Tokelau,R5OECD,XSA,Rest of Asia,Southeast Asia,Southeast Asia,OCE,Oceania,PAO,Pacific OECD,OAS,other Asia,Tokelau
+TON,Tonga,Tonga,R5ASIA,XSA,Rest of Asia,Southeast Asia,Southeast Asia,OCE,Oceania,PAS,Other Pacific Asia,OAS,other Asia,Tonga
+TGO,Togo,Togo,R5MAF,XAF,Other Africa,Africa_Western,Africa_Western,WAF,W. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Togo
+STP,Sao Tome and Principe,Sao Tome and Principe,R5MAF,XAF,Other Africa,Africa_Western,Africa_Western,WAF,W. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Sao Tome and Principe
+TUN,Tunisia,Tunisia,R5MAF,XNF,North Africa,Africa_Northern,Africa_Northern,NAF,N. Africa,MEA,Middle East and North Africa,MEA,Middle East and North Africa,Tunisia
+TUR,Turkey,Turkey,R5OECD,TUR,Turkey,Europe_Non_EU,Europe_Non_EU,TUR,Turkey,WEU,Western Europe,ROW,rest of the World,Turkey
+TUV,Tuvalu,Tuvalu,R5ASIA,XSA,Rest of Asia,Southeast Asia,Southeast Asia,OCE,Oceania,PAS,Other Pacific Asia,OAS,other Asia,Tuvalu
+TKM,Turkmenistan,Turkmenistan,R5REF,CIS,Former USSR,Central Asia,Central Asia,STAN,Kazakhstan region,FSU,Former Soviet Union,MEA,Middle East and North Africa,Turkmenistan
+TZA,United Republic of Tanzania,United Republic of Tanzania,R5MAF,XAF,Other Africa,Africa_Southern,Africa_Southern,RSAF,Rest S. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,United Republic of Tanzania
+UGA,Uganda,Uganda,R5MAF,XAF,Other Africa,Africa_Eastern,Africa_Eastern,EAF,E. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Uganda
+GBR,United Kingdom,United Kingdom,R5OECD,XE25,EU,EU-15,EU-15,WEU,W. Europe,WEU,Western Europe,EUR,EU 27,United Kingdom
+UKR,Ukraine,Ukraine,R5REF,CIS,Former USSR,Central Asia,Central Asia,UKR,Ukraine region,FSU,Former Soviet Union,ROW,rest of the World,Ukraine
+USA,United States,United States,R5OECD,USA,USA,USA,USA,USA,USA,NAM,North America,USA,United States of America,United States
+BFA,Burkina Faso,Burkina Faso,R5MAF,XAF,Other Africa,Africa_Western,Africa_Western,WAF,W. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Burkina Faso
+URY,Uruguay,Uruguay,R5LAM,XLM,Rest of Brazil,South America_Southern,South America_Southern,RSAM,Rest S. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Uruguay
+UZB,Uzbekistan,Uzbekistan,R5REF,CIS,Former USSR,Central Asia,Central Asia,STAN,Kazakhstan region,FSU,Former Soviet Union,MEA,Middle East and North Africa,Uzbekistan
+VCT,Saint Vincent and the Grenadines,Saint Vincent and the Grenadines,R5LAM,XLM,Rest of Brazil,Central America and Caribbean,Central America and Caribbean,RCAM,Rest C. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Saint Vincent and the Grenadines
+VEN,Venezuela,Venezuela,R5LAM,XLM,Rest of Brazil,South America_Northern,South America_Northern,RSAM,Rest S. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Venezuela
+VGB,British Virgin Islands,British Virgin Islands,R5OECD,XLM,Rest of Brazil,EU-15,EU-15,RCAM,Rest C. America,WEU,Western Europe,LAM,Latin America and the Caribbean,British Virgin Islands
+TLS,Timor-Leste,Timor-Leste,R5ASIA,XSE,Rest of East and South East Asia,Southeast Asia,Southeast Asia,SEAS,SE. Asia,PAS,Other Pacific Asia,OAS,other Asia,Timor-Leste
+VIR,United States Virgin Islands,United States Virgin Islands,R5OECD,XLM,Rest of Brazil,USA,USA,RCAM,Rest C. America,NAM,North America,LAM,Latin America and the Caribbean,United States Virgin Islands
+NAM,Namibia,Namibia,R5MAF,XAF,Other Africa,Africa_Southern,Africa_Southern,RSAF,Rest S. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Namibia
+WLF,Wallis and Futuna Islands,Wallis and Futuna Islands,R5OECD,XSA,Rest of Asia,EU-15,EU-15,OCE,Oceania,WEU,Western Europe,OAS,other Asia,Wallis and Futuna Islands
+WSM,Samoa,Samoa,R5ASIA,XSA,Rest of Asia,Southeast Asia,Southeast Asia,OCE,Oceania,PAS,Other Pacific Asia,OAS,other Asia,Samoa
+SWZ,Swaziland,Swaziland,R5MAF,XAF,Other Africa,Africa_Southern,Africa_Southern,RSAF,Rest S. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Swaziland
+YEM,Yemen,Yemen,R5MAF,XME,Middle East,Middle East,Middle East,ME,Middle East,MEA,Middle East and North Africa,MEA,Middle East and North Africa,Yemen
+ZMB,Zambia,Zambia,R5MAF,XAF,Other Africa,Africa_Southern,Africa_Southern,RSAF,Rest S. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Zambia
+ZWE,Zimbabwe,Zimbabwe,R5MAF,XAF,Other Africa,Africa_Southern,Africa_Southern,RSAF,Rest S. Africa,AFR,Sub-saharan Africa,AFR,Sub-saharan Africa,Zimbabwe
+IDN,Indonesia,Indonesia,R5ASIA,XSE,Rest of East and South East Asia,Indonesia,Indonesia,INDO,Indonesia,PAS,Other Pacific Asia,OAS,other Asia,Indonesia
+GLP,Guadeloupe,Guadeloupe,R5LAM,XLM,Rest of Brazil,Central America and Caribbean,Central America and Caribbean,RCAM,Rest C. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Guadeloupe
+ANT,Netherlands Antilles,Netherlands Antilles,R5LAM,XLM,Rest of Brazil,Central America and Caribbean,Central America and Caribbean,RCAM,Rest C. America,LAM,Latin America and the Caribbean,,,Netherlands Antilles
+ARE,United Arab Emirates,United Arab Emirates,R5MAF,XME,Middle East,Middle East,Middle East,ME,Middle East,MEA,Middle East and North Africa,MEA,Middle East and North Africa,United Arab Emirates
+VNM,Viet Nam,Viet Nam,R5ASIA,XSE,Rest of East and South East Asia,Southeast Asia,Southeast Asia,SEAS,SE. Asia,CPA,Centrally Planned Asia and China,OAS,other Asia,Viet Nam
+PCN,Pitcairn Islands,Pitcairn Islands,R5OECD,XSA,Rest of Asia,Southeast Asia,Southeast Asia,OCE,Oceania,WEU,Western Europe,OAS,other Asia,Pitcairn Islands
+PLW,Palau,Palau,R5ASIA,XSA,Rest of Asia,Southeast Asia,Southeast Asia,OCE,Oceania,PAS,Other Pacific Asia,OAS,other Asia,Palau
+MHL,Marshall Islands,Marshall Islands,R5ASIA,XSA,Rest of Asia,Southeast Asia,Southeast Asia,OCE,Oceania,PAS,Other Pacific Asia,OAS,other Asia,Marshall Islands
+SPM,Saint Pierre and Miquelon,Saint Pierre and Miquelon,R5OECD,XLM,Rest of Brazil,EU-15,EU-15,USA,USA,WEU,Western Europe,ROW,rest of the World,Saint Pierre and Miquelon
+SHN,Saint Helena,Saint Helena,R5OECD,XAF,Other Africa,EU-15,EU-15,WAF,W. Africa,WEU,Western Europe,AFR,Sub-saharan Africa,Saint Helena
+SMR,San Marino,San Marino,R5OECD,XER,Rest of Europe,EU-15,EU-15,WEU,W. Europe,WEU,Western Europe,ROW,rest of the World,San Marino
+TCA,Turks and Caicos Islands,Turks and Caicos Islands,R5LAM,XLM,Rest of Brazil,EU-15,EU-15,RCAM,Rest C. America,LAM,Latin America and the Caribbean,LAM,Latin America and the Caribbean,Turks and Caicos Islands
+ESH,Western Sahara,Western Sahara,R5MAF,XAF,Other Africa,Africa_Northern,Africa_Northern,NAF,N. Africa,AFR,Sub-saharan Africa,MEA,Middle East and North Africa,Western Sahara
+SRB,Serbia,Serbia,R5OECD,XER,Rest of Europe,Europe_Non_EU,Europe_Non_EU,CEU,C. Europe,EEU,Eastern Europe,ROW,rest of the World,Serbia
+SRB (KOSOVO),Serbia (Kosovo),Serbia (Kosovo),R5OECD,,,,,,,,,,,Serbia (Kosovo)
+VAT,Holy See (Vatican City),Holy See (Vatican City),R5OECD,XER,Rest of Europe,EU-15,EU-15,,,WEU,Western Europe,ROW,rest of the World,Holy See (Vatican City)
+SJM,Svalbard,Svalbard,R5OECD,XER,Rest of Europe,European Free Trade Association,European Free Trade Association,,,WEU,Western Europe,ROW,rest of the World,Svalbard
+MAF,Saint Martin,Saint Martin,R5OECD,XLM,Rest of Brazil,,,,,WEU,Western Europe,ROW,rest of the World,Saint Martin
+BLM,Saint Barthelemy,Saint Barthelemy,R5OECD,XLM,Rest of Brazil,,,,,WEU,Western Europe,LAM,Latin America and the Caribbean,Saint Barthelemy
+GGY,Guernsey,Guernsey,R5OECD,XER,Rest of Europe,,,,,WEU,Western Europe,ROW,rest of the World,Guernsey
+JEY,Jersey,Jersey,R5OECD,XER,Rest of Europe,,,,,WEU,Western Europe,EUR,EU 27,Jersey
+SGS,South Georgia South Sandwich Islands,South Georgia South Sandwich Islands,R5OECD,XLM,Rest of Brazil,,,,,WEU,Western Europe,ROW,rest of the World,South Georgia South Sandwich Islands
+TWN,Taiwan,Taiwan,R5ASIA,XSE,Rest of East and South East Asia,Taiwan,Taiwan,CHN,China,PAS,Other Pacific Asia,OAS,other Asia,Taiwan
